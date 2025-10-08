@@ -1,60 +1,45 @@
-import { Request, Response } from 'express';
-
 interface AccountPayable {
   id: number;
   description: string;
   amount: number;
-  dueDate: Date;
-  status: string;
-  createdAt: Date;
-  updatedAt: Date;
+  due_date: string;
 }
 
-let accountsPayable: AccountPayable[] = []; // simulação do DB
+// Array em memória
+let accountsPayable: AccountPayable[] = [];
 
-export const getAllAccountsPayable = (req: Request, res: Response) => {
-  res.json(accountsPayable);
+// GET todas
+export const getAccountsPayable = () => {
+  return accountsPayable;
 };
 
-export const getAccountPayableById = (req: Request, res: Response) => {
-  const { id } = req.params;
-  const account = accountsPayable.find(a => a.id === Number(id));
-  if (!account) return res.status(404).json({ message: 'Not found' });
-  res.json(account);
-};
-
-export const createAccountPayable = (req: Request, res: Response) => {
-  const { description, amount, dueDate } = req.body;
+// POST nova conta
+export const createAccountPayable = (data: Omit<AccountPayable, "id">) => {
   const newAccount: AccountPayable = {
     id: accountsPayable.length + 1,
-    description,
-    amount,
-    dueDate: new Date(dueDate),
-    status: 'pending',
-    createdAt: new Date(),
-    updatedAt: new Date()
+    ...data
   };
   accountsPayable.push(newAccount);
-  res.status(201).json(newAccount);
+  return newAccount;
 };
 
-export const updateAccountPayable = (req: Request, res: Response) => {
-  const { id } = req.params;
-  const { description, amount, dueDate, status } = req.body;
-  const account = accountsPayable.find(a => a.id === Number(id));
-  if (!account) return res.status(404).json({ message: 'Not found' });
+// PUT atualizar conta
+export const updateAccountPayable = (id: number, data: Partial<Omit<AccountPayable, "id">>) => {
+  const account = accountsPayable.find(a => a.id === id);
+  if (!account) return null;
 
-  account.description = description ?? account.description;
-  account.amount = amount ?? account.amount;
-  account.dueDate = dueDate ? new Date(dueDate) : account.dueDate;
-  account.status = status ?? account.status;
-  account.updatedAt = new Date();
+  account.description = data.description ?? account.description;
+  account.amount = data.amount ?? account.amount;
+  account.due_date = data.due_date ?? account.due_date;
 
-  res.json(account);
+  return account;
 };
 
-export const deleteAccountPayable = (req: Request, res: Response) => {
-  const { id } = req.params;
-  accountsPayable = accountsPayable.filter(a => a.id !== Number(id));
-  res.status(204).send();
+// DELETE conta
+export const deleteAccountPayable = (id: number) => {
+  const index = accountsPayable.findIndex(a => a.id === id);
+  if (index === -1) return null;
+
+  const deleted = accountsPayable.splice(index, 1);
+  return deleted[0];
 };
