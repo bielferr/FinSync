@@ -1,13 +1,11 @@
-import express, { Application, Request, Response } from "express";
+import express from 'express';
+import accountsPayableRoutes from './routes/accountsPayable.routes';
 
-const app: Application = express();
+const app = express();
 
-// Para aceitar JSON no corpo das requisições
 app.use(express.json());
 
-// Rota de teste
-app.get("/", (req: Request, res: Response) => {
-res.send("🚀 Server rodando com sucesso!");
-});
+// Rotas
+app.use('/api/accounts-payable', accountsPayableRoutes);
 
-export default app;
+export default app; // <- importante exportar o app
