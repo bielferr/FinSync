@@ -3,14 +3,15 @@ interface Card {
   name: string;
   limit: number;
   due_day: number;
+  balance: number;
 }
 
 let cards: Card[] = [];
 
 export const getCards = () => cards;
 
-export const createCard = (data: Omit<Card, "id">) => {
-  const newCard = { id: cards.length + 1, ...data };
+export const createCard = (data: Omit<Card, "id" | "balance">) => {
+  const newCard = { id: cards.length + 1, balance: 0, ...data }; // balance inicia em 0
   cards.push(newCard);
   return newCard;
 };
