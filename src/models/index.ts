@@ -1,6 +1,6 @@
 export { User } from './user.model';
-
-// em desenvolvimento
-// export { Transaction } from './transaction.model';
-// export { AccountsPayable } from './accountsPayable.model';
-// export { AccountsReceivable } from './accountsReceivable.model';
+export { Card } from './cards.model';
+export { AccountPayable } from './accountsPayable.model';
+export { AccountReceivable } from './accountsReceivable.model';
+export { Transaction } from './transaction.model';
+export { Wallet } from './wallet.model';

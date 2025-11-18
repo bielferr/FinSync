@@ -1,28 +1,35 @@
-import { Request, Response } from 'express';
-import { UserService } from '../services/user.service';
-
-const userService = new UserService();
+import { Request, Response } from "express";
+import { UserService } from "../services/user.service";
 
 export class UserController {
-  async createUser(req: Request, res: Response) {
+  private userService = new UserService();
+
+  // Lista todos os usuários (somente admin)
+  async getAllUsers(req: Request, res: Response) {
     try {
-      const user = await userService.createUser(req.body);
-      res.status(201).json(user);
+      const users = await this.userService.getAllUsers();
+      return res.status(200).json(users);
     } catch (error) {
-      res.status(400).json({ error: 'Erro ao criar usuário' });
+      console.error("Erro ao listar usuários:", error);
+      return res.status(500).json({ message: "Erro ao buscar usuários." });
     }
   }
 
+  // Busca um usuário específico
   async getUser(req: Request, res: Response) {
     try {
-      const user = await userService.getUserById(parseInt(req.params.id));
-      if (user) {
-        res.json(user);
-      } else {
-        res.status(404).json({ error: 'Usuário não encontrado' });
+      const { id } = req.params;
+
+      const user = await this.userService.getUserById(Number(id));
+
+      if (!user) {
+        return res.status(404).json({ message: "Usuário não encontrado." });
       }
+
+      return res.status(200).json(user);
     } catch (error) {
-      res.status(500).json({ error: 'Erro ao buscar usuário' });
+      console.error("Erro ao buscar usuário:", error);
+      return res.status(500).json({ message: "Erro interno ao buscar usuário." });
     }
   }
 }

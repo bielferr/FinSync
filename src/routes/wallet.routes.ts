@@ -1,15 +1,11 @@
+
 import { Router } from "express";
-import { getWallet } from "../controllers/wallet.controller";
+import { walletController } from "../controllers/wallet.controller";
+import { auth } from "../middleware/auth";
 
 const router = Router();
 
-router.get("/", (req, res) => {
-  try {
-    const wallet = getWallet();
-    res.json(wallet);
-  } catch (err) {
-    res.status(500).json({ error: "Erro ao buscar carteira digital" });
-  }
-});
+// GET /wallet
+router.get("/", auth, walletController.getWalletByUser);
 
 export default router;

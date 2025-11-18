@@ -1,15 +1,15 @@
 import { Router } from "express";
-import { getUserProfile } from "../controllers/user.controller";
+import { UserController } from "../controllers/user.controller";
+import { auth } from "../middleware/auth";
+import { admin } from "../middleware/admin";
 
 const router = Router();
+const controller = new UserController();
 
-router.get("/", (req, res) => {
-  try {
-    const profile = getUserProfile();
-    res.json(profile);
-  } catch (err) {
-    res.status(500).json({ error: "Erro ao buscar perfil" });
-  }
-});
+// Lista usuários (somente admin)
+router.get("/", auth, admin, (req, res) => controller.getAllUsers(req, res));
+
+// Busca um usuário específico
+router.get("/:id", auth, (req, res) => controller.getUser(req, res));
 
 export default router;

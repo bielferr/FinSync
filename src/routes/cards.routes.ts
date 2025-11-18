@@ -1,47 +1,52 @@
-// src/routes/cards.routes.ts
 import { Router } from "express";
+import { auth } from "../middleware/auth"; // exige login
 import {
   getCards,
   createCard,
   updateCard,
-  deleteCard
+  deleteCard,
 } from "../controllers/cards.controller";
 
 const router = Router();
 
-router.get("/", (req, res) => {
+// Rota GET para listar todos os cartões
+router.get("/", auth, async (req, res) => {
   try {
-    res.json(getCards());
-  } catch {
+    const cards = await getCards();
+    res.json(cards);
+  } catch (err) {
     res.status(500).json({ error: "Erro ao buscar cartões" });
   }
 });
 
-router.post("/", (req, res) => {
+// Rota POST para criar um novo cartão
+router.post("/", auth, async (req, res) => {
   try {
-    const card = createCard(req.body);
+    const card = await createCard(req.body);
     res.status(201).json(card);
-  } catch {
+  } catch (err) {
     res.status(400).json({ error: "Dados inválidos" });
   }
 });
 
-router.put("/:id", (req, res) => {
+// Rota PUT para atualizar um cartão existente
+router.put("/:id", auth, async (req, res) => {
   try {
-    const updated = updateCard(Number(req.params.id), req.body);
+    const updated = await updateCard(Number(req.params.id), req.body);
     if (!updated) return res.status(404).json({ error: "Cartão não encontrado" });
     res.json(updated);
-  } catch {
+  } catch (err) {
     res.status(400).json({ error: "Dados inválidos" });
   }
 });
 
-router.delete("/:id", (req, res) => {
+// Rota DELETE para remover um cartão
+router.delete("/:id", auth, async (req, res) => {
   try {
-    const deleted = deleteCard(Number(req.params.id));
+    const deleted = await deleteCard(Number(req.params.id));
     if (!deleted) return res.status(404).json({ error: "Cartão não encontrado" });
-    res.json(deleted);
-  } catch {
+    res.json({ message: "Cartão deletado com sucesso" });
+  } catch (err) {
     res.status(400).json({ error: "Erro ao deletar cartão" });
   }
 });

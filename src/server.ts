@@ -2,14 +2,16 @@ import { config } from "dotenv";
 // CARREGAR .env PRIMEIRO
 config();
 
-import express from 'express';
 import sequelize from './config/database';
+import app from './app';
+import authRoutes from './routes/authRotes';
+import userRoutes from './routes/user.routes';
 
-const app = express();
 const PORT = process.env.PORT || 3333;
 
-// Middleware
-app.use(express.json());
+// Registrar rotas que não estão em `app.ts`
+app.use('/auth', authRoutes);
+app.use("/user", userRoutes);
 
 // Rota de saúde
 app.get('/health', (req, res) => {
