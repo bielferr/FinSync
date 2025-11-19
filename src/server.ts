@@ -39,7 +39,6 @@ const connectDB = async () => {
     return false;
   }
 };
-
 // iniciar servidor
 const startServer = async () => {
   const dbConnected = await connectDB();
