@@ -13,6 +13,13 @@ export class UserService {
     return await User.findByPk(id);
   }
 
+  
+  async getAllUsers() {
+    return await User.findAll({
+      attributes: { exclude: ["password"] } // oculta senha de todos usuários
+    });
+  }
+
   async getUserByEmail(email: string) {
     return await User.findOne({ where: { email } });
   }

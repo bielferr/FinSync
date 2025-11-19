@@ -1,5 +1,10 @@
 import { Sequelize } from 'sequelize-typescript';
 import { User } from '../models/user.model';
+import { Card } from '../models/cards.model';
+import { AccountPayable } from '../models/accountsPayable.model';
+import { AccountReceivable } from '../models/accountsReceivable.model';
+import { Transaction } from '../models/transaction.model';
+import { Wallet } from '../models/wallet.model';
 
 // Configuração simples
 const sequelize = new Sequelize({
@@ -13,6 +18,11 @@ const sequelize = new Sequelize({
 });
 
 // Adicionar modelos manualmente
-sequelize.addModels([User]);
+sequelize.addModels([User, Card, AccountPayable, AccountReceivable, Transaction, Wallet]);
+
+// Sincroniza os models com o banco — cria as tabelas se não existirem
+sequelize.sync({ alter: true })
+  .then(() => console.log("Tabelas sincronizadas com sucesso!"))
+  .catch(err => console.error("Erro ao sincronizar tabelas:", err));
 
 export default sequelize;

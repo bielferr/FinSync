@@ -1,30 +1,31 @@
-interface Card {
-  id: number;
-  name: string;
-  limit: number;
-  due_day: number;
-  balance: number;
-}
+import { Card } from "../models/cards.model";
 
-let cards: Card[] = [];
+// Controller de cartões
 
-export const getCards = () => cards;
-
-export const createCard = (data: Omit<Card, "id" | "balance">) => {
-  const newCard = { id: cards.length + 1, balance: 0, ...data }; // balance inicia em 0
-  cards.push(newCard);
-  return newCard;
+export const getCards = async (): Promise<Card[]> => {
+  // Busca todos os cartões
+  return Card.findAll();
 };
 
-export const updateCard = (id: number, data: Partial<Omit<Card, "id">>) => {
-  const card = cards.find(c => c.id === id);
+export const createCard = async (data: Partial<Card>): Promise<Card> => {
+  // Cria um novo cartão
+
+  const created = await Card.create(data as any);
+  return created;
+};
+
+export const updateCard = async (id: number, data: Partial<Card>): Promise<Card | null> => {
+  // Atualiza um cartão existente
+  const card = await Card.findByPk(id);
   if (!card) return null;
-  Object.assign(card, data);
+  await card.update(data as any);
   return card;
 };
 
-export const deleteCard = (id: number) => {
-  const index = cards.findIndex(c => c.id === id);
-  if (index === -1) return null;
-  return cards.splice(index, 1)[0];
+export const deleteCard = async (id: number): Promise<Card | null> => {
+  // Deleta um cartão
+  const card = await Card.findByPk(id);
+  if (!card) return null;
+  await card.destroy();
+  return card;
 };

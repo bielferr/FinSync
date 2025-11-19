@@ -1,15 +1,14 @@
-import { getAccountsPayable } from "./accountsPayable.controller";
-import { getInvestments } from "./investments.controller";
 import { getCards } from "./cards.controller";
 
-export const getFinancialMatriz = () => {
-  const accountsPayable = getAccountsPayable();
-  const investments = getInvestments();
-  const cards = getCards();
+export const getFinancialMatriz = async () => {
+  // por enquanto outras fontes ficam vazias até implementarmos suas integrações
+  const accountsPayable: any[] = [];
+  const investments: any[] = [];
+  const cards = await getCards();
 
-  const totalPayable = accountsPayable.reduce((sum, a) => sum + a.amount, 0);
-  const totalInvested = investments.reduce((sum, i) => sum + i.amount, 0);
-  const totalCardBalance = cards.reduce((sum, c) => sum + c.balance, 0);
+  const totalPayable = accountsPayable.reduce((sum: number, a: any) => sum + Number(a.amount || 0), 0);
+  const totalInvested = investments.reduce((sum: number, i: any) => sum + Number(i.amount || 0), 0);
+  const totalCardBalance = cards.reduce((sum: number, c: any) => sum + Number(c.balance || 0), 0);
 
   return {
     totalPayable,

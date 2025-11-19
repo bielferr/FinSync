@@ -1,0 +1,21 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const accountsPayable_routes_1 = __importDefault(require("./routes/accountsPayable.routes"));
+const accountsReceivable_routes_1 = __importDefault(require("./routes/accountsReceivable.routes"));
+const cards_routes_1 = __importDefault(require("./routes/cards.routes"));
+const wallet_routes_1 = __importDefault(require("./routes/wallet.routes"));
+const user_routes_1 = __importDefault(require("./routes/user.routes"));
+const matriz_routes_1 = __importDefault(require("./routes/matriz.routes"));
+const app = (0, express_1.default)();
+app.use(express_1.default.json());
+app.use("/api/accounts-payable", accountsPayable_routes_1.default);
+app.use("/api/accounts-receivable", accountsReceivable_routes_1.default);
+app.use("/api/cards", cards_routes_1.default);
+app.use("/api/wallet", wallet_routes_1.default);
+app.use("/api/user", user_routes_1.default);
+app.use("/api/matriz", matriz_routes_1.default);
+exports.default = app;
