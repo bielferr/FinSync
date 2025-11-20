@@ -13,6 +13,6 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true
   },
-  "include": ["backend/src/**/*.ts", "backend/src/**/*.tsx"],
+  "include": ["backend/src/**/*.ts", "backend/src/**/*.tsx", "backend/src/teste-chatbot.ts"],
   "exclude": ["node_modules", "backend/dist"]
 }
