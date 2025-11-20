@@ -28,5 +28,11 @@
     "sequelize": "^6.37.7",
     "sequelize-typescript": "^2.1.6",
     "zod": "^4.1.12"
+  },
+  "dependencies": {
+    "@tensorflow/tfjs": "^4.15.0",
+    "@tensorflow/tfjs-node": "^4.15.0",
+    "natural": "^6.8.0",
+    "node-nlp": "^4.25.0"
   }
 }
