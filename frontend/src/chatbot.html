@@ -1,0 +1,22 @@
+<div>
+  <textarea id="msg" placeholder="Digite sua pergunta"></textarea>
+  <button onclick="enviarMsg()">Enviar</button>
+</div>
+
+<div id="resposta"></div>
+
+<script>
+async function enviarMsg() {
+  const texto = document.getElementById("msg").value;
+
+  const res = await fetch("http://localhost:3333/chatbot", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message: texto })
+  });
+
+  const data = await res.json();
+
+  document.getElementById("resposta").innerText = data.response;
+}
+</script>
