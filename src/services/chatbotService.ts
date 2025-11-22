@@ -22,44 +22,42 @@ export class ChatbotService {
   }
 
   private initializeResponses(): void {
-    // Configuração das respostas para cada categoria
-    this.responses.set('SAUDACAO', [
-      'Olá! Como posso ajudá-lo hoje?',
-      'Oi! Em que posso ser útil?',
-      'Olá! Estou aqui para ajudar.'
-    ]);
+  this.responses.set('SAUDACAO', [
+    'Olá! Como posso te ajudar?',
+    'Bem-vindo ao Blync! Em que posso ser útil?',
+    'Oi! Estou aqui para ajudar com suas finanças.'
+  ]);
 
-    this.responses.set('SALDO', [
-      'Para consultar seu saldo, acesse a seção "Minha Conta" no aplicativo.',
-      'Você pode verificar seu saldo na página inicial do app.',
-      'O saldo está disponível no menu principal.'
-    ]);
+  this.responses.set('SALDO', [
+    'Claro! Seu saldo atual é de R$ 5.243,87. Posso ajudar com mais alguma coisa?',
+    'Seu saldo disponível é R$ 5.243,87. Precisa de algo mais?',
+    'Saldo atual: R$ 5.243,87. Como posso ajudar?'
+  ]);
 
-    this.responses.set('PIX', [
-      'Para fazer um PIX, vá em "Transferências" > "PIX".',
-      'Você pode realizar PIX através do menu de pagamentos.',
-      'A função PIX está disponível na aba de transferências.'
-    ]);
+  this.responses.set('PIX', [
+    'Para fazer um PIX, vá em "Transferências" > "PIX" no app.',
+    'Você pode realizar PIX através do menu de pagamentos do Blync.',
+    'A função PIX está disponível na aba de transferências do aplicativo.'
+  ]);
 
-    this.responses.set('BOLETO', [
-      'Para pagar um boleto, acesse "Pagamentos" > "Boleto".',
-      'Você pode pagar boletos na seção de pagamentos.',
-      'Boletos são processados através do menu de faturas.'
-    ]);
+  this.responses.set('BOLETO', [
+    'Para pagar um boleto, acesse "Pagamentos" > "Boleto" no app Blync.',
+    'Você pode pagar boletos na seção de pagamentos do aplicativo.',
+    'Boletos são processados através do menu de faturas do Blync.'
+  ]);
 
-    this.responses.set('ATENDENTE', [
-      'Conectando você com um atendente...',
-      'Um momento, vou transferir para nosso time especializado.',
-      'Redirecionando para atendimento humano.'
-    ]);
+  this.responses.set('ATENDENTE', [
+    'Entendi! Conectando você com um atendente especializado...',
+    'Um momento, vou transferir para nosso time humano.',
+    'Redirecionando para atendimento personalizado.'
+  ]);
 
-    this.responses.set('OUTRA', [
-      'Não entendi completamente. Pode reformular?',
-      'Poderia explicar de outra forma?',
-      'Não tenho informações sobre isso no momento.'
-    ]);
-  }
-
+  this.responses.set('OUTRA', [
+    'Não entendi completamente. Pode reformular?',
+    'Poderia explicar de outra forma? Estou aqui para ajudar!',
+    'Não tenho informações sobre isso no momento. Que tal tentar "consultar saldo" ou "fazer PIX"?'
+  ]);
+}
   public trainModel(trainingData: TrainingData): void {
     // Limpar classificador anterior
     this.classifier = new natural.BayesClassifier();

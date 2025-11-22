@@ -7,5 +7,6 @@ const chatbotController = new ChatbotController();
 router.post('/message', chatbotController.processMessage);
 router.post('/train', chatbotController.trainModel);
 router.get('/health', chatbotController.getHealth);
+router.get('/history/:userId?', chatbotController.getChatHistpry)
 
 export default router;

@@ -1,7 +1,7 @@
 import express from "express";
 import accountsPayableRoutes from "./routes/accountsPayable.routes";
 import accountsReceivableRoutes from "./routes/accountsReceivable.routes";
-import cardsRoutes from ".//routes/cards.routes";
+import cardsRoutes from "./routes/cards.routes";
 import walletRoutes from "./routes/wallet.routes";
 import transactionsRoutes from "./routes/transactions.routes";
 import userRoutes from "./routes/user.routes";
@@ -26,7 +26,7 @@ app.use('/api/chatbot',ChatbotRoutes);
 app.use(cors());
 app.use(express.json());
 
-app.get('/health', (req, res )=>{
+app.get('/health', (req, res) => {
     res.json({
         status: 'OK',
         messange: 'Servidor FinSync rodando',
