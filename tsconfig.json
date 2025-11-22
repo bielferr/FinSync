@@ -14,5 +14,5 @@
     "emitDecoratorMetadata": true
   },
   "include": ["backend/src/**/*", "backend/src/teste-chatbot.ts", "app.ts"],
-  "exclude": ["node_modules", "backend/dist"]
+  "exclude": ["node_modules", "dist"]
 }

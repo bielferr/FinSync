@@ -22,7 +22,7 @@ app.use("/api/matriz", matrizRoutes);
 app.use("/api/transactions", transactionsRoutes);
 app.use("/auth", authRoutes);
 app.use("/api/users", userRoutes);
-app.use('/api/chatbot',ChatbotRoutes)
+app.use('/api/chatbot',ChatbotRoutes);
 app.use(cors());
 app.use(express.json());
 
@@ -34,9 +34,11 @@ app.get('/health', (req, res )=>{
     });
 });
 
-app.use('*', (req,res) => {
+app.use((req,res) => {
     res.status(404).json({
-        error: 'Rota não encontrada'
+        error: 'Rota não encontrada',
+        path: req.path,
+        method: req.method
     });
 });
 
