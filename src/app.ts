@@ -29,10 +29,16 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../frontend')))
 
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/index.html'))
+});
+
+//chatbotRoutes
 app.get('/suporte', (req, res) => {
     res.sendFile(path.join(__dirname, '../frontend/suporte.html'))
 });
 
+//curl ...
 app.get('/health', (req, res) => {
     res.json({
         status: 'OK',
@@ -42,15 +48,93 @@ app.get('/health', (req, res) => {
 });
 
 //accountsPayable.routes
-//accountsReceivable.routes
-//auth.routes
-//cards.routes
-//chatbot.routes
-//matriz.routes
-//transaction.routes
-//user.routes
-//wallet.routes
+app.get('/saidas', (req, res) => {
+    res.json({
+        status: 'OK',
+        messange: 'saida',
+        timestamp: new Date().toISOString()
+    });
+});
 
+//accountsReceivable.routes
+app.get('/entradas', (req, res) => {
+    res.json({
+        status: 'OK',
+        messange: 'entrada',
+        timestamp: new Date().toISOString()
+    });
+});
+
+//auth.routes
+app.get('/autenticacao', (req, res) => {
+    res.json({
+        status: 'OK',
+        messange: 'autenticacao',
+        timestamp: new Date().toISOString()
+    });
+});
+
+//cards.routes
+app.get('/cartoes', (req, res) => {
+    res.json({
+        status: 'OK',
+        messange: 'cartoes',
+        timestamp: new Date().toISOString()
+    });
+});
+
+//matriz.routes
+app.get('/matriz', (req, res) => {
+    res.json({
+        status: 'OK',
+        messange: 'matriz',
+        timestamp: new Date().toISOString()
+    });
+});
+
+//transaction.routes
+app.get('/transacoes', (req, res) => {
+    res.json({
+        status: 'OK',
+        messange: 'transacoes',
+        timestamp: new Date().toISOString()
+    });
+});
+
+//user.routes
+app.get('/perfil', (req, res) => {
+    res.json({
+        status: 'OK',
+        messange: 'perfil',
+        timestamp: new Date().toISOString()
+    });
+});
+
+//wallet.routes
+app.get('/carteira', (req, res) => {
+    res.json({
+        status: 'OK',
+        messange: 'Servidor FinSync rodando',
+        timestamp: new Date().toISOString()
+    });
+});
+
+//rotas based on frontend (VHS)
+app.get('/about', (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/sobre.html'));
+});
+
+app.get('/contact', (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/contato.html'));
+});
+
+app.get('/login', (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/login.html'));
+});
+
+app.get('/register', (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/cadastro.html'));
+});
 
 app.use((req,res) => {
     res.status(404).json({

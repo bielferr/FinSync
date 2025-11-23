@@ -4,6 +4,7 @@ class ChatbotUI {
         this.messageInput = document.getElementById('messageInput');
         this.sendButton = document.getElementById('sendButton');
         this.quickReplies = document.getElementById('quickReplies');
+        this.typingIndicator = document.getElementById('typingIndicator');
         
         this.userId = 'user_' + Math.random().toString(36).substr(2, 9);
         this.baseURL = 'http://localhost:3333/api/chatbot';
@@ -25,8 +26,12 @@ class ChatbotUI {
             }
         });
         
-        // Carregar histórico
-        this.loadChatHistory();
+        this.messageInput.addEventListener('input', () => {
+            this.sendButton.disabled = !this.messageInput.value.trim();
+        });
+        
+        // Focar no input quando a página carregar
+        this.messageInput.focus();
     }
     
     async sendMessage() {
@@ -36,7 +41,11 @@ class ChatbotUI {
         // Adicionar mensagem do usuário
         this.addMessage(message, 'user');
         this.messageInput.value = '';
-        this.toggleInput(false);
+        this.sendButton.disabled = true;
+        this.hideQuickReplies();
+        
+        // Mostrar indicador de digitação
+        this.showTypingIndicator();
         
         try {
             const response = await fetch(`${this.baseURL}/message`, {
@@ -52,21 +61,30 @@ class ChatbotUI {
             
             const data = await response.json();
             
+            // Esconder indicador de digitação
+            this.hideTypingIndicator();
+            
             if (data.success) {
-                // Adicionar resposta do bot
-                this.addMessage(data.data.message, 'bot');
-                
-                // Atualizar quick replies
-                this.updateQuickReplies(data.data.quickReplies);
+                // Simular delay de resposta mais natural
+                setTimeout(() => {
+                    // Adicionar resposta do bot
+                    this.addMessage(data.data.message, 'bot');
+                    
+                    // Atualizar quick replies se existirem
+                    if (data.data.quickReplies && data.data.quickReplies.length > 0) {
+                        this.updateQuickReplies(data.data.quickReplies);
+                    }
+                    
+                    this.scrollToBottom();
+                }, 1000);
             } else {
                 this.addMessage('Desculpe, ocorreu um erro. Tente novamente.', 'bot');
             }
         } catch (error) {
             console.error('Erro:', error);
+            this.hideTypingIndicator();
             this.addMessage('Erro de conexão. Verifique se o servidor está rodando.', 'bot');
         }
-        
-        this.toggleInput(true);
     }
     
     addMessage(text, type) {
@@ -78,10 +96,14 @@ class ChatbotUI {
             minute: '2-digit' 
         });
         
+        const avatarIcon = type === 'bot' ? 'fas fa-robot' : 'fas fa-user';
+        
         messageDiv.innerHTML = `
-            <div class="message-avatar">${type === 'bot' ? '🤖' : '👤'}</div>
+            <div class="message-avatar">
+                <i class="${avatarIcon}"></i>
+            </div>
             <div class="message-content">
-                <div class="message-text">${text}</div>
+                <div class="message-text">${this.formatMessage(text)}</div>
                 <div class="message-time">${time}</div>
             </div>
         `;
@@ -90,48 +112,45 @@ class ChatbotUI {
         this.scrollToBottom();
     }
     
+    formatMessage(text) {
+        // Substituir quebras de linha por <br>
+        return text.replace(/\n/g, '<br>');
+    }
+    
     updateQuickReplies(replies) {
         this.quickReplies.innerHTML = '';
         
         replies.forEach(reply => {
             const button = document.createElement('button');
             button.className = 'quick-reply';
-            button.textContent = reply;
+            button.innerHTML = `
+                <i class="fas fa-comment"></i>
+                ${reply}
+            `;
             button.setAttribute('data-message', reply);
             this.quickReplies.appendChild(button);
         });
+        
+        this.quickReplies.style.display = 'flex';
     }
     
-    toggleInput(enabled) {
-        this.messageInput.disabled = !enabled;
-        this.sendButton.disabled = !enabled;
-        
-        if (enabled) {
-            this.messageInput.focus();
-        }
+    hideQuickReplies() {
+        this.quickReplies.style.display = 'none';
+    }
+    
+    showTypingIndicator() {
+        this.typingIndicator.style.display = 'block';
+        this.scrollToBottom();
+    }
+    
+    hideTypingIndicator() {
+        this.typingIndicator.style.display = 'none';
     }
     
     scrollToBottom() {
-        this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
-    }
-    
-    async loadChatHistory() {
-        try {
-            const response = await fetch(`${this.baseURL}/history/${this.userId}`);
-            const data = await response.json();
-            
-            if (data.success) {
-                // Limpar mensagens iniciais
-                this.chatMessages.innerHTML = '';
-                
-                // Adicionar histórico
-                data.data.chatHistory.forEach(msg => {
-                    this.addMessage(msg.message, msg.type);
-                });
-            }
-        } catch (error) {
-            console.log('Não foi possível carregar o histórico');
-        }
+        setTimeout(() => {
+            this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
+        }, 100);
     }
 }
 

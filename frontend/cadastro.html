@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro - Blync</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <a href="/" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 12px;">
+                    <div class="logo">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <span class="brand-name">Blync</span>
+                </a>
+            </div>
+            
+            <div class="nav-menu">
+                <a href="/" class="nav-link">Início</a>
+                <a href="/about" class="nav-link">Sobre</a>
+                <a href="/contact" class="nav-link">Contato</a>
+                <a href="/chat" class="nav-link">Assistente</a>
+            </div>
+            
+            <div class="nav-actions">
+                <a href="/login" class="btn btn-outline">Entrar</a>
+                <a href="/register" class="btn btn-primary active">Abrir Conta</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Register Section -->
+    <section class="hero" style="padding: 120px 0 80px; min-height: calc(100vh - 80px); display: flex; align-items: center;">
+        <div class="container">
+            <div class="auth-container">
+                <div class="auth-card">
+                    <div class="auth-header">
+                        <h1>Crie sua conta</h1>
+                        <p>Junte-se ao Blync e transforme sua vida financeira</p>
+                    </div>
+                    
+                    <form class="auth-form" id="registerForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="firstName">Nome</label>
+                                <input type="text" id="firstName" name="firstName" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="lastName">Sobrenome</label>
+                                <input type="text" id="lastName" name="lastName" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email">E-mail</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="cpf">CPF</label>
+                            <input type="text" id="cpf" name="cpf" required placeholder="000.000.000-00">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="phone">Celular</label>
+                            <input type="tel" id="phone" name="phone" required placeholder="(11) 99999-9999">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="password">Senha</label>
+                            <div class="password-input">
+                                <input type="password" id="password" name="password" required>
+                                <button type="button" class="password-toggle" onclick="togglePassword('password')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <div class="password-strength">
+                                <div class="strength-bar"></div>
+                                <span class="strength-text">Segurança da senha</span>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="confirmPassword">Confirmar Senha</label>
+                            <div class="password-input">
+                                <input type="password" id="confirmPassword" name="confirmPassword" required>
+                                <button type="button" class="password-toggle" onclick="togglePassword('confirmPassword')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="form-options">
+                            <label class="checkbox">
+                                <input type="checkbox" name="terms" required>
+                                <span class="checkmark"></span>
+                                Concordo com os <a href="/terms">Termos de Uso</a> e <a href="/privacy">Política de Privacidade</a>
+                            </label>
+                            
+                            <label class="checkbox">
+                                <input type="checkbox" name="newsletter">
+                                <span class="checkmark"></span>
+                                Desejo receber ofertas e novidades por e-mail
+                            </label>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary btn-large btn-full">
+                            <i class="fas fa-user-plus"></i>
+                            Criar Minha Conta
+                        </button>
+                    </form>
+                    
+                    <div class="auth-divider">
+                        <span>ou cadastre-se com</span>
+                    </div>
+                    
+                    <div class="social-auth">
+                        <button type="button" class="btn btn-social btn-google">
+                            <i class="fab fa-google"></i>
+                            Google
+                        </button>
+                        <button type="button" class="btn btn-social btn-apple">
+                            <i class="fab fa-apple"></i>
+                            Apple
+                        </button>
+                    </div>
+                    
+                    <div class="auth-footer">
+                        <p>Já tem uma conta? <a href="/login">Faça login aqui</a></p>
+                    </div>
+                </div>
+                
+                <div class="auth-features">
+                    <h3>Vantagens do Blync</h3>
+                    <div class="feature-list">
+                        <div class="feature">
+                            <i class="fas fa-rocket"></i>
+                            <div>
+                                <h4>Conta em 5 minutos</h4>
+                                <p>Processo 100% digital e sem burocracia</p>
+                            </div>
+                        </div>
+                        
+                        <div class="feature">
+                            <i class="fas fa-piggy-bank"></i>
+                            <div>
+                                <h4>Zero Taxas</h4>
+                                <p>Sem custos de manutenção, TED ou boletos</p>
+                            </div>
+                        </div>
+                        
+                        <div class="feature">
+                            <i class="fas fa-chart-line"></i>
+                            <div>
+                                <h4>Investimentos</h4>
+                                <p>Comece a investir a partir de R$ 1,00</p>
+                            </div>
+                        </div>
+                        
+                        <div class="feature">
+                            <i class="fas fa-shield-alt"></i>
+                            <div>
+                                <h4>Seguro pelo FGC</h4>
+                                <p>Seu dinheiro protegido até R$ 250 mil</p>
+                            </div>
+                        </div>
+                        
+                        <div class="feature">
+                            <i class="fas fa-credit-card"></i>
+                            <div>
+                                <h4>Cartão Virtual Imediato</h4>
+                                <p>Use seu cartão antes mesmo de receber o físico</p>
+                            </div>
+                        </div>
+                        
+                        <div class="feature">
+                            <i class="fas fa-robot"></i>
+                            <div>
+                                <h4>Assistente 24h</h4>
+                                <p>Suporte sempre disponível no chat</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+        <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="logo">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <span class="brand-name">Blync</span>
+                    <p>Seu banco digital inteligente</p>
+                </div>
+                
+                <div class="footer-links">
+                    <div class="link-group">
+                        <h4>Produtos</h4>
+                        <a href="#">Matriz Financeira</a>
+                    </div>
+                    
+                    <div class="link-group">
+                        <h4>Institucional</h4>
+                        <a href="/sobre.html">Sobre nós</a>
+                    </div>
+                    
+                    <div class="link-group">
+                        <h4>Ajuda</h4>
+                        <a href="/contacto.html">Contato</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 Blync Tecnologia S.A. - CNPJ 17.123.456/7777-77</p>
+                <div class="footer-social">
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <style>
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .password-strength {
+            margin-top: 8px;
+        }
+        
+        .strength-bar {
+            height: 4px;
+            background: var(--gray);
+            border-radius: 2px;
+            margin-bottom: 4px;
+            overflow: hidden;
+        }
+        
+        .strength-bar:before {
+            content: '';
+            display: block;
+            height: 100%;
+            width: 0%;
+            background: #e53e3e;
+            transition: all 0.3s ease;
+        }
+        
+        .strength-text {
+            font-size: 12px;
+            color: var(--secondary);
+        }
+        
+        input:valid + .password-input + .password-strength .strength-bar:before {
+            width: 100%;
+            background: #38a169;
+        }
+    </style>
+
+    <script>
+        function togglePassword(fieldId) {
+            const passwordInput = document.getElementById(fieldId);
+            const toggleButton = passwordInput.parentNode.querySelector('.password-toggle i');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleButton.className = 'fas fa-eye-slash';
+            } else {
+                passwordInput.type = 'password';
+                toggleButton.className = 'fas fa-eye';
+            }
+        }
+        
+        // Máscara para CPF
+        document.getElementById('cpf').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length <= 11) {
+                value = value.replace(/(\d{3})(\d)/, '$1.$2');
+                value = value.replace(/(\d{3})(\d)/, '$1.$2');
+                value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+            }
+            e.target.value = value;
+        });
+        
+        // Máscara para telefone
+        document.getElementById('phone').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length <= 11) {
+                value = value.replace(/(\d{2})(\d)/, '($1) $2');
+                value = value.replace(/(\d{5})(\d)/, '$1-$2');
+            }
+            e.target.value = value;
+        });
+        
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            if (password !== confirmPassword) {
+                alert('As senhas não coincidem!');
+                return;
+            }
+            
+            if (!document.getElementById('cpf').value) {
+                alert('Por favor, preencha todos os campos obrigatórios!');
+                return;
+            }
+            
+            alert('Conta criada com sucesso! Verifique seu e-mail para ativar sua conta.');
+            // window.location.href = '/login';
+        });
+    </script>
+</body>
+</html>

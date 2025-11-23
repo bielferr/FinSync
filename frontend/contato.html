@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contato - Blync</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <a href="/" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 12px;">
+                    <div class="logo">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <span class="brand-name">Blync</span>
+                </a>
+            </div>
+            
+            <div class="nav-menu">
+                <a href="/" class="nav-link">Início</a>
+                <a href="/about" class="nav-link">Sobre</a>
+                <a href="/contact" class="nav-link active">Contato</a>
+                <a href="suporte.html" class="nav-link">Assistente</a>
+            </div>
+            
+            <div class="nav-actions">
+                <a href="/login" class="btn btn-outline">Entrar</a>
+                <a href="/register" class="btn btn-primary">Abrir Conta</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    Fale <span class="gradient-text">Conosco</span>
+                </h1>
+                <p class="hero-description">
+                    Estamos aqui para ajudar. Entre em contato conosco através dos canais abaixo ou preencha o formulário.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="features">
+        <div class="container">
+            <div class="contact-grid">
+                <div class="contact-info">
+                    <h2>Nossos Canais</h2>
+                    
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-headset"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h3>Central de Relacionamento</h3>
+                            <p>4004-0000 (Capitais)</p>
+                            <p>0800 000 0000 (Demais localidades)</p>
+                            <small>24 horas, 7 dias por semana</small>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h3>E-mail</h3>
+                            <p>suporte@blync.com</p>
+                            <p>comercial@blync.com</p>
+                            <small>Respondemos em até 2 horas úteis</small>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-comments"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h3>Assistente Virtual</h3>
+                            <p>Disponível 24/7 no app e site</p>
+                            <a href="suporte.html" class="btn btn-primary btn-small">Falar com o Blynkie</a>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h3>Escritório</h3>
+                            <p>Av. Paulista, 1000 - São Paulo/SP</p>
+                            <p>CEP: 01310-100</p>
+                            <small>Segunda a sexta, 9h às 18h</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="contact-form">
+                    <h2>Envie uma Mensagem</h2>
+                    <form id="contactForm">
+                        <div class="form-group">
+                            <label for="name">Nome Completo</label>
+                            <input type="text" id="name" name="name" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email">E-mail</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="phone">Telefone</label>
+                            <input type="tel" id="phone" name="phone">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="subject">Assunto</label>
+                            <select id="subject" name="subject" required>
+                                <option value="">Selecione um assunto</option>
+                                <option value="suporte">Suporte Técnico</option>
+                                <option value="conta">Dúvidas sobre Conta</option>
+                                <option value="investimentos">Investimentos</option>
+                                <option value="sugestao">Sugestões</option>
+                                <option value="outro">Outro</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="message">Mensagem</label>
+                            <textarea id="message" name="message" rows="5" required></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary btn-large">
+                            <i class="fas fa-paper-plane"></i>
+                            Enviar Mensagem
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="story" style="background: var(--light);">
+        <div class="container">
+            <div class="section-header">
+                <h2>Perguntas Frequentes</h2>
+                <p>Encontre respostas rápidas para as dúvidas mais comuns</p>
+            </div>
+            
+            <div class="faq-grid">
+                <div class="faq-item">
+                    <h3>Como abrir uma conta no Blync?</h3>
+                    <p>É simples e rápido! Basta acessar nosso site ou app, clicar em "Abrir Conta" e seguir o passo a passo. Todo o processo é digital e leva menos de 10 minutos.</p>
+                </div>
+                
+                <div class="faq-item">
+                    <h3>O Blync é seguro?</h3>
+                    <p>Sim! Utilizamos criptografia de ponta a ponta, autenticação de dois fatores e somos regulados pelo Banco Central. Seu dinheiro está protegido pelo FGC.</p>
+                </div>
+                
+                <div class="faq-item">
+                    <h3>Como falar com um atendente humano?</h3>
+                    <p>Além do nosso assistente virtual 24h, você pode solicitar atendimento humano entrando em contato com os desenvolvedores do projeto, o e-mail para contato se encontra na página Sobre.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+        <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="logo">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <span class="brand-name">Blync</span>
+                    <p>Seu banco digital inteligente</p>
+                </div>
+                
+                <div class="footer-links">
+                    <div class="link-group">
+                        <h4>Produtos</h4>
+                        <a href="#">Matriz Financeira</a>
+                    </div>
+                    
+                    <div class="link-group">
+                        <h4>Institucional</h4>
+                        <a href="/sobre.html">Sobre nós</a>
+                    </div>
+                    
+                    <div class="link-group">
+                        <h4>Ajuda</h4>
+                        <a href="/contacto.html">Contato</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 Blync Tecnologia S.A. - CNPJ 17.123.456/7777-77</p>
+                <div class="footer-social">
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Mensagem enviada com sucesso! Entraremos em contato em breve.');
+            this.reset();
+        });
+    </script>
+</body>
+</html>
