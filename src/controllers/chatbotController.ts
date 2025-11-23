@@ -1,6 +1,10 @@
 import { Request, Response } from 'express';
 import { ChatbotService } from '../services/chatbotService';
+import User from '../models/user.model';
 import { timeStamp } from 'console';
+import { id } from 'zod/locales';
+import { email } from 'zod';
+
 
 export class ChatbotController {
   private chatbotService: ChatbotService;
@@ -12,7 +16,7 @@ export class ChatbotController {
 
   public processMessage = async (req: Request, res: Response): Promise<void> => {
     try {
-      const { message } = req.body;
+      const { message, userId } = req.body;
 
       if (!message) {
         res.status(400).json({
@@ -23,27 +27,85 @@ export class ChatbotController {
 
       const response = this.chatbotService.predictCategory(message);
 
+      let userData = null;
+      if (userId && userId !== 'anonymous') { 
+        userData = await this.getUserData(userId);
+      }
+
+      const responseMessage = response.response || 'Desculpe, não entendi. Pode reformular?';
+      const finalMessage = this.personalizeResponse(responseMessage, userData);
+
       const blyncResponse = {
-        sucess: true,
+        success: true, 
         data: {
-          message: response.response,
+          message: finalMessage,
           category: response.category,
           confidence: response.confidence,
           quickReplies: this.getQuickReplies(response.category),
           userMessage: message,
-          timeStamp: new Date().toISOString,
+          timestamp: new Date().toISOString(), 
           userId: userId || 'anonymous',
+          userData: userData
         }
       };
 
       res.json(blyncResponse);
     } catch (error) {
-      console.error('Error processing message:', error)
+      console.error('Error processing message:', error);
       res.status(500).json({
-        sucess: false,
+        success: false, 
         error: 'Erro no servidor'
       });
     }
+  };
+
+  private async getUserData(userId: string): Promise<any> {
+    try {
+      const user = await User.findByPk(userId, {
+        attributes: ['id', 'name', 'email', 'createdAt'] 
+      });
+
+      if (!user) return null;
+
+      const safeUserId = user.id ? String(user.id) : 'unknown';
+
+      return {
+        id: safeUserId,
+        name: user.name,
+        email: user.email,
+        accountNumber: this.generateAccountNumber(safeUserId),
+        balance: this.generateBalance(safeUserId)
+      };
+    } catch (error) {
+      console.error('Dados inexistentes:', error);
+      return null;
+    }
+  }
+
+  private personalizeResponse(response: string, userData: any): string {
+    if (!userData || !userData.name) return response;
+
+    if (response.includes('Olá')) {
+      return `Olá, ${userData.name}! Como posso te ajudar?`;
+    }
+    
+    if (response.includes('saldo')) {
+      return `Claro, ${userData.name}! Na sua conta ${userData.accountNumber}, o saldo disponível é de R$ ${userData.balance}. Posso ajudar com mais alguma coisa?`;
+    }
+
+    return response.replace('você', userData.name);
+  }
+
+  private generateAccountNumber(userId: string): string {
+    const numericId = parseInt(userId) || 1;
+    return `1000${String(numericId).padStart(3, '0')}-1`;
+  }
+
+  private generateBalance(userId: string): number {
+
+    const numericId = parseInt(userId) || 1;
+    const baseBalance = 1000 + (numericId * 123.45);
+    return Math.round(baseBalance * 100) / 100;
   }
 
   private getQuickReplies(category: string): string[] {
@@ -56,9 +118,10 @@ export class ChatbotController {
       'OUTRA': ['Consultar saldo', 'Ajuda', 'Falar com atendente']
     };
 
-    return quickReplies[category] || ['Ajuda','Menu Principal','Falar com atendente'];
+    return quickReplies[category] || ['Ajuda', 'Menu Principal', 'Falar com atendente'];
   }
-    public trainModel = async (req: Request, res: Response): Promise<void> => {
+
+  public trainModel = async (req: Request, res: Response): Promise<void> => {
     try {
       const { phrases, categories } = req.body;
 
@@ -92,7 +155,7 @@ export class ChatbotController {
     });
   };
 
-  public getChatHistpry = async (req: Request, res: Response): Promise<void> =>{
+  public getChatHistory = async (req: Request, res: Response): Promise<void> => { // CORREÇÃO: 'getChatHistory' (estava 'getChatHistpry')
     try {
       const { userId } = req.params;
 
@@ -101,7 +164,7 @@ export class ChatbotController {
           id: 1,
           type: 'bot',
           message: 'Bem-vindo(a) ao chat Blync!',
-          timestamp: new Date(Date.now() - 300000).toISOString,
+          timestamp: new Date(Date.now() - 300000).toISOString(), // CORREÇÃO: toISOString()
         },
         {
           id: 2,
@@ -123,6 +186,7 @@ export class ChatbotController {
           quickReplies: ['Consultar saldo', 'Ver extrato', 'Pagar conta']
         }
       ];
+
       res.json({
         success: true,
         data: {

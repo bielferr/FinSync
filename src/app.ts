@@ -9,6 +9,8 @@ import matrizRoutes from "./routes/matriz.routes";
 import authRoutes from "./routes/authRotes";
 import ChatbotRoutes from './routes/chatbotRoutes'
 import cors from 'cors';
+import path from 'path';
+import { timeStamp } from "console";
 
 const app = express();
 app.use(express.json());
@@ -25,6 +27,11 @@ app.use("/api/users", userRoutes);
 app.use('/api/chatbot',ChatbotRoutes);
 app.use(cors());
 app.use(express.json());
+app.use(express.static(path.join(__dirname, '../frontend')))
+
+app.get('/suporte', (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/suporte.html'))
+});
 
 app.get('/health', (req, res) => {
     res.json({
@@ -33,6 +40,17 @@ app.get('/health', (req, res) => {
         timestamp: new Date().toISOString()
     });
 });
+
+//accountsPayable.routes
+//accountsReceivable.routes
+//auth.routes
+//cards.routes
+//chatbot.routes
+//matriz.routes
+//transaction.routes
+//user.routes
+//wallet.routes
+
 
 app.use((req,res) => {
     res.status(404).json({

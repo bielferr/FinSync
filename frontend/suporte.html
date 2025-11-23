@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blync - Chatbot</title>
+    <link rel="stylesheet" href="/css/chatbot.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="brand">
+                    <div class="logo">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <h1>Blync</h1>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <h3>Principal</h3>
+                    <ul>
+                        <li class="nav-item active">
+                            <i class="fas fa-comment-dots"></i>
+                            <span>Chat</span>
+                        </li>
+                        <li class="nav-item">
+                            <i class="fas fa-wallet"></i>
+                            <span>Minha Carteira</span>
+                        </li>
+                        <li class="nav-item">
+                            <i class="fas fa-exchange-alt"></i>
+                            <span>Transferências</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="nav-section">
+                    <h3>Serviços</h3>
+                    <ul>
+                        <li class="nav-item">
+                            <i class="fas fa-barcode"></i>
+                            <span>Pagamentos</span>
+                        </li>
+                        <li class="nav-item">
+                            <i class="fas fa-credit-card"></i>
+                            <span>Cartões</span>
+                        </li>
+                        <li class="nav-item">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Investimentos</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="nav-section">
+                    <h3>Conta</h3>
+                    <ul>
+                        <li class="nav-item">
+                            <i class="fas fa-cog"></i>
+                            <span>Configurações</span>
+                        </li>
+                        <li class="nav-item">
+                            <i class="fas fa-question-circle"></i>
+                            <span>Ajuda</span>
+                        </li>
+                        <li class="nav-item">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Sair</span>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <div class="user-profile">
+                <div class="user-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="user-info">
+                    <span class="user-name">João Silva</span>
+                    <span class="user-account">Conta: 12345-6</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Chat Area -->
+        <div class="main-content">
+            <!-- Chat Header -->
+            <div class="chat-header">
+                <div class="header-info">
+                    <h2>Blinkie</h2>
+                    <div class="status">
+                        <div class="status-dot"></div>
+                        <span>Online</span>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <button class="header-btn">
+                        <i class="fas fa-phone"></i>
+                    </button>
+                    <button class="header-btn">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Chat Messages -->
+            <div class="chat-messages" id="chatMessages">
+                <div class="message bot-message">
+                    <div class="message-avatar">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="message-content">
+                        <div class="message-text">Bem-vindo ao chat Blync!</div>
+                        <div class="message-time" id="currentTime"></div>
+                    </div>
+                </div>
+                
+                <div class="message bot-message">
+                    <div class="message-avatar">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="message-content">
+                        <div class="message-text">Olá! Como posso te ajudar?</div>
+                        <div class="message-time" id="currentTime2"></div>
+                    </div>
+                </div>
+
+                <div class="message user-message">
+                    <div class="message-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="message-content">
+                        <div class="message-text">Gostaria de saber sobre meu saldo</div>
+                        <div class="message-time" id="userTime"></div>
+                    </div>
+                </div>
+
+                <div class="message bot-message">
+                    <div class="message-avatar">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="message-content">
+                        <div class="message-text">Claro! Seu saldo atual é de R$ 5.243,87. Posso ajudar com mais alguma coisa?</div>
+                        <div class="message-time" id="botTime"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Replies -->
+            <div class="quick-replies" id="quickReplies">
+                <button class="quick-reply" data-message="Consultar saldo">
+                    <i class="fas fa-wallet"></i>
+                    Consultar saldo
+                </button>
+                <button class="quick-reply" data-message="Ver extrato">
+                    <i class="fas fa-receipt"></i>
+                    Ver extrato
+                </button>
+                <button class="quick-reply" data-message="Pagar conta">
+                    <i class="fas fa-barcode"></i>
+                    Pagar conta
+                </button>
+            </div>
+
+            <!-- Input Area -->
+            <div class="input-container">
+                <div class="input-wrapper">
+                    <button class="input-btn">
+                        <i class="fas fa-paperclip"></i>
+                    </button>
+                    <input 
+                        type="text" 
+                        id="messageInput" 
+                        placeholder="Digite sua mensagem..." 
+                        maxlength="500"
+                    >
+                    <button class="input-btn">
+                        <i class="fas fa-smile"></i>
+                    </button>
+                    <button id="sendButton">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/chatbot.js"></script>
+    <script>
+        // Atualizar horários
+        document.getElementById('currentTime').textContent = new Date().toLocaleTimeString('pt-BR', { 
+            hour: '2-digit', minute: '2-digit' 
+        });
+        document.getElementById('currentTime2').textContent = new Date().toLocaleTimeString('pt-BR', { 
+            hour: '2-digit', minute: '2-digit' 
+        });
+        document.getElementById('userTime').textContent = new Date().toLocaleTimeString('pt-BR', { 
+            hour: '2-digit', minute: '2-digit' 
+        });
+        document.getElementById('botTime').textContent = new Date().toLocaleTimeString('pt-BR', { 
+            hour: '2-digit', minute: '2-digit' 
+        });
+    </script>
+</body>
+</html>
