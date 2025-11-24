@@ -6,7 +6,7 @@ import { AccountReceivable } from '../models/accountsReceivable.model';
 import { Transaction } from '../models/transaction.model';
 import { Wallet } from '../models/wallet.model';
 
-// Configuração simples
+
 const sequelize = new Sequelize({
   database: process.env.DB_NAME || 'BLYNC',
   username: process.env.DB_USER || 'postgres',
@@ -17,10 +17,8 @@ const sequelize = new Sequelize({
   logging: process.env.NODE_ENV === 'development' ? console.log : false,
 });
 
-// Adicionar modelos manualmente
 sequelize.addModels([User, Card, AccountPayable, AccountReceivable, Transaction, Wallet]);
 
-// Sincroniza os models com o banco — cria as tabelas se não existirem
 sequelize.sync({ alter: true })
   .then(() => console.log("Tabelas sincronizadas com sucesso!"))
   .catch(err => console.error("Erro ao sincronizar tabelas:", err));

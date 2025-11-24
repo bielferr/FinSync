@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="/css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="/js/auth.js"></script>
 </head>
 <body>
     <!-- Navigation -->
@@ -224,6 +225,35 @@
             alert('Mensagem enviada com sucesso! Entraremos em contato em breve.');
             this.reset();
         });
+        // No script da página de contato
+document.getElementById('contactForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const data = Object.fromEntries(formData);
+    
+    try {
+        // Enviar para uma rota específica do backend
+        const response = await fetch('http://localhost:3333/api/contact', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            alert('Mensagem enviada com sucesso!');
+            this.reset();
+        } else {
+            alert('Erro ao enviar mensagem: ' + result.error);
+        }
+    } catch (error) {
+        alert('Erro de conexão: ' + error.message);
+    }
+});
     </script>
 </body>
 </html>

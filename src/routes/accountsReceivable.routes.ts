@@ -1,5 +1,7 @@
 import { Router } from "express";
 import AccountsReceivableController from "../controllers/accountsReceivable.controller";
+import AuthController from '../controllers/authController';
+
 
 const router = Router();
 

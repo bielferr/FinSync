@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro - Blync</title>
     <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/auth.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
@@ -48,47 +49,37 @@
                     <form class="auth-form" id="registerForm">
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="firstName">Nome</label>
+                                <label for="firstName">Nome *</label>
                                 <input type="text" id="firstName" name="firstName" required>
                             </div>
                             
                             <div class="form-group">
                                 <label for="lastName">Sobrenome</label>
-                                <input type="text" id="lastName" name="lastName" required>
+                                <input type="text" id="lastName" name="lastName">
                             </div>
                         </div>
                         
                         <div class="form-group">
-                            <label for="email">E-mail</label>
+                            <label for="email">E-mail *</label>
                             <input type="email" id="email" name="email" required>
                         </div>
                         
                         <div class="form-group">
-                            <label for="cpf">CPF</label>
-                            <input type="text" id="cpf" name="cpf" required placeholder="000.000.000-00">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="phone">Celular</label>
-                            <input type="tel" id="phone" name="phone" required placeholder="(11) 99999-9999">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="password">Senha</label>
+                            <label for="password">Senha *</label>
                             <div class="password-input">
-                                <input type="password" id="password" name="password" required>
+                                <input type="password" id="password" name="password" required minlength="6">
                                 <button type="button" class="password-toggle" onclick="togglePassword('password')">
                                     <i class="fas fa-eye"></i>
                                 </button>
                             </div>
                             <div class="password-strength">
                                 <div class="strength-bar"></div>
-                                <span class="strength-text">Segurança da senha</span>
+                                <span class="strength-text">A senha deve ter pelo menos 6 caracteres</span>
                             </div>
                         </div>
                         
                         <div class="form-group">
-                            <label for="confirmPassword">Confirmar Senha</label>
+                            <label for="confirmPassword">Confirmar Senha *</label>
                             <div class="password-input">
                                 <input type="password" id="confirmPassword" name="confirmPassword" required>
                                 <button type="button" class="password-toggle" onclick="togglePassword('confirmPassword')">
@@ -99,19 +90,19 @@
                         
                         <div class="form-options">
                             <label class="checkbox">
-                                <input type="checkbox" name="terms" required>
+                                <input type="checkbox" name="terms" id="terms" required>
                                 <span class="checkmark"></span>
-                                Concordo com os <a href="/terms">Termos de Uso</a> e <a href="/privacy">Política de Privacidade</a>
+                                Concordo com os <a href="/terms" target="_blank">Termos de Uso</a> e <a href="/privacy" target="_blank">Política de Privacidade</a> *
                             </label>
                             
                             <label class="checkbox">
-                                <input type="checkbox" name="newsletter">
+                                <input type="checkbox" name="newsletter" id="newsletter">
                                 <span class="checkmark"></span>
                                 Desejo receber ofertas e novidades por e-mail
                             </label>
                         </div>
                         
-                        <button type="submit" class="btn btn-primary btn-large btn-full">
+                        <button type="submit" class="btn btn-primary btn-large btn-full" id="submitBtn">
                             <i class="fas fa-user-plus"></i>
                             Criar Minha Conta
                         </button>
@@ -122,11 +113,11 @@
                     </div>
                     
                     <div class="social-auth">
-                        <button type="button" class="btn btn-social btn-google">
+                        <button type="button" class="btn btn-social btn-google" onclick="socialLogin('google')">
                             <i class="fab fa-google"></i>
                             Google
                         </button>
-                        <button type="button" class="btn btn-social btn-apple">
+                        <button type="button" class="btn btn-social btn-apple" onclick="socialLogin('apple')">
                             <i class="fab fa-apple"></i>
                             Apple
                         </button>
@@ -171,29 +162,13 @@
                                 <p>Seu dinheiro protegido até R$ 250 mil</p>
                             </div>
                         </div>
-                        
-                        <div class="feature">
-                            <i class="fas fa-credit-card"></i>
-                            <div>
-                                <h4>Cartão Virtual Imediato</h4>
-                                <p>Use seu cartão antes mesmo de receber o físico</p>
-                            </div>
-                        </div>
-                        
-                        <div class="feature">
-                            <i class="fas fa-robot"></i>
-                            <div>
-                                <h4>Assistente 24h</h4>
-                                <p>Suporte sempre disponível no chat</p>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-        <!-- Footer -->
+    <!-- Footer -->
     <footer class="footer">
         <div class="container">
             <div class="footer-content">
@@ -208,23 +183,32 @@
                 <div class="footer-links">
                     <div class="link-group">
                         <h4>Produtos</h4>
-                        <a href="#">Matriz Financeira</a>
+                        <a href="#">Conta Digital</a>
+                        <a href="#">Cartão de Crédito</a>
+                        <a href="#">Investimentos</a>
+                        <a href="#">Empréstimos</a>
                     </div>
                     
                     <div class="link-group">
                         <h4>Institucional</h4>
-                        <a href="/sobre.html">Sobre nós</a>
+                        <a href="/">Início</a>
+                        <a href="/about">Sobre Nós</a>
+                        <a href="#">Carreiras</a>
+                        <a href="#">Blog</a>
                     </div>
                     
                     <div class="link-group">
                         <h4>Ajuda</h4>
-                        <a href="/contacto.html">Contato</a>
+                        <a href="/contact">Contato</a>
+                        <a href="#">Central de Ajuda</a>
+                        <a href="#">Segurança</a>
+                        <a href="#">Tarifas</a>
                     </div>
                 </div>
             </div>
             
             <div class="footer-bottom">
-                <p>&copy; 2025 Blync Tecnologia S.A. - CNPJ 17.123.456/7777-77</p>
+                <p>&copy; 2024 Blync Tecnologia S.A. - CNPJ 00.000.000/0000-00</p>
                 <div class="footer-social">
                     <a href="#"><i class="fab fa-instagram"></i></a>
                     <a href="#"><i class="fab fa-twitter"></i></a>
@@ -235,46 +219,9 @@
         </div>
     </footer>
 
-    <style>
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-        
-        .password-strength {
-            margin-top: 8px;
-        }
-        
-        .strength-bar {
-            height: 4px;
-            background: var(--gray);
-            border-radius: 2px;
-            margin-bottom: 4px;
-            overflow: hidden;
-        }
-        
-        .strength-bar:before {
-            content: '';
-            display: block;
-            height: 100%;
-            width: 0%;
-            background: #e53e3e;
-            transition: all 0.3s ease;
-        }
-        
-        .strength-text {
-            font-size: 12px;
-            color: var(--secondary);
-        }
-        
-        input:valid + .password-input + .password-strength .strength-bar:before {
-            width: 100%;
-            background: #38a169;
-        }
-    </style>
-
+    <script src="/js/auth.js"></script>
     <script>
+        // Função para mostrar/ocultar senha
         function togglePassword(fieldId) {
             const passwordInput = document.getElementById(fieldId);
             const toggleButton = passwordInput.parentNode.querySelector('.password-toggle i');
@@ -287,47 +234,162 @@
                 toggleButton.className = 'fas fa-eye';
             }
         }
-        
-        // Máscara para CPF
-        document.getElementById('cpf').addEventListener('input', function(e) {
-            let value = e.target.value.replace(/\D/g, '');
-            if (value.length <= 11) {
-                value = value.replace(/(\d{3})(\d)/, '$1.$2');
-                value = value.replace(/(\d{3})(\d)/, '$1.$2');
-                value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+
+        // Função para login social (placeholder)
+        function socialLogin(provider) {
+            alert(`Login com ${provider} - Funcionalidade em desenvolvimento`);
+        }
+
+        // Validação em tempo real da senha
+        document.getElementById('password').addEventListener('input', function(e) {
+            const password = e.target.value;
+            const strengthBar = document.querySelector('.strength-bar');
+            const strengthText = document.querySelector('.strength-text');
+            
+            if (password.length >= 8) {
+                strengthBar.style.background = '#38a169';
+                strengthText.textContent = 'Senha forte';
+            } else if (password.length >= 6) {
+                strengthBar.style.background = '#d69e2e';
+                strengthText.textContent = 'Senha média';
+            } else {
+                strengthBar.style.background = '#e53e3e';
+                strengthText.textContent = 'Senha fraca';
             }
-            e.target.value = value;
+            
+            strengthBar.style.width = Math.min((password.length / 8) * 100, 100) + '%';
         });
-        
-        // Máscara para telefone
-        document.getElementById('phone').addEventListener('input', function(e) {
-            let value = e.target.value.replace(/\D/g, '');
-            if (value.length <= 11) {
-                value = value.replace(/(\d{2})(\d)/, '($1) $2');
-                value = value.replace(/(\d{5})(\d)/, '$1-$2');
-            }
-            e.target.value = value;
-        });
-        
-        document.getElementById('registerForm').addEventListener('submit', function(e) {
+
+        // Validação do formulário
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            const password = document.getElementById('password').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
+            // Coletar dados do formulário
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData);
             
-            if (password !== confirmPassword) {
-                alert('As senhas não coincidem!');
+            // Validações frontend
+            if (!data.firstName || !data.email || !data.password || !data.confirmPassword) {
+                showAlert('Por favor, preencha todos os campos obrigatórios', 'error');
                 return;
             }
             
-            if (!document.getElementById('cpf').value) {
-                alert('Por favor, preencha todos os campos obrigatórios!');
+            if (data.password !== data.confirmPassword) {
+                showAlert('As senhas não coincidem', 'error');
                 return;
             }
             
-            alert('Conta criada com sucesso! Verifique seu e-mail para ativar sua conta.');
-            // window.location.href = '/login';
+            if (data.password.length < 6) {
+                showAlert('A senha deve ter pelo menos 6 caracteres', 'error');
+                return;
+            }
+            
+            if (!data.terms) {
+                showAlert('Você deve aceitar os termos de uso', 'error');
+                return;
+            }
+            
+            // Enviar para o backend
+            await registerUser(data);
         });
+
+        // Função para enviar dados para o backend
+        async function registerUser(userData) {
+            const submitBtn = document.getElementById('submitBtn');
+            
+            // Mostrar loading
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Criando conta...';
+            
+            try {
+                const response = await fetch('http://localhost:3333/api/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        name: `${userData.firstName} ${userData.lastName || ''}`.trim(),
+                        email: userData.email,
+                        password: userData.password
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showAlert('Conta criada com sucesso! Redirecionando...', 'success');
+                    
+                    // Salvar token e dados do usuário
+                    if (window.authManager) {
+                        window.authManager.setAuthData(result.data.token, result.data.user);
+                    } else {
+                        localStorage.setItem('blync_token', result.data.token);
+                        localStorage.setItem('blync_user', JSON.stringify(result.data.user));
+                    }
+                    
+                    // Redirecionar para a página inicial
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 2000);
+                    
+                } else {
+                    showAlert(result.error || 'Erro ao criar conta', 'error');
+                }
+                
+            } catch (error) {
+                console.error('Erro no cadastro:', error);
+                showAlert('Erro de conexão. Tente novamente.', 'error');
+            } finally {
+                // Restaurar botão
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-user-plus"></i> Criar Minha Conta';
+            }
+        }
+
+        // Função para mostrar alertas
+        function showAlert(message, type = 'info') {
+            // Remover alertas anteriores
+            const existingAlert = document.querySelector('.auth-alert');
+            if (existingAlert) {
+                existingAlert.remove();
+            }
+            
+            // Criar novo alerta
+            const alert = document.createElement('div');
+            alert.className = `auth-alert auth-alert-${type}`;
+            alert.innerHTML = `
+                <div class="alert-content">
+                    <i class="fas fa-${getAlertIcon(type)}"></i>
+                    <span>${message}</span>
+                    <button class="alert-close" onclick="this.parentElement.parentElement.remove()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+            
+            // Adicionar ao documento
+            const mainContent = document.querySelector('.auth-card');
+            if (mainContent) {
+                mainContent.parentNode.insertBefore(alert, mainContent);
+            }
+            
+            // Auto-remover após 5 segundos
+            setTimeout(() => {
+                if (alert.parentNode) {
+                    alert.remove();
+                }
+            }, 5000);
+        }
+
+        function getAlertIcon(type) {
+            const icons = {
+                success: 'check-circle',
+                error: 'exclamation-circle',
+                warning: 'exclamation-triangle',
+                info: 'info-circle'
+            };
+            return icons[type] || 'info-circle';
+        }
     </script>
 </body>
 </html>

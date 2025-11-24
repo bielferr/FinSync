@@ -1,12 +1,11 @@
-import { Table, Column, Model, DataType, BeforeSave 
-
-} from 'sequelize-typescript';
-import  * as bcrypt from 'bcrypt';
-
+import { Table, Column, Model, DataType, BeforeCreate, BeforeUpdate } from 'sequelize-typescript';
+import * as bcrypt from 'bcrypt';
 
 @Table({
   tableName: 'users',
   timestamps: true,
+  createdAt: 'created_at',
+  updatedAt: 'updated_at'
 })
 export class User extends Model {
   @Column({
@@ -19,6 +18,9 @@ export class User extends Model {
     type: DataType.STRING,
     allowNull: false,
     unique: true,
+    validate: {
+      isEmail: true,
+    }
   })
   email!: string;
 
@@ -27,31 +29,27 @@ export class User extends Model {
     allowNull: false,
   })
   password!: string;
- @Column({
+  
+  @Column({
     type: DataType.STRING,
     allowNull: false,
-    defaultValue: 'user', // user | admin
+    defaultValue: 'user',
   })
   role!: string;
 
-    // Hash automático antes de salvar no DB
-    @BeforeSave
+  // Hook para hash automático da senha
+  @BeforeCreate
+  @BeforeUpdate
   static async hashPassword(instance: User) {
     if (instance.changed('password')) {
-      const salt = await bcrypt.genSalt(10);
-      instance.password = await bcrypt.hash(instance.password, salt);
+      instance.password = await bcrypt.hash(instance.password, 12);
     }
   }
-
   
   // Método para comparar senha no login
   async validarSenha(password: string): Promise<boolean> {
     return bcrypt.compare(password, this.password);
   }
-
 }
-  
-
-
 
 export default User;

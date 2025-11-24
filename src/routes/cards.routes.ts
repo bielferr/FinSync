@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { auth } from "../middleware/auth"; // exige login
+import { authenticateToken, requireAdmin } from "../middleware/auth"; // exige login
 import {
   getCards,
   createCard,
@@ -10,7 +10,7 @@ import {
 const router = Router();
 
 // Rota GET para listar todos os cartões
-router.get("/", auth, async (req, res) => {
+router.get("/", authenticateToken, async (req, res) => {
   try {
     const cards = await getCards();
     res.json(cards);
@@ -20,7 +20,7 @@ router.get("/", auth, async (req, res) => {
 });
 
 // Rota POST para criar um novo cartão
-router.post("/", auth, async (req, res) => {
+router.post("/", authenticateToken, async (req, res) => {
   try {
     const card = await createCard(req.body);
     res.status(201).json(card);
@@ -30,7 +30,7 @@ router.post("/", auth, async (req, res) => {
 });
 
 // Rota PUT para atualizar um cartão existente
-router.put("/:id", auth, async (req, res) => {
+router.put("/:id", authenticateToken, async (req, res) => {
   try {
     const updated = await updateCard(Number(req.params.id), req.body);
     if (!updated) return res.status(404).json({ error: "Cartão não encontrado" });
@@ -41,7 +41,7 @@ router.put("/:id", auth, async (req, res) => {
 });
 
 // Rota DELETE para remover um cartão
-router.delete("/:id", auth, async (req, res) => {
+router.delete("/:id", authenticateToken, async (req, res) => {
   try {
     const deleted = await deleteCard(Number(req.params.id));
     if (!deleted) return res.status(404).json({ error: "Cartão não encontrado" });

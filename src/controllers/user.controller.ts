@@ -8,10 +8,16 @@ export class UserController {
   async getAllUsers(req: Request, res: Response) {
     try {
       const users = await this.userService.getAllUsers();
-      return res.status(200).json(users);
+      return res.status(200).json({
+        success: true,
+        data: users
+      });
     } catch (error) {
       console.error("Erro ao listar usuários:", error);
-      return res.status(500).json({ message: "Erro ao buscar usuários." });
+      return res.status(500).json({ 
+        success: false,
+        message: "Erro ao buscar usuários." 
+      });
     }
   }
 
@@ -23,13 +29,22 @@ export class UserController {
       const user = await this.userService.getUserById(Number(id));
 
       if (!user) {
-        return res.status(404).json({ message: "Usuário não encontrado." });
+        return res.status(404).json({ 
+          success: false,
+          message: "Usuário não encontrado." 
+        });
       }
 
-      return res.status(200).json(user);
+      return res.status(200).json({
+        success: true,
+        data: user
+      });
     } catch (error) {
       console.error("Erro ao buscar usuário:", error);
-      return res.status(500).json({ message: "Erro interno ao buscar usuário." });
+      return res.status(500).json({ 
+        success: false,
+        message: "Erro interno ao buscar usuário." 
+      });
     }
   }
 }

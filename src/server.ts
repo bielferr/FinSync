@@ -4,14 +4,14 @@ config();
 
 import sequelize from './config/database';
 import app from './app';
-import authRoutes from './routes/authRotes';
+import authRoutes from './routes/authRoutes';
 import userRoutes from './routes/user.routes';
 
 const PORT = process.env.PORT || 3333;
 
-// Registrar rotas que não estão em `app.ts`
-app.use('/auth', authRoutes);
-app.use("/user", userRoutes);
+// Registrar rotas - CORRIGIDO: usar /api prefix para consistência
+app.use('/api/auth', authRoutes);
+app.use("/api/user", userRoutes);
 
 // Rota de saúde
 app.get('/health', (req, res) => {
@@ -20,6 +20,19 @@ app.get('/health', (req, res) => {
     message: 'FINSYNC API is running',
     database: process.env.DB_NAME,
     timestamp: new Date().toISOString()
+  });
+});
+
+// Rota raiz
+app.get('/', (req, res) => {
+  res.json({
+    message: 'Bem-vindo à API do FinSync',
+    version: '1.0.0',
+    endpoints: {
+      auth: '/api/auth',
+      users: '/api/user',
+      health: '/health'
+    }
   });
 });
 
@@ -53,6 +66,7 @@ const startServer = async () => {
     console.log(`Ambiente: ${process.env.NODE_ENV || 'development'}`);
     console.log(`Banco de dados: ${process.env.DB_NAME}`);
     console.log(`Health check: http://localhost:${PORT}/health`);
+    console.log(`API Base: http://localhost:${PORT}/api`);
   });
 };
 

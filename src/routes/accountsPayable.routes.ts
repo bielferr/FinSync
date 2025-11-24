@@ -1,5 +1,6 @@
 import { Router } from "express";
 import AccountPayableController from "../controllers/accountsPayable.controller";
+import AuthController from '../controllers/authController';
 
 const router = Router();
 
