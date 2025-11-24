@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administração - FinSync</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <a href="/" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 12px;">
+                    <div class="logo">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <span class="brand-name">FinSync</span>
+                </a>
+            </div>
+            
+            <div class="nav-menu">
+                <a href="/dashboard.html" class="nav-link">Dashboard</a>
+                <a href="/perfil-adm.html" class="nav-link active">Administração</a>
+                <a href="hist.html" class="nav-link">Histórico</a>
+                <a href="/perfil.html" class="nav-link">Meu Perfil</a>
+            </div>
+            
+            <div class="nav-actions">
+                <button class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <a href="/configuracoes.html" class="btn btn-outline">
+                    <i class="fas fa-cog"></i>
+                    Configurações
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <div class="page-header">
+                <h1 class="page-title">Administração</h1>
+                <p class="page-subtitle">Gerencie usuários e configurações do sistema</p>
+            </div>
+
+            <!-- Estatísticas Gerais -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalUsers">0</div>
+                    <div class="stat-label">Total de Usuários</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="activeUsers">0</div>
+                    <div class="stat-label">Usuários Ativos</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="adminUsers">0</div>
+                    <div class="stat-label">Administradores</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="newUsers">0</div>
+                    <div class="stat-label">Novos este mês</div>
+                </div>
+            </div>
+
+            <!-- Gestão de Usuários -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Gestão de Usuários</h2>
+                    <button class="btn btn-primary btn-small" onclick="openCreateUserModal()">
+                        <i class="fas fa-plus"></i>
+                        Novo Usuário
+                    </button>
+                </div>
+                
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>E-mail</th>
+                                <th>Tipo</th>
+                                <th>Data de Cadastro</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTable">
+                            <!-- Usuários serão carregados via JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal Criar/Editar Usuário -->
+    <div id="userModal" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; align-items: center; justify-content: center;">
+        <div class="card" style="width: 90%; max-width: 500px; margin: 20px;">
+            <div class="card-header">
+                <h2 class="card-title" id="modalTitle">Criar Usuário</h2>
+                <button onclick="closeUserModal()" style="background: none; border: none; font-size: 20px; color: var(--secondary); cursor: pointer;">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <form id="userForm">
+                <div class="form-group">
+                    <label class="form-label">Nome Completo</label>
+                    <input type="text" class="form-input" id="userNameInput" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">E-mail</label>
+                    <input type="email" class="form-input" id="userEmailInput" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Senha</label>
+                    <input type="password" class="form-input" id="userPasswordInput">
+                    <small style="color: var(--secondary);">Deixe em branco para não alterar</small>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Tipo de Usuário</label>
+                    <select class="form-input" id="userRoleInput" required>
+                        <option value="user">Usuário</option>
+                        <option value="admin">Administrador</option>
+                    </select>
+                </div>
+                
+                <div style="display: flex; gap: 12px; margin-top: 24px;">
+                    <button type="button" class="btn btn-secondary btn-full" onclick="closeUserModal()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary btn-full">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Theme Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        themeToggle.addEventListener('click', () => {
+            document.body.dataset.theme = document.body.dataset.theme === 'dark' ? 'light' : 'dark';
+            themeToggle.innerHTML = document.body.dataset.theme === 'dark' 
+                ? '<i class="fas fa-sun"></i>' 
+                : '<i class="fas fa-moon"></i>';
+        });
+
+        let editingUserId = null;
+
+        // Carregar usuários
+        async function loadUsers() {
+            try {
+                // Simular carregamento de usuários
+                const users = [
+                    { id: 1, name: 'João Silva', email: 'joao@email.com', role: 'admin', createdAt: '2024-01-15', active: true },
+                    { id: 2, name: 'Maria Santos', email: 'maria@email.com', role: 'user', createdAt: '2024-02-20', active: true },
+                    { id: 3, name: 'Pedro Oliveira', email: 'pedro@email.com', role: 'user', createdAt: '2024-03-01', active: true }
+                ];
+
+                updateUsersTable(users);
+                updateStats(users);
+                
+            } catch (error) {
+                console.error('Erro ao carregar usuários:', error);
+            }
+        }
+
+        function updateUsersTable(users) {
+            const tbody = document.getElementById('usersTable');
+            tbody.innerHTML = users.map(user => `
+                <tr>
+                    <td>${user.name}</td>
+                    <td>${user.email}</td>
+                    <td>
+                        <span class="badge ${user.role === 'admin' ? 'badge-warning' : 'badge-info'}">
+                            ${user.role === 'admin' ? 'Administrador' : 'Usuário'}
+                        </span>
+                    </td>
+                    <td>${new Date(user.createdAt).toLocaleDateString('pt-BR')}</td>
+                    <td>
+                        <span class="badge badge-success">Ativo</span>
+                    </td>
+                    <td>
+                        <div style="display: flex; gap: 8px;">
+                            <button class="btn btn-outline btn-small" onclick="editUser(${user.id})">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-error btn-small" onclick="deleteUser(${user.id})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function updateStats(users) {
+            document.getElementById('totalUsers').textContent = users.length;
+            document.getElementById('activeUsers').textContent = users.filter(u => u.active).length;
+            document.getElementById('adminUsers').textContent = users.filter(u => u.role === 'admin').length;
+            document.getElementById('newUsers').textContent = users.filter(u => {
+                const userDate = new Date(u.createdAt);
+                const now = new Date();
+                return userDate.getMonth() === now.getMonth() && userDate.getFullYear() === now.getFullYear();
+            }).length;
+        }
+
+        function openCreateUserModal() {
+            editingUserId = null;
+            document.getElementById('modalTitle').textContent = 'Criar Usuário';
+            document.getElementById('userForm').reset();
+            document.getElementById('userPasswordInput').required = true;
+            document.getElementById('userModal').style.display = 'flex';
+        }
+
+        function editUser(userId) {
+            // Simular busca de usuário
+            const user = { id: userId, name: 'João Silva', email: 'joao@email.com', role: 'admin' };
+            
+            editingUserId = userId;
+            document.getElementById('modalTitle').textContent = 'Editar Usuário';
+            document.getElementById('userNameInput').value = user.name;
+            document.getElementById('userEmailInput').value = user.email;
+            document.getElementById('userRoleInput').value = user.role;
+            document.getElementById('userPasswordInput').required = false;
+            document.getElementById('userModal').style.display = 'flex';
+        }
+
+        function closeUserModal() {
+            document.getElementById('userModal').style.display = 'none';
+            editingUserId = null;
+        }
+
+        function deleteUser(userId) {
+            if (confirm('Tem certeza que deseja excluir este usuário?')) {
+                // Simular exclusão
+                console.log('Excluir usuário:', userId);
+                alert('Usuário excluído com sucesso!');
+                loadUsers();
+            }
+        }
+
+        // Form submit
+        document.getElementById('userForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                name: document.getElementById('userNameInput').value,
+                email: document.getElementById('userEmailInput').value,
+                password: document.getElementById('userPasswordInput').value,
+                role: document.getElementById('userRoleInput').value
+            };
+
+            // Simular salvamento
+            console.log('Salvar usuário:', formData, 'Editando:', editingUserId);
+            alert(editingUserId ? 'Usuário atualizado com sucesso!' : 'Usuário criado com sucesso!');
+            
+            closeUserModal();
+            loadUsers();
+        });
+
+        // Carregar dados quando a página carregar
+        document.addEventListener('DOMContentLoaded', loadUsers);
+    </script>
+</body>
+</html>

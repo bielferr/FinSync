@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Perfil - FinSync</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <a href="/" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 12px;">
+                    <div class="logo">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <span class="brand-name">FinSync</span>
+                </a>
+            </div>
+            
+            <div class="nav-menu">
+                <a href="/dashboard.html" class="nav-link">Dashboard</a>
+                <a href="/hist.html" class="nav-link">Histórico</a>
+                <a href="/cartoes.html" class="nav-link">Cartões</a>
+                <a href="/perfil.html" class="nav-link active">Perfil</a>
+            </div>
+            
+            <div class="nav-actions">
+                <button class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <a href="/configuracoes.html" class="btn btn-outline">
+                    <i class="fas fa-cog"></i>
+                    Configurações
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <div class="page-header">
+                <h1 class="page-title">Meu Perfil</h1>
+                <p class="page-subtitle">Gerencie suas informações pessoais e visualize seu saldo</p>
+            </div>
+
+            <div class="grid grid-2">
+                <!-- Informações do Usuário -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Informações Pessoais</h2>
+                    </div>
+                    
+                    <div class="user-info">
+                        <div class="user-avatar" style="text-align: center; margin-bottom: 24px;">
+                            <div style="width: 80px; height: 80px; background: var(--gradient); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: white; font-size: 32px; font-weight: 600;">
+                                <span id="userInitials">US</span>
+                            </div>
+                        </div>
+                        
+                        <div class="info-grid" style="display: grid; gap: 16px;">
+                            <div class="info-item">
+                                <label style="font-size: 0.875rem; color: var(--secondary);">Nome Completo</label>
+                                <p style="font-weight: 500; margin-top: 4px;" id="userName">Carregando...</p>
+                            </div>
+                            
+                            <div class="info-item">
+                                <label style="font-size: 0.875rem; color: var(--secondary);">E-mail</label>
+                                <p style="font-weight: 500; margin-top: 4px;" id="userEmail">Carregando...</p>
+                            </div>
+                            
+                            <div class="info-item">
+                                <label style="font-size: 0.875rem; color: var(--secondary);">Data de Entrada</label>
+                                <p style="font-weight: 500; margin-top: 4px;" id="userJoinDate">Carregando...</p>
+                            </div>
+                            
+                            <div class="info-item">
+                                <label style="font-size: 0.875rem; color: var(--secondary);">Tipo de Conta</label>
+                                <p style="font-weight: 500; margin-top: 4px;">
+                                    <span class="badge badge-success" id="userRole">Usuário</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Saldo e Estatísticas -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Saldo Atual</h2>
+                    </div>
+                    
+                    <div class="balance-section">
+                        <div style="text-align: center; margin-bottom: 32px;">
+                            <div class="stat-value" id="currentBalance">R$ 0,00</div>
+                            <p class="stat-label">Saldo Disponível</p>
+                        </div>
+                        
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-value" style="color: var(--success);" id="monthIncome">R$ 0,00</div>
+                                <div class="stat-label">Entradas este mês</div>
+                            </div>
+                            
+                            <div class="stat-card">
+                                <div class="stat-value" style="color: var(--error);" id="monthExpense">R$ 0,00</div>
+                                <div class="stat-label">Saídas este mês</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Últimas Transações -->
+            <div class="card" style="margin-top: 32px;">
+                <div class="card-header">
+                    <h2 class="card-title">Últimas Transações</h2>
+                    <a href="/hist.html" class="btn btn-outline btn-small">
+                        Ver Todas
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Descrição</th>
+                                <th>Categoria</th>
+                                <th>Data</th>
+                                <th>Valor</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentTransactions">
+                            <!-- Transações serão carregadas via JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Theme Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        themeToggle.addEventListener('click', () => {
+            document.body.dataset.theme = document.body.dataset.theme === 'dark' ? 'light' : 'dark';
+            themeToggle.innerHTML = document.body.dataset.theme === 'dark' 
+                ? '<i class="fas fa-sun"></i>' 
+                : '<i class="fas fa-moon"></i>';
+        });
+
+        // Carregar dados do usuário
+        async function loadUserData() {
+            try {
+                const token = localStorage.getItem('blync_token');
+                const user = JSON.parse(localStorage.getItem('blync_user') || '{}');
+                
+                // Atualizar informações básicas
+                document.getElementById('userName').textContent = user.name || 'Usuário';
+                document.getElementById('userEmail').textContent = user.email || 'user@example.com';
+                document.getElementById('userRole').textContent = user.role === 'admin' ? 'Administrador' : 'Usuário';
+                document.getElementById('userInitials').textContent = getUserInitials(user.name);
+                
+                // Data de entrada (simulada)
+                document.getElementById('userJoinDate').textContent = new Date().toLocaleDateString('pt-BR');
+                
+                // Carregar saldo e transações
+                await loadBalance();
+                await loadRecentTransactions();
+                
+            } catch (error) {
+                console.error('Erro ao carregar dados:', error);
+            }
+        }
+
+        function getUserInitials(name) {
+            if (!name) return 'US';
+            return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+        }
+
+        async function loadBalance() {
+            // Simular carregamento do saldo
+            setTimeout(() => {
+                document.getElementById('currentBalance').textContent = 'R$ 2.543,67';
+                document.getElementById('monthIncome').textContent = 'R$ 3.200,00';
+                document.getElementById('monthExpense').textContent = 'R$ 656,33';
+            }, 1000);
+        }
+
+        async function loadRecentTransactions() {
+            const transactions = [
+                { description: 'Salário', category: 'Receita', date: '15/03/2024', amount: 'R$ 3.000,00', type: 'income' },
+                { description: 'Supermercado', category: 'Alimentação', date: '18/03/2024', amount: 'R$ 256,33', type: 'expense' },
+                { description: 'Internet', category: 'Utilidades', date: '20/03/2024', amount: 'R$ 120,00', type: 'expense' },
+                { description: 'Freelance', category: 'Receita', date: '22/03/2024', amount: 'R$ 200,00', type: 'income' },
+                { description: 'Restaurante', category: 'Alimentação', date: '25/03/2024', amount: 'R$ 80,00', type: 'expense' }
+            ];
+
+            const tbody = document.getElementById('recentTransactions');
+            tbody.innerHTML = transactions.map(transaction => `
+                <tr>
+                    <td>${transaction.description}</td>
+                    <td>${transaction.category}</td>
+                    <td>${transaction.date}</td>
+                    <td style="color: ${transaction.type === 'income' ? 'var(--success)' : 'var(--error)'}">
+                        ${transaction.amount}
+                    </td>
+                    <td>
+                        <span class="badge ${transaction.type === 'income' ? 'badge-success' : 'badge-error'}">
+                            ${transaction.type === 'income' ? 'Entrada' : 'Saída'}
+                        </span>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Carregar dados quando a página carregar
+        document.addEventListener('DOMContentLoaded', loadUserData);
+    </script>
+</body>
+</html>
