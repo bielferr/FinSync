@@ -3,9 +3,7 @@ import * as bcrypt from 'bcrypt';
 
 @Table({
   tableName: 'users',
-  timestamps: true,
-  createdAt: 'created_at',
-  updatedAt: 'updated_at'
+  timestamps: true
 })
 export class User extends Model {
   @Column({

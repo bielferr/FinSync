@@ -36,15 +36,33 @@ app.get('/', (req, res) => {
   });
 });
 
+// const connectDB = async () => {
+//   try {
+//     console.log('Conectando ao PostgreSQL...');
+//     await sequelize.authenticate();
+//     console.log('PostgreSQL conectado com sucesso!');
+    
+//     console.log('Sincronizando modelos...');
+//     await sequelize.sync({ force: false });
+//     console.log('Modelos sincronizados!');
+    
+//     return true;
+//   } catch (error) {
+//     console.error('Erro no banco de dados:', error);
+//     return false;
+//   }
+// };
+
 const connectDB = async () => {
   try {
     console.log('Conectando ao PostgreSQL...');
     await sequelize.authenticate();
     console.log('PostgreSQL conectado com sucesso!');
     
-    console.log('Sincronizando modelos...');
-    await sequelize.sync({ force: false });
-    console.log('Modelos sincronizados!');
+    console.log('Verificando e sincronizando modelos...');
+    // Use sync com alter em vez de force para não perder dados
+    await sequelize.sync({ alter: true });
+    console.log('Modelos verificados e sincronizados!');
     
     return true;
   } catch (error) {
