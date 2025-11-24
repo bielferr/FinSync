@@ -522,3 +522,84 @@ input:valid + .password-input + .password-strength .strength-bar:before {
         font-size: 1.75rem;
     }
 }
+/* Adicione estas regras ao seu index.css */
+
+/* Melhorias na Navigation */
+.navbar {
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    padding: 12px 0;
+}
+
+.nav-brand {
+    font-size: 22px;
+    font-weight: 800;
+}
+
+.nav-menu {
+    gap: 40px;
+}
+
+.nav-link {
+    font-weight: 500;
+    font-size: 15px;
+    position: relative;
+    padding: 8px 0;
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--primary);
+    transition: width 0.3s ease;
+}
+
+.nav-link:hover::after,
+.nav-link.active::after {
+    width: 100%;
+}
+
+.nav-actions {
+    gap: 16px;
+}
+
+/* Ajustes nos botões da navbar */
+.nav-actions .btn {
+    font-size: 13px;
+    padding: 10px 20px;
+}
+
+/* Tema escuro para navbar */
+[data-theme="dark"] .navbar {
+    background: rgba(31, 41, 55, 0.95);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+    .nav-menu {
+        position: fixed;
+        top: 70px;
+        left: 0;
+        width: 100%;
+        background: var(--white);
+        flex-direction: column;
+        padding: 20px;
+        border-bottom: 1px solid var(--gray);
+        display: none;
+    }
+    
+    .nav-menu.active {
+        display: flex;
+    }
+    
+    [data-theme="dark"] .nav-menu {
+        background: var(--light);
+    }
+}
