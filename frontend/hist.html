@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Histórico - FinSync</title>
+    <title>Histórico - Blync</title>
     <link rel="stylesheet" href="/css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -242,22 +242,30 @@
                     <span class="brand-name">FinSync</span>
                 </a>
             </div>
-            
-            <div class="nav-menu">
-                <a href="/dashboard.html" class="nav-link">Dashboard</a>
-                <a href="hist.html" class="nav-link active">Histórico</a>
-                <a href="/nova-transacao.html" class="nav-link">Nova Transação</a>
-                <a href="/cartoes.html" class="nav-link">Cartões</a>
+            <div class="nav-menu" id="navMenu">
+                <a href="/dashboard.html" class="nav-link active">Dashboard</a>
+                <a href="sobre.html" class="nav-link">Sobre</a>
+                <a href="contato.html" class="nav-link">Contato</a>
             </div>
             
             <div class="nav-actions">
                 <button class="theme-toggle" id="themeToggle">
                     <i class="fas fa-moon"></i>
                 </button>
-                <a href="/perfil.html" class="btn btn-outline">
-                    <i class="fas fa-user"></i>
-                    Perfil
-                </a>
+                <div class="user-menu">
+                    <button class="btn btn-outline" id="userMenuBtn">
+                        <i class="fas fa-user"></i>
+                        <span id="userName">Usuário</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="user-dropdown" id="userDropdown" style="display: none;">
+                        <a href="/perfil.html"><i class="fas fa-user"></i> Meu Perfil</a>
+                        <a href="/perfil.html"><i class="fa fa-bar-chart"></i> Dashboard</a>
+                        <a href="/configuracoes.html"><i class="fas fa-cog"></i> Configurações</a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Sair</a>
+                    </div>
+                </div>
             </div>
         </div>
     </nav>
@@ -379,6 +387,47 @@
                 </div>
             </div>
         </div>
+        <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="logo">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <span class="brand-name">Blync</span>
+                    <p>Seu assistente financeiro inteligente</p>
+                </div>
+                
+                <div class="footer-links">
+                    <div class="link-group">
+                        <h4>Produtos</h4>
+                        <a href="dashboard.html">Dashboard</a>
+                    </div>
+                    
+                    <div class="link-group">
+                        <h4>Institucional</h4>
+                        <a href="sobre.html">Sobre Nós</a>
+                    </div>
+                    
+                    <div class="link-group">
+                        <h4>Ajuda</h4>
+                        <a href="contato.html">Contato</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 Blync Tecnologia S.A. - CNPJ 17.123.456/7777-77</p>
+                <div class="footer-social">
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
     </main>
 
     <script>

@@ -10,6 +10,72 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
+        /* Dashboard Page Styles */
+        .dashboard-page {
+            min-height: 100vh;
+            background: var(--light);
+            padding-top: 80px;
+        }
+
+        .dashboard-header {
+            background: var(--white);
+            border-bottom: 1px solid var(--gray);
+            padding: 20px 0;
+        }
+
+        .dashboard-header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .dashboard-info h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 4px;
+        }
+
+        .dashboard-subtitle {
+            font-size: 0.875rem;
+            color: var(--secondary);
+        }
+
+        .dashboard-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .dashboard-btn {
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--gray);
+            background: var(--white);
+            border-radius: 8px;
+            color: var(--secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .dashboard-btn:hover {
+            background: var(--light);
+            color: var(--primary);
+        }
+
+        .dashboard-wrapper {
+            padding: 40px 0;
+        }
+
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Stats Overview */
         .dashboard-stats {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -24,6 +90,8 @@
             border: 1px solid var(--gray);
             text-align: center;
             transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
 
         .stat-card:hover {
@@ -31,10 +99,24 @@
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
         }
 
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--gradient);
+        }
+
         .stat-value {
             font-size: 2.5rem;
             font-weight: 700;
             margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
         .stat-income {
@@ -49,6 +131,23 @@
             color: var(--primary);
         }
 
+        .stat-trend {
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            margin-top: 8px;
+        }
+
+        .trend-up {
+            color: var(--success);
+        }
+
+        .trend-down {
+            color: var(--error);
+        }
+
         .stat-label {
             color: var(--secondary);
             font-size: 0.875rem;
@@ -56,13 +155,13 @@
             letter-spacing: 0.5px;
         }
 
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 24px;
-            margin-bottom: 40px;
+        .stat-period {
+            color: var(--secondary);
+            font-size: 0.75rem;
+            margin-top: 4px;
         }
 
+        /* Quick Actions */
         .quick-actions {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -108,6 +207,15 @@
             font-size: 0.875rem;
         }
 
+        /* Main Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        /* Recent Transactions */
         .transaction-item {
             display: flex;
             align-items: center;
@@ -174,6 +282,7 @@
             color: var(--error);
         }
 
+        /* Chart Container */
         .chart-container {
             background: var(--white);
             padding: 24px;
@@ -198,6 +307,7 @@
             font-size: 12px;
         }
 
+        /* Budget Progress */
         .budget-progress {
             margin-top: 16px;
         }
@@ -225,29 +335,284 @@
             transition: width 0.3s ease;
         }
 
-        .progress-fill.food { background: #EF4444; width: 75%; }
-        .progress-fill.transport { background: #F59E0B; width: 50%; }
-        .progress-fill.entertainment { background: #8B5CF6; width: 30%; }
-        .progress-fill.shopping { background: #10B981; width: 60%; }
+        .progress-fill.food { background: #EF4444; }
+        .progress-fill.transport { background: #F59E0B; }
+        .progress-fill.entertainment { background: #8B5CF6; }
+        .progress-fill.shopping { background: #10B981; }
 
-        @media (max-width: 968px) {
+        /* Quick Tips */
+        .tips-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 0;
+        }
+
+        .tips-item:not(:last-child) {
+            border-bottom: 1px solid var(--gray);
+        }
+
+        .tips-icon {
+            color: #F59E0B;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .tips-content h4 {
+            font-size: 14px;
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+
+        .tips-content p {
+            font-size: 12px;
+            color: var(--secondary);
+            line-height: 1.4;
+        }
+
+        /* Empty States */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--secondary);
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .empty-title {
+            font-size: 1.25rem;
+            margin-bottom: 8px;
+            color: var(--dark);
+        }
+
+        .empty-description {
+            margin-bottom: 24px;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: var(--white);
+            margin: 5% auto;
+            padding: 0;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        /* Loading States */
+        .dashboard-loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .loading-skeleton {
+            background: linear-gradient(90deg, var(--gray) 25%, var(--light) 50%, var(--gray) 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            border-radius: 8px;
+        }
+
+        @keyframes loading {
+            0% {
+                background-position: 200% 0;
+            }
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
             .dashboard-grid {
                 grid-template-columns: 1fr;
             }
             
             .quick-actions {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-header-content {
+                flex-direction: column;
+                gap: 16px;
+                text-align: center;
+            }
+            
+            .dashboard-actions {
+                justify-content: center;
+            }
+            
+            .dashboard-stats {
                 grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .quick-actions {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .transaction-item {
+                flex-direction: column;
+                text-align: center;
+                gap: 12px;
+            }
+            
+            .transaction-info {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .transaction-amount {
+                text-align: center;
+            }
+            
+            .chart-container {
+                height: 250px;
             }
         }
 
         @media (max-width: 480px) {
+            .dashboard-stats {
+                grid-template-columns: 1fr;
+            }
+            
             .quick-actions {
                 grid-template-columns: 1fr;
             }
             
-            .dashboard-stats {
+            .dashboard-grid {
                 grid-template-columns: 1fr;
             }
+            
+            .chart-header {
+                flex-direction: column;
+                gap: 12px;
+                text-align: center;
+            }
+            
+            .chart-controls {
+                justify-content: center;
+            }
+            
+            .progress-header {
+                flex-direction: column;
+                gap: 4px;
+                text-align: center;
+            }
+        }
+
+        /* Dark theme adjustments */
+        [data-theme="dark"] .stat-card::before {
+            background: var(--gradient);
+        }
+
+        [data-theme="dark"] .transaction-icon.income {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10B981;
+        }
+
+        [data-theme="dark"] .transaction-icon.expense {
+            background: rgba(239, 68, 68, 0.2);
+            color: #EF4444;
+        }
+
+        /* Mobile menu button for responsive navbar */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--secondary);
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Responsive navbar */
+        @media (max-width: 768px) {
+            .mobile-menu-btn {
+                display: flex;
+            }
+            
+            .nav-menu {
+                position: fixed;
+                top: 72px;
+                left: 0;
+                width: 100%;
+                background: var(--white);
+                flex-direction: column;
+                padding: 20px;
+                border-bottom: 1px solid var(--gray);
+                display: none;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                gap: 16px;
+            }
+            
+            .nav-menu.active {
+                display: flex;
+            }
+            
+            .user-name {
+                display: none;
+            }
+
+            [data-theme="dark"] .nav-menu {
+                background: var(--light);
+            }
+        }
+
+        .p-4 {
+            padding: 1rem;
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background: var(--gray);
+            margin: 8px 0;
+        }
+
+        .user-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: var(--white);
+            min-width: 200px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            border: 1px solid var(--gray);
+            z-index: 1000;
+        }
+
+        .user-dropdown a {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 16px;
+            text-decoration: none;
+            color: var(--dark);
+            transition: background 0.2s ease;
+        }
+
+        .user-dropdown a:hover {
+            background: var(--light);
         }
     </style>
 </head>
@@ -264,11 +629,14 @@
                 </a>
             </div>
             
-            <div class="nav-menu">
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <div class="nav-menu" id="navMenu">
                 <a href="/dashboard.html" class="nav-link active">Dashboard</a>
-                <a href="/hist.html" class="nav-link">Histórico</a>
-                <a href="/cartoes.html" class="nav-link">Cartões</a>
-                <a href="/perfil.html" class="nav-link">Perfil</a>
+                <a href="sobre.html" class="nav-link">Sobre</a>
+                <a href="contato.html" class="nav-link">Contato</a>
             </div>
             
             <div class="nav-actions">
@@ -283,6 +651,7 @@
                     </button>
                     <div class="user-dropdown" id="userDropdown" style="display: none;">
                         <a href="/perfil.html"><i class="fas fa-user"></i> Meu Perfil</a>
+                        <a href="/perfil.html"><i class="fa fa-bar-chart"></i> Dashboard</a>
                         <a href="/configuracoes.html"><i class="fas fa-cog"></i> Configurações</a>
                         <div class="dropdown-divider"></div>
                         <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Sair</a>
@@ -292,181 +661,172 @@
         </div>
     </nav>
 
-    <!-- Main Content -->
-    <main class="main-content">
-        <div class="container">
-            <!-- Welcome Header -->
-            <div class="page-header">
-                <h1 class="page-title">Dashboard</h1>
-                <p class="page-subtitle" id="welcomeMessage">Bem-vindo de volta!</p>
-            </div>
-
-            <!-- Stats Overview -->
-            <div class="dashboard-stats">
-                <div class="stat-card">
-                    <div class="stat-value stat-balance" id="totalBalance">R$ 0,00</div>
-                    <div class="stat-label">Saldo Total</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value stat-income" id="monthIncome">R$ 0,00</div>
-                    <div class="stat-label">Receitas (Mês)</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value stat-expense" id="monthExpense">R$ 0,00</div>
-                    <div class="stat-label">Despesas (Mês)</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value" id="transactionsCount">0</div>
-                    <div class="stat-label">Transações</div>
+    <!-- Dashboard Page -->
+    <div class="dashboard-page">
+        <header class="dashboard-header">
+            <div class="dashboard-container">
+                <div class="dashboard-header-content">
+                    <div class="dashboard-info">
+                        <h1>Dashboard Financeiro</h1>
+                        <p class="dashboard-subtitle" id="welcomeMessage">Carregando...</p>
+                    </div>
+                    <div class="dashboard-actions">
+                        <button class="dashboard-btn" onclick="syncData()" title="Sincronizar dados">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                        <button class="dashboard-btn" onclick="exportData()" title="Exportar dados">
+                            <i class="fas fa-download"></i>
+                        </button>
+                        <button class="dashboard-btn" onclick="showDataManager()" title="Gerenciar dados">
+                            <i class="fas fa-database"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
+        </header>
 
-            <!-- Quick Actions -->
-            <div class="quick-actions">
-                <a href="/nova-transacao.html" class="action-btn">
-                    <div class="action-icon">
-                        <i class="fas fa-plus"></i>
-                    </div>
-                    <span class="action-label">Nova Transação</span>
-                </a>
-                <a href="/hist.html" class="action-btn">
-                    <div class="action-icon">
-                        <i class="fas fa-history"></i>
-                    </div>
-                    <span class="action-label">Histórico</span>
-                </a>
-                <a href="/cartoes.html" class="action-btn">
-                    <div class="action-icon">
-                        <i class="fas fa-credit-card"></i>
-                    </div>
-                    <span class="action-label">Cartões</span>
-                </a>
-                <a href="/relatorios.html" class="action-btn">
-                    <div class="action-icon">
-                        <i class="fas fa-chart-bar"></i>
-                    </div>
-                    <span class="action-label">Relatórios</span>
-                </a>
-                <a href="/metas.html" class="action-btn">
-                    <div class="action-icon">
-                        <i class="fas fa-bullseye"></i>
-                    </div>
-                    <span class="action-label">Metas</span>
-                </a>
-                <a href="/configuracoes.html" class="action-btn">
-                    <div class="action-icon">
-                        <i class="fas fa-cog"></i>
-                    </div>
-                    <span class="action-label">Configurações</span>
-                </a>
-            </div>
-
-            <!-- Main Dashboard Grid -->
-            <div class="dashboard-grid">
-                <!-- Left Column -->
-                <div>
-                    <!-- Recent Transactions -->
-                    <div class="card">
-                        <div class="card-header">
-                            <h2 class="card-title">Transações Recentes</h2>
-                            <a href="/hist.html" class="btn btn-outline btn-small">
-                                Ver Todas
-                                <i class="fas fa-arrow-right"></i>
-                            </a>
-                        </div>
-                        <div id="recentTransactions">
-                            <!-- Transactions will be loaded here -->
+        <div class="dashboard-wrapper">
+            <div class="dashboard-container">
+                <!-- Stats Overview -->
+                <div class="dashboard-stats">
+                    <div class="stat-card">
+                        <div class="stat-value stat-balance" id="totalBalance">R$ 0,00</div>
+                        <div class="stat-label">Saldo Total</div>
+                        <div class="stat-trend trend-up" id="balanceTrend">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>Carregando...</span>
                         </div>
                     </div>
-
-                    <!-- Monthly Chart -->
-                    <div class="card">
-                        <div class="card-header">
-                            <h2 class="card-title">Visão Geral do Mês</h2>
-                            <select id="chartType" class="btn btn-outline btn-small" onchange="updateChartType()">
-                                <option value="bar">Barras</option>
-                                <option value="line">Linhas</option>
-                                <option value="pie">Pizza</option>
-                            </select>
-                        </div>
-                        <div class="chart-container">
-                            <canvas id="monthlyChart"></canvas>
-                        </div>
+                    <div class="stat-card">
+                        <div class="stat-value stat-income" id="monthIncome">R$ 0,00</div>
+                        <div class="stat-label">Receitas (Mês)</div>
+                        <div class="stat-period" id="currentMonth">Carregando...</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value stat-expense" id="monthExpense">R$ 0,00</div>
+                        <div class="stat-label">Despesas (Mês)</div>
+                        <div class="stat-period" id="currentMonthExpense">Carregando...</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="transactionsCount">0</div>
+                        <div class="stat-label">Transações</div>
+                        <div class="stat-period">Total</div>
                     </div>
                 </div>
 
-                <!-- Right Column -->
-                <div>
-                    <!-- Budget Overview -->
-                    <div class="card">
-                        <div class="card-header">
-                            <h2 class="card-title">Orçamento Mensal</h2>
+                <!-- Quick Actions -->
+                <div class="quick-actions">
+                    <a href="/novatransacao.html" class="action-btn">
+                        <div class="action-icon">
+                            <i class="fas fa-plus"></i>
                         </div>
-                        <div class="budget-progress">
-                            <div class="progress-item">
-                                <div class="progress-header">
-                                    <span>Alimentação</span>
-                                    <span>R$ 750 / R$ 1.000</span>
-                                </div>
-                                <div class="progress-bar">
-                                    <div class="progress-fill food"></div>
+                        <span class="action-label">Nova Transação</span>
+                    </a>
+                    <a href="/hist.html" class="action-btn">
+                        <div class="action-icon">
+                            <i class="fas fa-history"></i>
+                        </div>
+                        <span class="action-label">Histórico</span>
+                    </a>
+                    <a href="/cartoes.html" class="action-btn">
+                        <div class="action-icon">
+                            <i class="fas fa-credit-card"></i>
+                        </div>
+                        <span class="action-label">Cartões</span>
+                    </a>
+
+                </div>
+
+                <!-- Main Dashboard Grid -->
+                <div class="dashboard-grid">
+                    <!-- Left Column -->
+                    <div>
+                        <!-- Recent Transactions -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h2 class="card-title">Transações Recentes</h2>
+                                <a href="/hist.html" class="btn btn-outline btn-small">
+                                    Ver Todas
+                                    <i class="fas fa-arrow-right"></i>
+                                </a>
+                            </div>
+                            <div id="recentTransactions">
+                                <div class="empty-state">
+                                    <div class="empty-icon">
+                                        <i class="fas fa-receipt"></i>
+                                    </div>
+                                    <h4 class="empty-title">Carregando transações...</h4>
+                                    <p class="empty-description">Buscando seus dados mais recentes</p>
                                 </div>
                             </div>
-                            <div class="progress-item">
-                                <div class="progress-header">
-                                    <span>Transporte</span>
-                                    <span>R$ 250 / R$ 500</span>
-                                </div>
-                                <div class="progress-bar">
-                                    <div class="progress-fill transport"></div>
-                                </div>
+                        </div>
+
+                        <!-- Monthly Chart -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h2 class="card-title">Visão Geral do Mês</h2>
+                                <select id="chartType" class="btn btn-outline btn-small" onchange="updateChartType()">
+                                    <option value="bar">Barras</option>
+                                    <option value="line">Linhas</option>
+                                    <option value="pie">Pizza</option>
+                                </select>
                             </div>
-                            <div class="progress-item">
-                                <div class="progress-header">
-                                    <span>Entretenimento</span>
-                                    <span>R$ 150 / R$ 500</span>
-                                </div>
-                                <div class="progress-bar">
-                                    <div class="progress-fill entertainment"></div>
-                                </div>
-                            </div>
-                            <div class="progress-item">
-                                <div class="progress-header">
-                                    <span>Compras</span>
-                                    <span>R$ 300 / R$ 500</span>
-                                </div>
-                                <div class="progress-bar">
-                                    <div class="progress-fill shopping"></div>
-                                </div>
+                            <div class="chart-container">
+                                <canvas id="monthlyChart"></canvas>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Quick Tips -->
-                    <div class="card">
-                        <div class="card-header">
-                            <h2 class="card-title">Dicas Financeiras</h2>
+                    <!-- Right Column -->
+                    <div>
+                        <!-- Budget Overview -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h2 class="card-title">Orçamento Mensal</h2>
+                                <button class="btn btn-outline btn-small" onclick="updateBudgets()">
+                                    <i class="fas fa-sync"></i>
+                                </button>
+                            </div>
+                            <div class="budget-progress" id="budgetContainer">
+                                <div class="empty-state">
+                                    <div class="empty-icon">
+                                        <i class="fas fa-chart-pie"></i>
+                                    </div>
+                                    <h4 class="empty-title">Carregando orçamentos...</h4>
+                                    <p class="empty-description">Calculando seus limites mensais</p>
+                                </div>
+                            </div>
                         </div>
-                        <div style="display: flex; flex-direction: column; gap: 16px;">
-                            <div style="display: flex; align-items: flex-start; gap: 12px;">
-                                <i class="fas fa-lightbulb" style="color: #F59E0B; margin-top: 2px;"></i>
-                                <div>
-                                    <h4 style="font-size: 14px; margin-bottom: 4px;">Economize 20%</h4>
-                                    <p style="font-size: 12px; color: var(--secondary);">Tente guardar pelo menos 20% da sua renda mensal.</p>
-                                </div>
+
+                        <!-- Quick Tips -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h2 class="card-title">Dicas Financeiras</h2>
+                                <button class="btn btn-outline btn-small" onclick="loadNewTips()">
+                                    <i class="fas fa-refresh"></i>
+                                </button>
                             </div>
-                            <div style="display: flex; align-items: flex-start; gap: 12px;">
-                                <i class="fas fa-lightbulb" style="color: #F59E0B; margin-top: 2px;"></i>
-                                <div>
-                                    <h4 style="font-size: 14px; margin-bottom: 4px;">Revise Gastos</h4>
-                                    <p style="font-size: 12px; color: var(--secondary);">Analise suas despesas semanais para identificar excessos.</p>
+                            <div id="tipsContainer">
+                                <div class="tips-item">
+                                    <i class="fas fa-lightbulb tips-icon"></i>
+                                    <div class="tips-content">
+                                        <h4>Economize 20%</h4>
+                                        <p>Tente guardar pelo menos 20% da sua renda mensal.</p>
+                                    </div>
                                 </div>
-                            </div>
-                            <div style="display: flex; align-items: flex-start; gap: 12px;">
-                                <i class="fas fa-lightbulb" style="color: #F59E0B; margin-top: 2px;"></i>
-                                <div>
-                                    <h4 style="font-size: 14px; margin-bottom: 4px;">Metas Realistas</h4>
-                                    <p style="font-size: 12px; color: var(--secondary);">Estabeleça metas financeiras alcançáveis e mensuráveis.</p>
+                                <div class="tips-item">
+                                    <i class="fas fa-lightbulb tips-icon"></i>
+                                    <div class="tips-content">
+                                        <h4>Revise Gastos</h4>
+                                        <p>Analise suas despesas semanais para identificar excessos.</p>
+                                    </div>
+                                </div>
+                                <div class="tips-item">
+                                    <i class="fas fa-lightbulb tips-icon"></i>
+                                    <div class="tips-content">
+                                        <h4>Metas Realistas</h4>
+                                        <p>Estabeleça metas financeiras alcançáveis e mensuráveis.</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -474,7 +834,34 @@
                 </div>
             </div>
         </div>
-    </main>
+    </div>
+
+    <!-- Data Manager Modal -->
+    <div id="dataManagerModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="card-header">
+                <h2 class="card-title">Gerenciador de Dados</h2>
+                <button class="btn btn-outline btn-small" onclick="closeDataManager()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="p-4">
+                <p>Dados sincronizados com chatbot e histórico.</p>
+                <div class="form-group">
+                    <label class="form-label">Total de Transações:</label>
+                    <div class="form-input" id="modalTransactionCount">0</div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Última Sincronização:</label>
+                    <div class="form-input" id="lastSyncTime">Nunca</div>
+                </div>
+                <button class="btn btn-primary btn-full" onclick="forceSync()">
+                    <i class="fas fa-sync"></i>
+                    Forçar Sincronização Completa
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- 🧪 CONTROLES DE DESENVOLVIMENTO -->
     <div class="card" style="margin: 20px auto; max-width: 1200px; display: none;" id="devControls">
@@ -512,387 +899,568 @@
         🧪
     </button>
 
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="logo">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <span class="brand-name">Blync</span>
+                    <p>Seu assistente financeiro inteligente</p>
+                </div>
+                
+                <div class="footer-links">
+                    <div class="link-group">
+                        <h4>Produtos</h4>
+                        <a href="dashboard.html">Dashboard</a>
+                    </div>
+                    
+                    <div class="link-group">
+                        <h4>Institucional</h4>
+                        <a href="sobre.html">Sobre Nós</a>
+                    </div>
+                    
+                    <div class="link-group">
+                        <h4>Ajuda</h4>
+                        <a href="contato.html">Contato</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 Blync Tecnologia S.A. - CNPJ 17.123.456/7777-77</p>
+                <div class="footer-social">
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
     <script>
-        // Global chart variable
-        let monthlyChart = null;
+        // =============================================
+        // SISTEMA UNIFICADO DE DADOS - USANDO MESMA CHAVE DO HISTÓRICO
+        // =============================================
+        const BlyncDataManager = {
+            storageKeys: {
+                TRANSACTIONS: 'finsync_transactions', // MESMA CHAVE DO HISTÓRICO
+                BUDGETS: 'blync_budgets',
+                USER_DATA: 'blync_user_data',
+                LAST_SYNC: 'blync_last_sync'
+            },
 
-        // Theme Toggle
-        const themeToggle = document.getElementById('themeToggle');
-        themeToggle.addEventListener('click', () => {
-            document.body.dataset.theme = document.body.dataset.theme === 'dark' ? 'light' : 'dark';
-            themeToggle.innerHTML = document.body.dataset.theme === 'dark' 
-                ? '<i class="fas fa-sun"></i>' 
-                : '<i class="fas fa-moon"></i>';
-            
-            // Update chart colors when theme changes
-            setTimeout(updateChartColors, 100);
-        });
-
-        // User Menu
-        const userMenuBtn = document.getElementById('userMenuBtn');
-        const userDropdown = document.getElementById('userDropdown');
-
-        userMenuBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            userDropdown.style.display = userDropdown.style.display === 'block' ? 'none' : 'block';
-        });
-
-        // Close dropdown when clicking outside
-        document.addEventListener('click', () => {
-            userDropdown.style.display = 'none';
-        });
-
-        // Load user data
-        function loadUserData() {
-            try {
-                const user = JSON.parse(localStorage.getItem('blync_user') || '{}');
-                
-                // Update user name
-                document.getElementById('userName').textContent = user.name || 'Usuário';
-                document.getElementById('welcomeMessage').textContent = `Bem-vindo de volta, ${user.name || 'Usuário'}!`;
-                
-                // Load dashboard data
-                loadDashboardData();
-                
-            } catch (error) {
-                console.error('Erro ao carregar dados do usuário:', error);
-                // Redirect to login if no user data
-                if (!localStorage.getItem('blync_token')) {
-                    window.location.href = '/login.html';
-                }
-            }
-        }
-
-        // Load dashboard data
-        function loadDashboardData() {
-            // Simulate API call delay
-            setTimeout(() => {
-                // Update stats
-                document.getElementById('totalBalance').textContent = 'R$ 2.543,67';
-                document.getElementById('monthIncome').textContent = 'R$ 3.200,00';
-                document.getElementById('monthExpense').textContent = 'R$ 656,33';
-                document.getElementById('transactionsCount').textContent = '24';
-
-                // Load recent transactions
-                loadRecentTransactions();
-                
-                // Initialize chart
-                initializeChart();
-                
-            }, 1000);
-        }
-
-        // Initialize Chart with sample data
-        function initializeChart() {
-            const ctx = document.getElementById('monthlyChart').getContext('2d');
-            
-            // Sample data - in a real app, this would come from your API
-            const chartData = {
-                labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
-                datasets: [
-                    {
-                        label: 'Receitas',
-                        data: [3200, 2800, 3500, 4200, 3800, 4100, 3200, 4500, 3800, 4200, 3900, 4800],
-                        backgroundColor: '#10B981',
-                        borderColor: '#10B981',
-                        borderWidth: 2,
-                        fill: false
-                    },
-                    {
-                        label: 'Despesas',
-                        data: [2200, 2400, 2100, 2800, 2600, 2900, 2500, 3200, 2800, 3000, 2700, 3300],
-                        backgroundColor: '#EF4444',
-                        borderColor: '#EF4444',
-                        borderWidth: 2,
-                        fill: false
-                    }
-                ]
-            };
-
-            // Destroy existing chart if it exists
-            if (monthlyChart) {
-                monthlyChart.destroy();
-            }
-
-            monthlyChart = new Chart(ctx, {
-                type: 'bar',
-                data: chartData,
-                options: getChartOptions('bar')
-            });
-        }
-
-        // Update chart type
-        function updateChartType() {
-            const chartType = document.getElementById('chartType').value;
-            
-            if (monthlyChart) {
-                monthlyChart.destroy();
-            }
-
-            const ctx = document.getElementById('monthlyChart').getContext('2d');
-            
-            // Different data structure for pie chart
-            let chartData;
-
-            if (chartType === 'pie') {
-                chartData = {
-                    labels: ['Alimentação', 'Transporte', 'Moradia', 'Lazer', 'Saúde', 'Outros'],
-                    datasets: [{
-                        data: [25, 15, 30, 10, 12, 8],
-                        backgroundColor: [
-                            '#EF4444', '#F59E0B', '#10B981', '#3B82F6', '#8B5CF6', '#6B7280'
-                        ],
-                        borderWidth: 2,
-                        borderColor: getComputedStyle(document.body).getPropertyValue('--white')
-                    }]
-                };
-            } else {
-                // Bar or Line chart
-                chartData = {
-                    labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
-                    datasets: [
-                        {
-                            label: 'Receitas',
-                            data: [3200, 2800, 3500, 4200, 3800, 4100, 3200, 4500, 3800, 4200, 3900, 4800],
-                            backgroundColor: chartType === 'bar' ? '#10B981' : 'transparent',
-                            borderColor: '#10B981',
-                            borderWidth: 3,
-                            fill: chartType === 'line',
-                            tension: 0.4
-                        },
-                        {
-                            label: 'Despesas',
-                            data: [2200, 2400, 2100, 2800, 2600, 2900, 2500, 3200, 2800, 3000, 2700, 3300],
-                            backgroundColor: chartType === 'bar' ? '#EF4444' : 'transparent',
-                            borderColor: '#EF4444',
-                            borderWidth: 3,
-                            fill: chartType === 'line',
-                            tension: 0.4
-                        }
-                    ]
-                };
-            }
-
-            monthlyChart = new Chart(ctx, {
-                type: chartType,
-                data: chartData,
-                options: getChartOptions(chartType)
-            });
-        }
-
-        // Get chart options based on type
-        function getChartOptions(type) {
-            const isDarkTheme = document.body.dataset.theme === 'dark';
-            const textColor = isDarkTheme ? '#F9FAFB' : '#1F2937';
-            const gridColor = isDarkTheme ? '#374151' : '#E5E7EB';
-            
-            const baseOptions = {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'top',
-                        labels: {
-                            color: textColor,
-                            font: {
-                                family: 'Inter, sans-serif'
-                            }
-                        }
-                    },
-                    tooltip: {
-                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                        titleFont: {
-                            family: 'Inter, sans-serif'
-                        },
-                        bodyFont: {
-                            family: 'Inter, sans-serif'
-                        },
-                        callbacks: {
-                            label: function(context) {
-                                if (type === 'pie') {
-                                    return `${context.label}: ${context.parsed}%`;
-                                }
-                                return `${context.dataset.label}: R$ ${context.parsed.y.toLocaleString('pt-BR')}`;
-                            }
-                        }
-                    }
-                }
-            };
-
-            if (type === 'pie') {
-                return baseOptions;
-            }
-
-            return {
-                ...baseOptions,
-                scales: {
-                    x: {
-                        grid: {
-                            color: gridColor
-                        },
-                        ticks: {
-                            color: textColor
-                        }
-                    },
-                    y: {
-                        grid: {
-                            color: gridColor
-                        },
-                        ticks: {
-                            color: textColor,
-                            callback: function(value) {
-                                return 'R$ ' + value.toLocaleString('pt-BR');
-                            }
-                        },
-                        beginAtZero: true
-                    }
-                }
-            };
-        }
-
-        // Update chart colors when theme changes
-        function updateChartColors() {
-            if (monthlyChart) {
-                const chartType = document.getElementById('chartType').value;
-                monthlyChart.options = getChartOptions(chartType);
-                monthlyChart.update();
-            }
-        }
-
-        // Load recent transactions
-        function loadRecentTransactions() {
-            const transactions = [
-                { 
-                    id: 1, 
-                    description: 'Salário', 
-                    category: 'Receita', 
-                    date: '15/03/2024', 
-                    amount: 'R$ 3.000,00', 
+            // Dados padrão compatíveis com o histórico
+            defaultData: [
+                {
+                    id: 1,
                     type: 'income',
+                    description: 'Salário Mensal',
+                    amount: 3500.00,
+                    date: new Date().toISOString().split('T')[0],
+                    category: 'salario',
+                    paymentMethod: 'transferencia',
+                    notes: 'Salário referente ao mês atual',
+                    createdAt: new Date().toISOString(),
                     icon: 'fas fa-money-bill-wave'
                 },
-                { 
-                    id: 2, 
-                    description: 'Supermercado', 
-                    category: 'Alimentação', 
-                    date: '18/03/2024', 
-                    amount: 'R$ 256,33', 
+                {
+                    id: 2,
                     type: 'expense',
+                    description: 'Supermercado',
+                    amount: 256.33,
+                    date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+                    category: 'alimentacao',
+                    paymentMethod: 'debito',
+                    notes: 'Compra do mês',
+                    createdAt: new Date().toISOString(),
                     icon: 'fas fa-shopping-cart'
                 },
-                { 
-                    id: 3, 
-                    description: 'Internet', 
-                    category: 'Utilidades', 
-                    date: '20/03/2024', 
-                    amount: 'R$ 120,00', 
+                {
+                    id: 3,
                     type: 'expense',
+                    description: 'Internet',
+                    amount: 120.00,
+                    date: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+                    category: 'moradia',
+                    paymentMethod: 'debito',
+                    notes: 'Fatura mensal',
+                    createdAt: new Date().toISOString(),
                     icon: 'fas fa-wifi'
                 },
-                { 
-                    id: 4, 
-                    description: 'Freelance', 
-                    category: 'Receita', 
-                    date: '22/03/2024', 
-                    amount: 'R$ 200,00', 
+                {
+                    id: 4,
                     type: 'income',
+                    description: 'Freelance',
+                    amount: 800.00,
+                    date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+                    category: 'outros',
+                    paymentMethod: 'transferencia',
+                    notes: 'Projeto concluído',
+                    createdAt: new Date().toISOString(),
                     icon: 'fas fa-laptop-code'
-                },
-                { 
-                    id: 5, 
-                    description: 'Restaurante', 
-                    category: 'Alimentação', 
-                    date: '25/03/2024', 
-                    amount: 'R$ 80,00', 
-                    type: 'expense',
-                    icon: 'fas fa-utensils'
                 }
-            ];
+            ],
 
+            initializeData() {
+                // Verifica se já existem dados do histórico
+                const existingTransactions = this.getTransactions();
+                if (existingTransactions.length === 0) {
+                    // Se não existem dados, inicializa com dados padrão
+                    localStorage.setItem(this.storageKeys.TRANSACTIONS, JSON.stringify(this.defaultData));
+                    console.log('Dados padrão inicializados');
+                }
+                
+                // Inicializa orçamentos se não existirem
+                if (!localStorage.getItem(this.storageKeys.BUDGETS)) {
+                    const defaultBudgets = [
+                        { category: 'Alimentação', spent: 256.33, limit: 1000, color: 'food' },
+                        { category: 'Transporte', spent: 0, limit: 500, color: 'transport' },
+                        { category: 'Entretenimento', spent: 0, limit: 500, color: 'entertainment' },
+                        { category: 'Compras', spent: 0, limit: 500, color: 'shopping' }
+                    ];
+                    localStorage.setItem(this.storageKeys.BUDGETS, JSON.stringify(defaultBudgets));
+                }
+                
+                if (!localStorage.getItem(this.storageKeys.LAST_SYNC)) {
+                    localStorage.setItem(this.storageKeys.LAST_SYNC, new Date().toISOString());
+                }
+            },
+
+            getTransactions() {
+                const transactions = localStorage.getItem(this.storageKeys.TRANSACTIONS);
+                return transactions ? JSON.parse(transactions) : [];
+            },
+
+            getBudgets() {
+                const budgets = localStorage.getItem(this.storageKeys.BUDGETS);
+                return budgets ? JSON.parse(budgets) : [];
+            },
+
+            calculateStats() {
+                const transactions = this.getTransactions();
+                const currentDate = new Date();
+                const currentMonth = currentDate.getMonth();
+                const currentYear = currentDate.getFullYear();
+
+                let totalIncome = 0;
+                let totalExpense = 0;
+                let monthIncome = 0;
+                let monthExpense = 0;
+
+                transactions.forEach(transaction => {
+                    const transactionDate = new Date(transaction.date);
+                    
+                    if (transaction.type === 'income') {
+                        totalIncome += transaction.amount;
+                        if (transactionDate.getMonth() === currentMonth && transactionDate.getFullYear() === currentYear) {
+                            monthIncome += transaction.amount;
+                        }
+                    } else {
+                        totalExpense += transaction.amount;
+                        if (transactionDate.getMonth() === currentMonth && transactionDate.getFullYear() === currentYear) {
+                            monthExpense += transaction.amount;
+                        }
+                    }
+                });
+
+                return {
+                    totalBalance: totalIncome - totalExpense,
+                    monthIncome: monthIncome,
+                    monthExpense: monthExpense,
+                    transactionsCount: transactions.length,
+                    monthTransactions: transactions.filter(t => {
+                        const date = new Date(t.date);
+                        return date.getMonth() === currentMonth && date.getFullYear() === currentYear;
+                    }).length
+                };
+            },
+
+            updateLastSync() {
+                localStorage.setItem(this.storageKeys.LAST_SYNC, new Date().toISOString());
+            },
+
+            getLastSync() {
+                return localStorage.getItem(this.storageKeys.LAST_SYNC);
+            },
+
+            // Função para obter ícone baseado na categoria (compatível com histórico)
+            getCategoryIcon(category) {
+                const icons = {
+                    'salario': 'fas fa-money-bill-wave',
+                    'alimentacao': 'fas fa-utensils',
+                    'transporte': 'fas fa-bus',
+                    'moradia': 'fas fa-home',
+                    'saude': 'fas fa-heartbeat',
+                    'educacao': 'fas fa-graduation-cap',
+                    'lazer': 'fas fa-film',
+                    'compras': 'fas fa-shopping-bag',
+                    'investimentos': 'fas fa-chart-line',
+                    'outros': 'fas fa-circle'
+                };
+                return icons[category] || 'fas fa-circle';
+            },
+
+            // Função para obter nome da categoria (compatível com histórico)
+            getCategoryName(category) {
+                const categories = {
+                    'salario': 'Salário',
+                    'alimentacao': 'Alimentação',
+                    'transporte': 'Transporte',
+                    'moradia': 'Moradia',
+                    'saude': 'Saúde',
+                    'educacao': 'Educação',
+                    'lazer': 'Lazer',
+                    'compras': 'Compras',
+                    'investimentos': 'Investimentos',
+                    'outros': 'Outros'
+                };
+                return categories[category] || category;
+            }
+        };
+
+        // =============================================
+        // VARIÁVEIS GLOBAIS
+        // =============================================
+        let monthlyChart = null;
+
+        // =============================================
+        // INICIALIZAÇÃO
+        // =============================================
+        document.addEventListener('DOMContentLoaded', function() {
+            BlyncDataManager.initializeData();
+            initializeDashboard();
+            setupEventListeners();
+        });
+
+        function initializeDashboard() {
+            loadUserData();
+            loadDashboardData();
+        }
+
+        function setupEventListeners() {
+            // Menu mobile
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const navMenu = document.getElementById('navMenu');
+
+            if (mobileMenuBtn && navMenu) {
+                mobileMenuBtn.addEventListener('click', () => {
+                    navMenu.classList.toggle('active');
+                    const icon = mobileMenuBtn.querySelector('i');
+                    if (navMenu.classList.contains('active')) {
+                        icon.className = 'fas fa-times';
+                    } else {
+                        icon.className = 'fas fa-bars';
+                    }
+                });
+            }
+
+            // Toggle theme
+            const themeToggle = document.getElementById('themeToggle');
+            if (themeToggle) {
+                themeToggle.addEventListener('click', toggleTheme);
+            }
+
+            // User dropdown
+            const userMenuBtn = document.getElementById('userMenuBtn');
+            const userDropdown = document.getElementById('userDropdown');
+            
+            if (userMenuBtn && userDropdown) {
+                userMenuBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    userDropdown.style.display = userDropdown.style.display === 'none' ? 'block' : 'none';
+                });
+
+                // Fechar dropdown ao clicar fora
+                document.addEventListener('click', () => {
+                    userDropdown.style.display = 'none';
+                });
+            }
+        }
+
+        // =============================================
+        // FUNÇÕES DO DASHBOARD
+        // =============================================
+        function loadUserData() {
+            const userName = localStorage.getItem('userName') || 'Usuário';
+            document.getElementById('userName').textContent = userName;
+            
+            const welcomeMessages = [
+                `Bem-vindo de volta, ${userName}!`,
+                `Olá, ${userName}! Como estão suas finanças?`,
+                `${userName}, seu controle financeiro está em dia!`,
+                `Bom te ver, ${userName}!`
+            ];
+            
+            const randomMessage = welcomeMessages[Math.floor(Math.random() * welcomeMessages.length)];
+            document.getElementById('welcomeMessage').textContent = randomMessage;
+        }
+
+        function loadDashboardData() {
+            const stats = BlyncDataManager.calculateStats();
+            
+            // Atualizar estatísticas
+            document.getElementById('totalBalance').textContent = formatCurrency(stats.totalBalance);
+            document.getElementById('monthIncome').textContent = formatCurrency(stats.monthIncome);
+            document.getElementById('monthExpense').textContent = formatCurrency(stats.monthExpense);
+            document.getElementById('transactionsCount').textContent = stats.transactionsCount;
+            
+            // Atualizar mês atual
+            const now = new Date();
+            const monthNames = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+                'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+            document.getElementById('currentMonth').textContent = monthNames[now.getMonth()];
+            document.getElementById('currentMonthExpense').textContent = monthNames[now.getMonth()];
+            
+            // Carregar transações recentes
+            loadRecentTransactions();
+            
+            // Carregar gráfico
+            initializeChart();
+            
+            // Carregar orçamentos
+            loadBudgets();
+        }
+
+        function loadRecentTransactions() {
+            const transactions = BlyncDataManager.getTransactions()
+                .sort((a, b) => new Date(b.date) - new Date(a.date))
+                .slice(0, 5);
+            
             const container = document.getElementById('recentTransactions');
+            
+            if (transactions.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">
+                            <i class="fas fa-receipt"></i>
+                        </div>
+                        <h4 class="empty-title">Nenhuma transação</h4>
+                        <p class="empty-description">Adicione sua primeira transação para começar</p>
+                        <a href="/novatransacao.html" class="btn btn-primary">Nova Transação</a>
+                    </div>
+                `;
+                return;
+            }
+            
             container.innerHTML = transactions.map(transaction => `
                 <div class="transaction-item">
                     <div class="transaction-info">
                         <div class="transaction-icon ${transaction.type}">
-                            <i class="${transaction.icon}"></i>
+                            <i class="${transaction.icon || BlyncDataManager.getCategoryIcon(transaction.category)}"></i>
                         </div>
                         <div class="transaction-details">
                             <h4>${transaction.description}</h4>
-                            <p>${transaction.category} • ${transaction.date}</p>
+                            <p>${BlyncDataManager.getCategoryName(transaction.category)} • ${formatDate(transaction.date)}</p>
                         </div>
                     </div>
                     <div class="transaction-amount ${transaction.type}">
-                        ${transaction.amount}
+                        ${transaction.type === 'income' ? '+' : '-'} ${formatCurrency(transaction.amount)}
                     </div>
                 </div>
             `).join('');
         }
 
-        // 🧪 FUNÇÕES PARA CONTROLES DE DESENVOLVIMENTO
+        function initializeChart() {
+            const ctx = document.getElementById('monthlyChart').getContext('2d');
+            const stats = BlyncDataManager.calculateStats();
+            
+            monthlyChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Receitas', 'Despesas', 'Saldo'],
+                    datasets: [{
+                        label: 'Valores do Mês',
+                        data: [stats.monthIncome, stats.monthExpense, stats.totalBalance],
+                        backgroundColor: [
+                            'rgba(16, 185, 129, 0.8)',
+                            'rgba(239, 68, 68, 0.8)',
+                            'rgba(0, 102, 255, 0.8)'
+                        ],
+                        borderColor: [
+                            'rgb(16, 185, 129)',
+                            'rgb(239, 68, 68)',
+                            'rgb(0, 102, 255)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return 'R$ ' + value.toLocaleString('pt-BR');
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function loadBudgets() {
+            const budgets = BlyncDataManager.getBudgets();
+            const container = document.getElementById('budgetContainer');
+            
+            if (budgets.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">
+                            <i class="fas fa-chart-pie"></i>
+                        </div>
+                        <h4 class="empty-title">Nenhum orçamento</h4>
+                        <p class="empty-description">Configure seus orçamentos mensais</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = budgets.map(budget => {
+                const percentage = (budget.spent / budget.limit) * 100;
+                return `
+                    <div class="progress-item">
+                        <div class="progress-header">
+                            <span>${budget.category}</span>
+                            <span>${formatCurrency(budget.spent)} / ${formatCurrency(budget.limit)}</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill ${budget.color}" style="width: ${Math.min(percentage, 100)}%"></div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // =============================================
+        // FUNÇÕES UTILITÁRIAS
+        // =============================================
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            }).format(value);
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('pt-BR');
+        }
+
+        function toggleTheme() {
+            const currentTheme = document.body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.body.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            const icon = document.querySelector('#themeToggle i');
+            icon.className = newTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        }
+
+        // =============================================
+        // FUNÇÕES DE CONTROLE
+        // =============================================
+        function syncData() {
+            // Simular sincronização
+            const btn = event.target.closest('.dashboard-btn');
+            const originalHtml = btn.innerHTML;
+            
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                BlyncDataManager.updateLastSync();
+                loadDashboardData();
+                btn.innerHTML = originalHtml;
+                btn.disabled = false;
+                
+                // Mostrar feedback
+                showNotification('Dados sincronizados com sucesso!', 'success');
+            }, 1000);
+        }
+
+        function showDataManager() {
+            const modal = document.getElementById('dataManagerModal');
+            const transactions = BlyncDataManager.getTransactions();
+            const lastSync = BlyncDataManager.getLastSync();
+            
+            document.getElementById('modalTransactionCount').textContent = transactions.length;
+            document.getElementById('lastSyncTime').textContent = lastSync ? 
+                new Date(lastSync).toLocaleString('pt-BR') : 'Nunca';
+            
+            modal.style.display = 'block';
+        }
+
+        function closeDataManager() {
+            document.getElementById('dataManagerModal').style.display = 'none';
+        }
+
+        function forceSync() {
+            syncData();
+            closeDataManager();
+        }
+
         function toggleDevControls() {
             const devControls = document.getElementById('devControls');
             devControls.style.display = devControls.style.display === 'none' ? 'block' : 'none';
         }
 
         function updateDashboardData() {
-            // Atualizar stats
-            document.getElementById('totalBalance').textContent = 'R$ ' + document.getElementById('devBalance').value;
-            document.getElementById('monthIncome').textContent = 'R$ ' + document.getElementById('devIncome').value;
-            document.getElementById('monthExpense').textContent = 'R$ ' + document.getElementById('devExpense').value;
-            document.getElementById('transactionsCount').textContent = document.getElementById('devTransactions').value;
-            
-            // Recriar gráfico com novos dados
-            if (monthlyChart) {
-                monthlyChart.destroy();
-            }
-            initializeChart();
-            
-            alert('Dashboard atualizado com sucesso!');
+            // Esta função seria usada pelos controles de desenvolvimento
+            // Para fins de demonstração, vamos recarregar os dados
+            loadDashboardData();
+            showNotification('Dashboard atualizado!', 'success');
         }
 
-        // Logout function
+        function showNotification(message, type = 'info') {
+            // Implementação básica de notificação
+            console.log(`${type.toUpperCase()}: ${message}`);
+            // Aqui você pode implementar um sistema de notificação mais elaborado
+        }
+
         function logout() {
-            localStorage.removeItem('blync_token');
-            localStorage.removeItem('blync_user');
-            localStorage.removeItem('blync_remember');
-            sessionStorage.removeItem('blync_token');
-            sessionStorage.removeItem('blync_user');
-            window.location.href = '/login.html';
+            if (confirm('Tem certeza que deseja sair?')) {
+                localStorage.removeItem('userToken');
+                window.location.href = '/login.html';
+            }
+        }
+
+        // Fechar modal ao clicar fora
+        window.onclick = function(event) {
+            const modal = document.getElementById('dataManagerModal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        // Carregar tema salvo
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.body.setAttribute('data-theme', savedTheme);
+        const themeIcon = document.querySelector('#themeToggle i');
+        if (themeIcon) {
+            themeIcon.className = savedTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
         }
 
         // Check authentication
         function checkAuth() {
-            const token = localStorage.getItem('blync_token') || sessionStorage.getItem('blync_token');
+            const token = localStorage.getItem('blync_token');
             if (!token) {
                 window.location.href = '/login.html';
                 return false;
             }
             return true;
         }
-
-                // Initialize dashboard
-        document.addEventListener('DOMContentLoaded', function() {
-            if (checkAuth()) {
-                loadUserData();
-            }
-            
-            // 🧪 CONTROLES SEMPRE VISÍVEIS (PARA TESTE)
-            document.getElementById('devControls').style.display = 'block';
-            console.log('Controles de desenvolvimento ativados');
-        });
-
-        // Add some interactivity to stats cards
-        document.addEventListener('DOMContentLoaded', function() {
-            const statCards = document.querySelectorAll('.stat-card');
-            statCards.forEach(card => {
-                card.addEventListener('click', function() {
-                    this.style.transform = 'translateY(-4px) scale(1.02)';
-                    setTimeout(() => {
-                        this.style.transform = 'translateY(-4px) scale(1)';
-                    }, 150);
-                });
-            });
-        });
     </script>
 </body>
 </html>

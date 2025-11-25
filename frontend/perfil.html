@@ -219,9 +219,16 @@
                 </tr>
             `).join('');
         }
-
-        // Carregar dados quando a página carregar
-        document.addEventListener('DOMContentLoaded', loadUserData);
+        
+        // Check authentication
+        function checkAuth() {
+            const token = localStorage.getItem('blync_token');
+            if (!token) {
+                window.location.href = '/login.html';
+                return false;
+            }
+            return true;
+        }
     </script>
 </body>
 </html>

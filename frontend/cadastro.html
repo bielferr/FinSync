@@ -8,6 +8,60 @@
     <link rel="stylesheet" href="/css/auth.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Estilos CSS para garantir funcionamento */
+        .auth-alert {
+            position: fixed;
+            top: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10000;
+            min-width: 300px;
+            max-width: 500px;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        .auth-alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            border-radius: 8px;
+        }
+
+        .auth-alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            border-radius: 8px;
+        }
+
+        .alert-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 20px;
+        }
+
+        .alert-close {
+            background: none;
+            border: none;
+            color: inherit;
+            cursor: pointer;
+            margin-left: auto;
+            opacity: 0.7;
+        }
+    </style>
 </head>
 <body>
     <!-- Navigation -->
@@ -23,14 +77,13 @@
             </div>
             
             <div class="nav-menu">
-                <a href="/about" class="nav-link">Sobre</a>
-                <a href="/contact" class="nav-link">Contato</a>
-                <a href="/chat" class="nav-link">Assistente</a>
+                <a href="sobre.html" class="nav-link">Sobre</a>
+                <a href="contato.html" class="nav-link">Contato</a>
             </div>
             
             <div class="nav-actions">
-                <a href="/login" class="btn btn-outline">Entrar</a>
-                <a href="/register" class="btn btn-primary active">Abrir Conta</a>
+                <a href="login.html" class="btn btn-outline">Entrar</a>
+                <a href="cadastro.html" class="btn btn-primary active">Abrir Conta</a>
             </div>
         </div>
     </nav>
@@ -48,25 +101,25 @@
                     <form class="auth-form" id="registerForm">
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="firstName">Nome *</label>
-                                <input type="text" id="firstName" name="firstName" required>
+                                <label for="firstName" class="form-label">Nome *</label>
+                                <input type="text" id="firstName" name="firstName" class="form-input" required>
                             </div>
                             
                             <div class="form-group">
-                                <label for="lastName">Sobrenome</label>
-                                <input type="text" id="lastName" name="lastName">
+                                <label for="lastName" class="form-label">Sobrenome</label>
+                                <input type="text" id="lastName" name="lastName" class="form-input">
                             </div>
                         </div>
                         
                         <div class="form-group">
-                            <label for="email">E-mail *</label>
-                            <input type="email" id="email" name="email" required>
+                            <label for="email" class="form-label">E-mail *</label>
+                            <input type="email" id="email" name="email" class="form-input" required>
                         </div>
                         
                         <div class="form-group">
-                            <label for="password">Senha *</label>
+                            <label for="password" class="form-label">Senha *</label>
                             <div class="password-input">
-                                <input type="password" id="password" name="password" required minlength="6">
+                                <input type="password" id="password" name="password" class="form-input" required minlength="6">
                                 <button type="button" class="password-toggle" onclick="togglePassword('password')">
                                     <i class="fas fa-eye"></i>
                                 </button>
@@ -78,9 +131,9 @@
                         </div>
                         
                         <div class="form-group">
-                            <label for="confirmPassword">Confirmar Senha *</label>
+                            <label for="confirmPassword" class="form-label">Confirmar Senha *</label>
                             <div class="password-input">
-                                <input type="password" id="confirmPassword" name="confirmPassword" required>
+                                <input type="password" id="confirmPassword" name="confirmPassword" class="form-input" required>
                                 <button type="button" class="password-toggle" onclick="togglePassword('confirmPassword')">
                                     <i class="fas fa-eye"></i>
                                 </button>
@@ -123,7 +176,7 @@
                     </div>
                     
                     <div class="auth-footer">
-                        <p>Já tem uma conta? <a href="/login">Faça login aqui</a></p>
+                        <p>Já tem uma conta? <a href="login.html">Faça login aqui</a></p>
                     </div>
                 </div>
                 
@@ -137,7 +190,7 @@
                                 <p>Processo 100% digital e sem burocracia</p>
                             </div>
                         </div>
-                        
+                    
                         <div class="feature">
                             <i class="fas fa-piggy-bank"></i>
                             <div>
@@ -145,7 +198,7 @@
                                 <p>Sem custos de manutenção, TED ou boletos</p>
                             </div>
                         </div>
-                        
+                    
                         <div class="feature">
                             <i class="fas fa-chart-line"></i>
                             <div>
@@ -153,7 +206,7 @@
                                 <p>Comece a investir a partir de R$ 1,00</p>
                             </div>
                         </div>
-                        
+                    
                         <div class="feature">
                             <i class="fas fa-shield-alt"></i>
                             <div>
@@ -176,38 +229,24 @@
                         <i class="fas fa-comments"></i>
                     </div>
                     <span class="brand-name">Blync</span>
-                    <p>Seu banco digital inteligente</p>
+                    <p>Seu assistente financeiro inteligente</p>
                 </div>
                 
                 <div class="footer-links">
                     <div class="link-group">
-                        <h4>Produtos</h4>
-                        <a href="#">Conta Digital</a>
-                        <a href="#">Cartão de Crédito</a>
-                        <a href="#">Investimentos</a>
-                        <a href="#">Empréstimos</a>
-                    </div>
-                    
-                    <div class="link-group">
                         <h4>Institucional</h4>
-                        <a href="/">Início</a>
-                        <a href="/about">Sobre Nós</a>
-                        <a href="#">Carreiras</a>
-                        <a href="#">Blog</a>
+                        <a href="sobre.html">Sobre Nós</a>
                     </div>
                     
                     <div class="link-group">
                         <h4>Ajuda</h4>
-                        <a href="/contact">Contato</a>
-                        <a href="#">Central de Ajuda</a>
-                        <a href="#">Segurança</a>
-                        <a href="#">Tarifas</a>
+                        <a href="contato.html">Contato</a>
                     </div>
                 </div>
             </div>
             
             <div class="footer-bottom">
-                <p>&copy; 2024 Blync Tecnologia S.A. - CNPJ 00.000.000/0000-00</p>
+                <p>&copy; 2025 Blync Tecnologia S.A. - CNPJ 17.123.456/7777-77</p>
                 <div class="footer-social">
                     <a href="#"><i class="fab fa-instagram"></i></a>
                     <a href="#"><i class="fab fa-twitter"></i></a>
@@ -218,7 +257,6 @@
         </div>
     </footer>
 
-    <script src="/js/auth.js"></script>
     <script>
         // Função para mostrar/ocultar senha
         function togglePassword(fieldId) {
@@ -240,10 +278,12 @@
         }
 
         // Validação em tempo real da senha
-        document.getElementById('password').addEventListener('input', function(e) {
+        document.getElementById('password')?.addEventListener('input', function(e) {
             const password = e.target.value;
             const strengthBar = document.querySelector('.strength-bar');
             const strengthText = document.querySelector('.strength-text');
+            
+            if (!strengthBar || !strengthText) return;
             
             if (password.length >= 8) {
                 strengthBar.style.background = '#38a169';
@@ -260,12 +300,14 @@
         });
 
         // Validação do formulário
-        document.getElementById('registerForm').addEventListener('submit', async function(e) {
+        document.getElementById('registerForm')?.addEventListener('submit', async function(e) {
             e.preventDefault();
             
             // Coletar dados do formulário
             const formData = new FormData(this);
             const data = Object.fromEntries(formData);
+            
+            console.log('Dados do formulário:', data);
             
             // Validações frontend
             if (!data.firstName || !data.email || !data.password || !data.confirmPassword) {
@@ -292,36 +334,44 @@
             await registerUser(data);
         });
 
-        // Função para enviar dados para o backend
+        // Função para enviar dados para o backend - CORRIGIDA
         async function registerUser(userData) {
             const submitBtn = document.getElementById('submitBtn');
+            if (!submitBtn) return;
             
             // Mostrar loading
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Criando conta...';
             
             try {
+                // CORREÇÃO: Estrutura de dados mais robusta
+                const requestData = {
+                    name: `${userData.firstName} ${userData.lastName || ''}`.trim(),
+                    email: userData.email,
+                    password: userData.password,
+                    newsletter: userData.newsletter === 'on'
+                };
+
+                console.log('Enviando dados:', requestData);
+
                 const response = await fetch('http://localhost:3333/api/auth/register', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({
-                        name: `${userData.firstName} ${userData.lastName || ''}`.trim(),
-                        email: userData.email,
-                        password: userData.password
-                    })
+                    body: JSON.stringify(requestData)
                 });
+
+                console.log('Status da resposta:', response.status);
                 
                 const result = await response.json();
-                
-                if (result.success) {
+                console.log('Resposta do servidor:', result);
+
+                if (response.ok && result.success) {
                     showAlert('Conta criada com sucesso! Redirecionando...', 'success');
                     
                     // Salvar token e dados do usuário
-                    if (window.authManager) {
-                        window.authManager.setAuthData(result.data.token, result.data.user);
-                    } else {
+                    if (result.data && result.data.token) {
                         localStorage.setItem('blync_token', result.data.token);
                         localStorage.setItem('blync_user', JSON.stringify(result.data.user));
                     }
@@ -332,12 +382,14 @@
                     }, 2000);
                     
                 } else {
-                    showAlert(result.error || 'Erro ao criar conta', 'error');
+                    // CORREÇÃO: Mensagem de erro mais específica
+                    const errorMessage = result.error || result.message || 'Erro ao criar conta';
+                    showAlert(errorMessage, 'error');
                 }
                 
             } catch (error) {
                 console.error('Erro no cadastro:', error);
-                showAlert('Erro de conexão. Tente novamente.', 'error');
+                showAlert('Erro de conexão. Verifique se o servidor está rodando.', 'error');
             } finally {
                 // Restaurar botão
                 submitBtn.disabled = false;
@@ -345,7 +397,7 @@
             }
         }
 
-        // Função para mostrar alertas
+        // Função para mostrar alertas - CORRIGIDA
         function showAlert(message, type = 'info') {
             // Remover alertas anteriores
             const existingAlert = document.querySelector('.auth-alert');
@@ -367,10 +419,7 @@
             `;
             
             // Adicionar ao documento
-            const mainContent = document.querySelector('.auth-card');
-            if (mainContent) {
-                mainContent.parentNode.insertBefore(alert, mainContent);
-            }
+            document.body.appendChild(alert);
             
             // Auto-remover após 5 segundos
             setTimeout(() => {
@@ -389,6 +438,34 @@
             };
             return icons[type] || 'info-circle';
         }
+
+        // CORREÇÃO: Adicionar validação de email em tempo real
+        document.getElementById('email')?.addEventListener('blur', function(e) {
+            const email = e.target.value;
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            
+            if (email && !emailRegex.test(email)) {
+                showAlert('Por favor, insira um email válido', 'error');
+            }
+        });
+
+        // CORREÇÃO: Prevenir envio duplo do formulário
+        let isSubmitting = false;
+        document.getElementById('registerForm')?.addEventListener('submit', function(e) {
+            if (isSubmitting) {
+                e.preventDefault();
+                return;
+            }
+            isSubmitting = true;
+            
+            // Reset após 3 segundos caso haja erro
+            setTimeout(() => {
+                isSubmitting = false;
+            }, 3000);
+        });
     </script>
+
+    <!-- Font Awesome para ícones -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
 </body>
 </html>
