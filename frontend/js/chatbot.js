@@ -7,7 +7,7 @@ class ChatbotUI {
         this.typingIndicator = document.getElementById('typingIndicator');
         
         this.userId = 'user_' + Math.random().toString(36).substr(2, 9);
-        this.baseURL = 'http://localhost:3333/api/chatbot';
+        this.baseURL = 'https://blync.onrender.com/api/chatbot';
         
         this.init();
     }

@@ -1,5 +1,5 @@
 class ApiClient {
-    constructor(baseURL = 'http://localhost:3333/api') {
+    constructor(baseURL = 'https://blync.onrender.com/api/auth/login') {
         this.baseURL = baseURL;
     }
 

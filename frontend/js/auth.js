@@ -1,6 +1,6 @@
 class AuthManager {
     constructor() {
-        this.baseURL = 'http://localhost:3333/api/auth';
+        this.baseURL = 'https://blync.onrender.com/api/auth';
         this.tokenKey = 'blync_token';
         this.userKey = 'blync_user';
         
