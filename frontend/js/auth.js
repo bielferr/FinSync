@@ -38,8 +38,8 @@ class AuthManager {
     async handleLogin(e) {
         e.preventDefault();
         
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
+        const email = document.getElementById('email')?.value;
+        const password = document.getElementById('password')?.value;
         const submitBtn = e.target.querySelector('button[type="submit"]');
         
         // Validar campos
@@ -63,9 +63,15 @@ class AuthManager {
                 })
             });
             
+            // Verificar se a resposta é JSON válido
+            const contentType = response.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/json')) {
+                throw new Error('Resposta do servidor não é JSON válido');
+            }
+            
             const data = await response.json();
             
-            if (data.success) {
+            if (response.ok && data.success) {
                 // Salvar token e dados do usuário
                 this.setAuthData(data.data.token, data.data.user);
                 
@@ -77,7 +83,7 @@ class AuthManager {
                 }, 1000);
                 
             } else {
-                this.showAlert(data.error || 'Erro no login', 'error');
+                this.showAlert(data.error || data.message || 'Erro no login', 'error');
             }
             
         } catch (error) {
@@ -108,6 +114,11 @@ class AuthManager {
             return;
         }
         
+        if (data.password.length < 6) {
+            this.showAlert('A senha deve ter pelo menos 6 caracteres', 'error');
+            return;
+        }
+        
         // Validar termos
         if (!data.terms) {
             this.showAlert('Você deve aceitar os termos de uso', 'error');
@@ -130,9 +141,15 @@ class AuthManager {
                 })
             });
             
+            // Verificar se a resposta é JSON válido
+            const contentType = response.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/json')) {
+                throw new Error('Resposta do servidor não é JSON válido');
+            }
+            
             const result = await response.json();
             
-            if (result.success) {
+            if (response.ok && result.success) {
                 // Salvar token e dados do usuário
                 this.setAuthData(result.data.token, result.data.user);
                 
@@ -144,7 +161,7 @@ class AuthManager {
                 }, 1000);
                 
             } else {
-                this.showAlert(result.error || 'Erro no cadastro', 'error');
+                this.showAlert(result.error || result.message || 'Erro no cadastro', 'error');
             }
             
         } catch (error) {
@@ -202,53 +219,110 @@ class AuthManager {
         }
     }
     
+    // NOVO MÉTODO: Verificar se usuário é admin
+    isUserAdmin() {
+        const { user } = this.getAuthData();
+        return user && user.role === 'admin';
+    }
+    
+    // NOVO MÉTODO: Obter URL do perfil baseado na role
+    getProfileUrl() {
+        return this.isUserAdmin() ? 'perfiladm.html' : 'perfil.html';
+    }
+    
     updateUIForAuthState(isAuthenticated, user = null) {
-        // Atualizar navbar
-        const navActions = document.querySelector('.nav-actions');
-        if (navActions) {
-            if (isAuthenticated && user) {
-                navActions.innerHTML = `
-                    <div class="user-menu">
-                        <span>Olá, ${user.name.split(' ')[0]}</span>
-                        <div class="dropdown">
-                            <button class="btn btn-outline" id="userDropdown">
+    // Atualizar navbar de ações (botões de login/cadastro)
+    const navActions = document.querySelector('.nav-actions');
+    if (navActions) {
+        if (isAuthenticated && user) {
+            const profileUrl = this.getProfileUrl();
+            const firstName = user.name ? user.name.split(' ')[0] : 'Usuário';
+            
+            navActions.innerHTML = `
+                <div class="user-menu">
+                    <span class="user-greeting">Olá, ${firstName}</span>
+                    <div class="dropdown">
+                        <button class="btn btn-outline" id="userDropdown">
+                            <i class="fas fa-user"></i>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="dropdown-content">
+                            <a href="${profileUrl}" class="profile-link">
                                 <i class="fas fa-user"></i>
-                            </button>
-                            <div class="dropdown-content">
-                                <a href="/profile">Meu Perfil</a>
-                                <a href="#" id="logoutBtn">Sair</a>
-                            </div>
+                                ${this.isUserAdmin() ? 'Painel Admin' : 'Meu Perfil'}
+                            </a>
+                            <a href="#" id="logoutBtn" class="logout-link">
+                                <i class="fas fa-sign-out-alt"></i>
+                                Sair
+                            </a>
                         </div>
                     </div>
-                `;
-                
-                // Re-adicionar event listener para logout
-                setTimeout(() => {
-                    const logoutBtn = document.getElementById('logoutBtn');
-                    if (logoutBtn) {
-                        logoutBtn.addEventListener('click', (e) => {
-                            e.preventDefault();
-                            this.handleLogout();
-                        });
-                    }
-                }, 100);
-            } else {
-                navActions.innerHTML = `
-                    <a href="/login" class="btn btn-outline">Entrar</a>
-                    <a href="/register" class="btn btn-primary">Abrir Conta</a>
-                `;
-            }
-        }
-        
-        // Redirecionar se tentar acessar login/registro já logado
-        if (isAuthenticated && (window.location.pathname === '/login' || window.location.pathname === '/register')) {
+                </div>
+            `;
+            
+            // Re-adicionar event listeners
             setTimeout(() => {
-                window.location.href = '/';
+                const logoutBtn = document.getElementById('logoutBtn');
+                if (logoutBtn) {
+                    logoutBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        this.handleLogout();
+                    });
+                }
+                
+                // Adicionar toggle para dropdown
+                const userDropdown = document.getElementById('userDropdown');
+                const dropdownContent = userDropdown?.nextElementSibling;
+                
+                if (userDropdown && dropdownContent) {
+                    userDropdown.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        dropdownContent.style.display = 
+                            dropdownContent.style.display === 'block' ? 'none' : 'block';
+                    });
+                    
+                    // Fechar dropdown ao clicar fora
+                    document.addEventListener('click', () => {
+                        dropdownContent.style.display = 'none';
+                    });
+                }
             }, 100);
+        } else {
+            navActions.innerHTML = `
+                <a href="login.html" class="btn btn-outline">Entrar</a>
+                <a href="cadastro.html" class="btn btn-primary">Abrir Conta</a>
+            `;
         }
     }
     
+    // NOVO: Atualizar menu de navegação
+    this.updateNavigationForAuthState(isAuthenticated);
+    
+    // Redirecionar se tentar acessar login/registro já logado
+    if (isAuthenticated && 
+        (window.location.pathname.includes('/login') || 
+         window.location.pathname.includes('/cadastro') ||
+         window.location.pathname === '/login.html' ||
+         window.location.pathname === '/cadastro.html')) {
+        setTimeout(() => {
+            window.location.href = '/';
+        }, 100);
+    }
+    
+    // Proteger rotas administrativas
+    if (!this.isUserAdmin() && 
+        (window.location.pathname.includes('admin') || 
+         window.location.pathname.includes('perfiladm'))) {
+        this.showAlert('Acesso não autorizado', 'error');
+        setTimeout(() => {
+            window.location.href = this.getProfileUrl();
+        }, 2000);
+    }
+}
+    
     setButtonLoading(button, isLoading) {
+        if (!button) return;
+        
         if (isLoading) {
             button.disabled = true;
             button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processando...';
@@ -258,6 +332,8 @@ class AuthManager {
                 button.innerHTML = '<i class="fas fa-sign-in-alt"></i> Entrar na Conta';
             } else if (button.closest('#registerForm')) {
                 button.innerHTML = '<i class="fas fa-user-plus"></i> Criar Minha Conta';
+            } else {
+                button.innerHTML = button.dataset.originalText || 'Concluir';
             }
         }
     }
@@ -283,9 +359,15 @@ class AuthManager {
         `;
         
         // Adicionar ao documento
-        const mainContent = document.querySelector('.auth-card') || document.querySelector('.hero') || document.body;
+        const mainContent = document.querySelector('.auth-card') || 
+                           document.querySelector('.hero') || 
+                           document.querySelector('main') || 
+                           document.body;
+        
         if (mainContent) {
             mainContent.parentNode.insertBefore(alert, mainContent);
+        } else {
+            document.body.appendChild(alert);
         }
         
         // Auto-remover após 5 segundos
@@ -324,9 +406,194 @@ class AuthManager {
         
         return fetch(url, { ...defaultOptions, ...options });
     }
+    
+    // NOVO MÉTODO: Forçar verificação de autenticação em páginas protegidas
+    requireAuth(redirectUrl = 'login.html') {
+        if (!this.isAuthenticated()) {
+            this.showAlert('Você precisa estar logado para acessar esta página', 'error');
+            setTimeout(() => {
+                window.location.href = redirectUrl;
+            }, 2000);
+            return false;
+        }
+        return true;
+    }
+    
+    // NOVO MÉTODO: Forçar verificação de admin
+    requireAdmin(redirectUrl = 'perfil.html') {
+        if (!this.isAuthenticated()) {
+            this.showAlert('Você precisa estar logado para acessar esta página', 'error');
+            setTimeout(() => {
+                window.location.href = 'login.html';
+            }, 2000);
+            return false;
+        }
+        
+        if (!this.isUserAdmin()) {
+            this.showAlert('Acesso restrito a administradores', 'error');
+            setTimeout(() => {
+                window.location.href = redirectUrl;
+            }, 2000);
+            return false;
+        }
+        
+        return true;
+    }
+
+    // NOVO MÉTODO: Gerenciar navegação baseada na autenticação
+updateNavigationForAuthState(isAuthenticated) {
+    const navMenu = document.querySelector('.nav-menu');
+    if (!navMenu) return;
+
+    if (isAuthenticated) {
+        // Usuário logado - mostrar todas as páginas
+        navMenu.innerHTML = `
+            <a href="dashboard.html" class="nav-link">Dashboard</a>
+            <a href="hist.html" class="nav-link">Histórico</a>
+            <a href="cartoes.html" class="nav-link">Cartões</a>
+            <a href="perfil.html" class="nav-link">Perfil</a>
+            ${this.isUserAdmin() ? '<a href="perfiladm.html" class="nav-link">Admin</a>' : ''}
+        `;
+    } else {
+        // Usuário não logado - mostrar apenas sobre e contato
+        navMenu.innerHTML = `
+            <a href="sobre.html" class="nav-link">Sobre</a>
+            <a href="contato.html" class="nav-link">Contato</a>
+        `;
+    }
 }
+}
+
+
 
 // Inicializar quando a página carregar
 document.addEventListener('DOMContentLoaded', () => {
     window.authManager = new AuthManager();
+    
+    // Adicionar CSS para os alertas se não existir
+    if (!document.querySelector('#auth-alert-styles')) {
+        const style = document.createElement('style');
+        style.id = 'auth-alert-styles';
+        style.textContent = `
+            .auth-alert {
+                position: fixed;
+                top: 100px;
+                left: 50%;
+                transform: translateX(-50%);
+                z-index: 10000;
+                min-width: 300px;
+                max-width: 500px;
+                animation: slideDown 0.3s ease;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            }
+            
+            @keyframes slideDown {
+                from {
+                    opacity: 0;
+                    transform: translateX(-50%) translateY(-20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateX(-50%) translateY(0);
+                }
+            }
+            
+            .auth-alert-success {
+                background: #d4edda;
+                color: #155724;
+                border: 1px solid #c3e6cb;
+            }
+            
+            .auth-alert-error {
+                background: #f8d7da;
+                color: #721c24;
+                border: 1px solid #f5c6cb;
+            }
+            
+            .auth-alert-warning {
+                background: #fff3cd;
+                color: #856404;
+                border: 1px solid #ffeaa7;
+            }
+            
+            .auth-alert-info {
+                background: #d1ecf1;
+                color: #0c5460;
+                border: 1px solid #bee5eb;
+            }
+            
+            .alert-content {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 16px 20px;
+            }
+            
+            .alert-close {
+                background: none;
+                border: none;
+                color: inherit;
+                cursor: pointer;
+                margin-left: auto;
+                opacity: 0.7;
+                transition: opacity 0.2s ease;
+            }
+            
+            .alert-close:hover {
+                opacity: 1;
+            }
+            
+            .user-greeting {
+                margin-right: 8px;
+                font-weight: 500;
+            }
+            
+            .dropdown {
+                position: relative;
+                display: inline-block;
+            }
+            
+            .dropdown-content {
+                display: none;
+                position: absolute;
+                right: 0;
+                background: white;
+                min-width: 160px;
+                box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+                border-radius: 8px;
+                border: 1px solid #E5E7EB;
+                z-index: 1000;
+                margin-top: 8px;
+            }
+            
+            .dropdown-content a {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                padding: 12px 16px;
+                text-decoration: none;
+                color: #1F2937;
+                transition: background 0.2s ease;
+            }
+            
+            .dropdown-content a:hover {
+                background: #F8FAFC;
+            }
+            
+            .profile-link, .logout-link {
+                border: none;
+                width: 100%;
+                text-align: left;
+                background: none;
+                cursor: pointer;
+            }
+        `;
+        document.head.appendChild(style);
+    }
 });
+
+// Exportar para uso em outros arquivos
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = AuthManager;
+}

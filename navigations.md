@@ -1,3 +1,5 @@
 cadastro.html - production
 cartoes.html  - development
-contato.hmtl  - alert on send message
+contato.hmtl  - alert on send message 
+dashboard.html- production
+hist.html     - production

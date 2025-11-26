@@ -3,10 +3,367 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Administração - FinSync</title>
+    <title>Painel Admin - Blync</title>
     <link rel="stylesheet" href="/css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .admin-page {
+            min-height: 100vh;
+            background: var(--light);
+            padding-top: 80px;
+        }
+
+        .page-header {
+            background: var(--white);
+            border-bottom: 1px solid var(--gray);
+            padding: 30px 0;
+        }
+
+        .page-header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 8px;
+        }
+
+        .page-subtitle {
+            color: var(--secondary);
+        }
+
+        .page-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .admin-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: var(--white);
+            padding: 24px;
+            border-radius: 16px;
+            border: 1px solid var(--gray);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            color: var(--secondary);
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .admin-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            border-bottom: 1px solid var(--gray);
+            padding-bottom: 16px;
+        }
+
+        .tab-btn {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            border-radius: 8px;
+            color: var(--secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .tab-btn:hover:not(.active) {
+            background: var(--light);
+            color: var(--dark);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .table-container {
+            background: var(--white);
+            border-radius: 16px;
+            border: 1px solid var(--gray);
+            overflow: hidden;
+            margin-bottom: 40px;
+        }
+
+        .table-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--gray);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th,
+        .table td {
+            padding: 16px 20px;
+            text-align: left;
+            border-bottom: 1px solid var(--gray);
+        }
+
+        .table th {
+            background: var(--light);
+            color: var(--secondary);
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .table tbody tr:hover {
+            background: var(--light);
+        }
+
+        .user-avatar, .card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-weight: 600;
+        }
+
+        .card-icon {
+            background: var(--secondary);
+        }
+
+        .user-info, .card-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-details h4, .card-details h4 {
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .user-details p, .card-details p {
+            color: var(--secondary);
+            font-size: 0.875rem;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .badge-admin {
+            background: #DBEAFE;
+            color: #1E40AF;
+        }
+
+        .badge-user {
+            background: #D1FAE5;
+            color: #065F46;
+        }
+
+        .badge-active {
+            background: #D1FAE5;
+            color: #065F46;
+        }
+
+        .badge-inactive {
+            background: #FEE2E2;
+            color: #991B1B;
+        }
+
+        .badge-success {
+            background: #D1FAE5;
+            color: #065F46;
+        }
+
+        .badge-error {
+            background: #FEE2E2;
+            color: #991B1B;
+        }
+
+        .badge-warning {
+            background: #FEF3C7;
+            color: #92400E;
+        }
+
+        .user-actions, .card-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: var(--white);
+            margin: 5% auto;
+            padding: 0;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .modal-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--gray);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-body {
+            padding: 24px;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        .modal-actions {
+            padding: 24px;
+            border-top: 1px solid var(--gray);
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .password-field {
+            position: relative;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--secondary);
+            cursor: pointer;
+        }
+
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .loading-skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            border-radius: 4px;
+        }
+
+        .sync-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.875rem;
+            color: var(--secondary);
+            margin-top: 8px;
+        }
+
+        @keyframes loading {
+            0% {
+                background-position: 200% 0;
+            }
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .page-header-content {
+                flex-direction: column;
+                gap: 16px;
+                text-align: center;
+            }
+            
+            .table-actions {
+                flex-direction: column;
+            }
+            
+            .user-actions, .card-actions {
+                flex-direction: column;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .admin-tabs {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
 </head>
 <body>
     <!-- Navigation -->
@@ -22,34 +379,45 @@
             </div>
             
             <div class="nav-menu">
-                <a href="/dashboard.html" class="nav-link">Dashboard</a>
-                <a href="/perfil-adm.html" class="nav-link active">Administração</a>
-                <a href="hist.html" class="nav-link">Histórico</a>
-                <a href="/perfil.html" class="nav-link">Meu Perfil</a>
+                <a href="dashboard.html" class="nav-link">Dashboard</a>
+                <a href="perfiladm.html" class="nav-link active">Painel Admin</a>
+                <a href="usuarios.html" class="nav-link">Usuários</a>
             </div>
             
-            <div class="nav-actions">
-                <button class="theme-toggle" id="themeToggle">
-                    <i class="fas fa-moon"></i>
-                </button>
-                <a href="/configuracoes.html" class="btn btn-outline">
-                    <i class="fas fa-cog"></i>
-                    Configurações
-                </a>
+            <div class="nav-actions" id="navActions">
+                <!-- Será preenchido pelo AuthManager -->
             </div>
         </div>
     </nav>
 
-    <!-- Main Content -->
-    <main class="main-content">
-        <div class="container">
-            <div class="page-header">
-                <h1 class="page-title">Administração</h1>
-                <p class="page-subtitle">Gerencie usuários e configurações do sistema</p>
+    <!-- Admin Page -->
+    <div class="admin-page">
+        <header class="page-header">
+            <div class="page-header-content">
+                <div>
+                    <h1 class="page-title">Painel Administrativo</h1>
+                    <p class="page-subtitle">Gerencie usuários, cartões e configurações do sistema</p>
+                    <div class="sync-status" id="syncStatus">
+                        <i class="fas fa-sync"></i>
+                        <span>Sincronizando com o banco de dados...</span>
+                    </div>
+                </div>
+                <div>
+                    <button class="btn btn-primary" onclick="openAddUserModal()">
+                        <i class="fas fa-user-plus"></i>
+                        Adicionar Usuário
+                    </button>
+                    <button class="btn btn-primary" onclick="openAddCardModal()">
+                        <i class="fas fa-credit-card"></i>
+                        Adicionar Cartão
+                    </button>
+                </div>
             </div>
+        </header>
 
-            <!-- Estatísticas Gerais -->
-            <div class="stats-grid">
+        <div class="page-content">
+            <!-- Stats -->
+            <div class="admin-stats">
                 <div class="stat-card">
                     <div class="stat-value" id="totalUsers">0</div>
                     <div class="stat-label">Total de Usuários</div>
@@ -63,136 +431,814 @@
                     <div class="stat-label">Administradores</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-value" id="newUsers">0</div>
-                    <div class="stat-label">Novos este mês</div>
+                    <div class="stat-value" id="totalCards">0</div>
+                    <div class="stat-label">Cartões Cadastrados</div>
                 </div>
             </div>
 
-            <!-- Gestão de Usuários -->
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">Gestão de Usuários</h2>
-                    <button class="btn btn-primary btn-small" onclick="openCreateUserModal()">
-                        <i class="fas fa-plus"></i>
-                        Novo Usuário
-                    </button>
-                </div>
-                
-                <div class="table-container">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Nome</th>
-                                <th>E-mail</th>
-                                <th>Tipo</th>
-                                <th>Data de Cadastro</th>
-                                <th>Status</th>
-                                <th>Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="usersTable">
-                            <!-- Usuários serão carregados via JavaScript -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <!-- Modal Criar/Editar Usuário -->
-    <div id="userModal" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; align-items: center; justify-content: center;">
-        <div class="card" style="width: 90%; max-width: 500px; margin: 20px;">
-            <div class="card-header">
-                <h2 class="card-title" id="modalTitle">Criar Usuário</h2>
-                <button onclick="closeUserModal()" style="background: none; border: none; font-size: 20px; color: var(--secondary); cursor: pointer;">
-                    <i class="fas fa-times"></i>
+            <!-- Tabs -->
+            <div class="admin-tabs">
+                <button class="tab-btn active" onclick="switchTab('users')">
+                    <i class="fas fa-users"></i>
+                    Usuários
+                </button>
+                <button class="tab-btn" onclick="switchTab('cards')">
+                    <i class="fas fa-credit-card"></i>
+                    Cartões
                 </button>
             </div>
-            
-            <form id="userForm">
-                <div class="form-group">
-                    <label class="form-label">Nome Completo</label>
-                    <input type="text" class="form-input" id="userNameInput" required>
+
+            <!-- Users Tab -->
+            <div id="usersTab" class="tab-content active">
+                <div class="table-container">
+                    <div class="table-header">
+                        <h2 class="card-title">Usuários do Sistema</h2>
+                        <div class="table-actions">
+                            <input type="text" class="form-input" placeholder="Buscar usuários..." 
+                                   style="min-width: 250px;" oninput="filterUsers(this.value)">
+                            <button class="btn btn-outline" onclick="refreshUsers()">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Usuário</th>
+                                    <th>Email</th>
+                                    <th>Status</th>
+                                    <th>Registro</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody">
+                                <tr>
+                                    <td colspan="5" style="text-align: center; padding: 40px; color: var(--secondary);">
+                                        <div class="loading-skeleton" style="height: 20px; margin-bottom: 8px;"></div>
+                                        <div class="loading-skeleton" style="height: 16px; width: 60%; margin: 0 auto;"></div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-                
-                <div class="form-group">
-                    <label class="form-label">E-mail</label>
-                    <input type="email" class="form-input" id="userEmailInput" required>
+            </div>
+
+            <!-- Cards Tab -->
+            <div id="cardsTab" class="tab-content">
+                <div class="table-container">
+                    <div class="table-header">
+                        <h2 class="card-title">Cartões Cadastrados</h2>
+                        <div class="table-actions">
+                            <input type="text" class="form-input" placeholder="Buscar cartões..." 
+                                   style="min-width: 250px;" oninput="filterCards(this.value)">
+                            <button class="btn btn-outline" onclick="refreshCards()">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Cartão</th>
+                                    <th>Limite</th>
+                                    <th>Saldo</th>
+                                    <th>Dia Vencimento</th>
+                                    <th>Status</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="cardsTableBody">
+                                <tr>
+                                    <td colspan="6" style="text-align: center; padding: 40px; color: var(--secondary);">
+                                        <div class="loading-skeleton" style="height: 20px; margin-bottom: 8px;"></div>
+                                        <div class="loading-skeleton" style="height: 16px; width: 60%; margin: 0 auto;"></div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Senha</label>
-                    <input type="password" class="form-input" id="userPasswordInput">
-                    <small style="color: var(--secondary);">Deixe em branco para não alterar</small>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Tipo de Usuário</label>
-                    <select class="form-input" id="userRoleInput" required>
-                        <option value="user">Usuário</option>
-                        <option value="admin">Administrador</option>
-                    </select>
-                </div>
-                
-                <div style="display: flex; gap: 12px; margin-top: 24px;">
-                    <button type="button" class="btn btn-secondary btn-full" onclick="closeUserModal()">Cancelar</button>
-                    <button type="submit" class="btn btn-primary btn-full">Salvar</button>
-                </div>
-            </form>
+            </div>
         </div>
     </div>
 
+    <!-- Add User Modal -->
+    <div id="addUserModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="card-title">Adicionar Usuário</h2>
+                <button class="btn btn-outline btn-small" onclick="closeAddUserModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="addUserForm">
+                    <div class="form-group">
+                        <label class="form-label">Nome Completo *</label>
+                        <input type="text" class="form-input" id="userName" name="userName" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Email *</label>
+                        <input type="email" class="form-input" id="userEmail" name="userEmail" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Senha *</label>
+                        <div class="password-field">
+                            <input type="password" class="form-input" id="userPassword" name="userPassword" required minlength="6">
+                            <button type="button" class="toggle-password" onclick="togglePassword('userPassword')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Tipo de Usuário *</label>
+                        <select class="form-select" id="userRole" name="userRole" required>
+                            <option value="user">Usuário</option>
+                            <option value="admin">Administrador</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-outline" onclick="closeAddUserModal()">Cancelar</button>
+                <button class="btn btn-primary" onclick="saveUser()">Salvar Usuário</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit User Modal -->
+    <div id="editUserModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="card-title">Editar Usuário</h2>
+                <button class="btn btn-outline btn-small" onclick="closeEditUserModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="editUserForm">
+                    <input type="hidden" id="editUserId">
+                    <div class="form-group">
+                        <label class="form-label">Nome Completo *</label>
+                        <input type="text" class="form-input" id="editUserName" name="userName" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Email *</label>
+                        <input type="email" class="form-input" id="editUserEmail" name="userEmail" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Nova Senha</label>
+                        <div class="password-field">
+                            <input type="password" class="form-input" id="editUserPassword" name="userPassword" minlength="6" placeholder="Deixe em branco para manter a atual">
+                            <button type="button" class="toggle-password" onclick="togglePassword('editUserPassword')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <small style="color: var(--secondary); font-size: 12px;">Deixe em branco para manter a senha atual</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Tipo de Usuário *</label>
+                        <select class="form-select" id="editUserRole" name="userRole" required>
+                            <option value="user">Usuário</option>
+                            <option value="admin">Administrador</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Status *</label>
+                        <select class="form-select" id="editUserStatus" name="userStatus" required>
+                            <option value="active">Ativo</option>
+                            <option value="inactive">Inativo</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-outline" onclick="closeEditUserModal()">Cancelar</button>
+                <button class="btn btn-primary" onclick="updateUser()">Atualizar Usuário</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Card Modal -->
+    <div id="addCardModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="card-title">Adicionar Cartão</h2>
+                <button class="btn btn-outline btn-small" onclick="closeAddCardModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="addCardForm">
+                    <div class="form-group">
+                        <label class="form-label">Nome do Cartão *</label>
+                        <input type="text" class="form-input" id="cardName" name="cardName" required placeholder="Ex: Nubank, Inter, Itaú...">
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Limite do Cartão *</label>
+                            <input type="number" class="form-input" id="cardLimit" name="cardLimit" required min="0" step="0.01" placeholder="0.00">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Dia de Vencimento *</label>
+                            <input type="number" class="form-input" id="cardDueDay" name="cardDueDay" required min="1" max="31" placeholder="1-31">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Saldo Atual</label>
+                        <input type="number" class="form-input" id="cardBalance" name="cardBalance" min="0" step="0.01" placeholder="0.00" value="0">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-outline" onclick="closeAddCardModal()">Cancelar</button>
+                <button class="btn btn-primary" onclick="saveCard()">Salvar Cartão</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Card Modal -->
+    <div id="editCardModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="card-title">Editar Cartão</h2>
+                <button class="btn btn-outline btn-small" onclick="closeEditCardModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="editCardForm">
+                    <input type="hidden" id="editCardId">
+                    <div class="form-group">
+                        <label class="form-label">Nome do Cartão *</label>
+                        <input type="text" class="form-input" id="editCardName" name="cardName" required>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Limite do Cartão *</label>
+                            <input type="number" class="form-input" id="editCardLimit" name="cardLimit" required min="0" step="0.01">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Dia de Vencimento *</label>
+                            <input type="number" class="form-input" id="editCardDueDay" name="cardDueDay" required min="1" max="31">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Saldo Atual</label>
+                        <input type="number" class="form-input" id="editCardBalance" name="cardBalance" min="0" step="0.01">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-outline" onclick="closeEditCardModal()">Cancelar</button>
+                <button class="btn btn-primary" onclick="updateCard()">Atualizar Cartão</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/auth.js"></script>
     <script>
-        // Theme Toggle
-        const themeToggle = document.getElementById('themeToggle');
-        themeToggle.addEventListener('click', () => {
-            document.body.dataset.theme = document.body.dataset.theme === 'dark' ? 'light' : 'dark';
-            themeToggle.innerHTML = document.body.dataset.theme === 'dark' 
-                ? '<i class="fas fa-sun"></i>' 
-                : '<i class="fas fa-moon"></i>';
+        // Configurações da API
+        const API_BASE_URL = 'http://localhost:3333/api';
+        
+        // Sistema de Gerenciamento de Dados
+        const AdminDataManager = {
+            storageKeys: {
+                USERS: 'blync_admin_users',
+                CARDS: 'blync_admin_cards',
+                LAST_SYNC: 'blync_admin_last_sync'
+            },
+
+            // Funções para Usuários
+            async getUsersFromAPI() {
+                try {
+                    const response = await window.authManager.authenticatedFetch(`${API_BASE_URL}/admin/users`);
+                    if (response.ok) {
+                        const result = await response.json();
+                        return result.data || [];
+                    } else {
+                        console.warn('Erro ao buscar usuários da API, usando dados locais');
+                        return this.getUsersFromLocal();
+                    }
+                } catch (error) {
+                    console.warn('API indisponível, usando dados locais:', error);
+                    return this.getUsersFromLocal();
+                }
+            },
+
+            async saveUserToAPI(userData) {
+                try {
+                    const response = await window.authManager.authenticatedFetch(`${API_BASE_URL}/admin/users`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(userData)
+                    });
+                    
+                    if (response.ok) {
+                        const result = await response.json();
+                        return result.data;
+                    } else {
+                        const error = await response.json();
+                        throw new Error(error.message || 'Erro ao salvar usuário');
+                    }
+                } catch (error) {
+                    throw error;
+                }
+            },
+
+            async updateUserInAPI(userId, userData) {
+                try {
+                    const response = await window.authManager.authenticatedFetch(`${API_BASE_URL}/admin/users/${userId}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(userData)
+                    });
+                    
+                    if (response.ok) {
+                        const result = await response.json();
+                        return result.data;
+                    } else {
+                        const error = await response.json();
+                        throw new Error(error.message || 'Erro ao atualizar usuário');
+                    }
+                } catch (error) {
+                    throw error;
+                }
+            },
+
+            async deleteUserFromAPI(userId) {
+                try {
+                    const response = await window.authManager.authenticatedFetch(`${API_BASE_URL}/admin/users/${userId}`, {
+                        method: 'DELETE'
+                    });
+                    
+                    return response.ok;
+                } catch (error) {
+                    throw error;
+                }
+            },
+
+            // Funções locais (fallback)
+            getUsersFromLocal() {
+                const users = localStorage.getItem(this.storageKeys.USERS);
+                return users ? JSON.parse(users) : [];
+            },
+
+            saveUsersToLocal(users) {
+                localStorage.setItem(this.storageKeys.USERS, JSON.stringify(users));
+            },
+
+            // Funções para Cartões (manter local por enquanto)
+            getCards() {
+                const cards = localStorage.getItem(this.storageKeys.CARDS);
+                return cards ? JSON.parse(cards) : [];
+            },
+
+            saveCards(cards) {
+                localStorage.setItem(this.storageKeys.CARDS, JSON.stringify(cards));
+            },
+
+            addCard(cardData) {
+                const cards = this.getCards();
+                const newCard = {
+                    id: this.generateId(cards),
+                    ...cardData,
+                    status: 'active',
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                };
+                cards.push(newCard);
+                this.saveCards(cards);
+                return newCard;
+            },
+
+            updateCard(cardId, cardData) {
+                const cards = this.getCards();
+                const index = cards.findIndex(c => c.id === cardId);
+                if (index !== -1) {
+                    cards[index] = { ...cards[index], ...cardData, updatedAt: new Date().toISOString() };
+                    this.saveCards(cards);
+                    return cards[index];
+                }
+                return null;
+            },
+
+            deleteCard(cardId) {
+                const cards = this.getCards();
+                const filteredCards = cards.filter(c => c.id !== cardId);
+                this.saveCards(filteredCards);
+                return filteredCards.length !== cards.length;
+            },
+
+            // Utilitários
+            generateId(items) {
+                return items.length > 0 ? Math.max(...items.map(item => item.id)) + 1 : 1;
+            },
+
+            updateLastSync() {
+                localStorage.setItem(this.storageKeys.LAST_SYNC, new Date().toISOString());
+            }
+        };
+
+        let users = [];
+        let filteredUsers = [];
+        let cards = [];
+        let filteredCards = [];
+        let currentTab = 'users';
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            // Verificar se usuário é admin
+            if (!window.authManager.requireAdmin()) {
+                return;
+            }
+
+            loadUsers();
+            loadCards();
         });
 
-        let editingUserId = null;
-
-        // Carregar usuários
-        async function loadUsers() {
-            try {
-                // Simular carregamento de usuários
-                const users = [
-                    { id: 1, name: 'João Silva', email: 'joao@email.com', role: 'admin', createdAt: '2024-01-15', active: true },
-                    { id: 2, name: 'Maria Santos', email: 'maria@email.com', role: 'user', createdAt: '2024-02-20', active: true },
-                    { id: 3, name: 'Pedro Oliveira', email: 'pedro@email.com', role: 'user', createdAt: '2024-03-01', active: true }
-                ];
-
-                updateUsersTable(users);
-                updateStats(users);
-                
-            } catch (error) {
-                console.error('Erro ao carregar usuários:', error);
+        // Função para mostrar/ocultar senha
+        function togglePassword(fieldId) {
+            const passwordInput = document.getElementById(fieldId);
+            const toggleButton = passwordInput.parentNode.querySelector('.toggle-password i');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleButton.className = 'fas fa-eye-slash';
+            } else {
+                passwordInput.type = 'password';
+                toggleButton.className = 'fas fa-eye';
             }
         }
 
-        function updateUsersTable(users) {
-            const tbody = document.getElementById('usersTable');
-            tbody.innerHTML = users.map(user => `
+        // Atualizar status de sincronização
+        function updateSyncStatus(message, type = 'info') {
+            const syncStatus = document.getElementById('syncStatus');
+            if (syncStatus) {
+                const icon = syncStatus.querySelector('i');
+                syncStatus.innerHTML = `
+                    <i class="fas fa-${type === 'success' ? 'check' : type === 'error' ? 'exclamation-triangle' : 'sync'} ${type === 'syncing' ? 'fa-spin' : ''}"></i>
+                    <span>${message}</span>
+                `;
+            }
+        }
+
+        // Funções de Tab
+        function switchTab(tabName) {
+            currentTab = tabName;
+            
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(tabName + 'Tab').classList.add('active');
+        }
+
+        // =============================================
+        // GERENCIAMENTO DE USUÁRIOS - INTEGRAÇÃO COM API
+        // =============================================
+
+        async function loadUsers() {
+            try {
+                updateSyncStatus('Carregando usuários do banco de dados...', 'syncing');
+                users = await AdminDataManager.getUsersFromAPI();
+                filteredUsers = [...users];
+                updateStats();
+                renderUsersTable();
+                updateSyncStatus(`Sincronizado - ${users.length} usuários carregados`, 'success');
+            } catch (error) {
+                console.error('Erro ao carregar usuários:', error);
+                updateSyncStatus('Erro ao carregar usuários', 'error');
+                window.authManager.showAlert('Erro ao carregar usuários do banco de dados', 'error');
+            }
+        }
+
+        function updateStats() {
+            const totalUsers = users.length;
+            const activeUsers = users.filter(u => u.status === 'active').length;
+            const adminUsers = users.filter(u => u.role === 'admin').length;
+            const totalCards = cards.length;
+
+            document.getElementById('totalUsers').textContent = totalUsers;
+            document.getElementById('activeUsers').textContent = activeUsers;
+            document.getElementById('adminUsers').textContent = adminUsers;
+            document.getElementById('totalCards').textContent = totalCards;
+        }
+
+        function renderUsersTable() {
+            const tbody = document.getElementById('usersTableBody');
+            
+            if (filteredUsers.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 40px; color: var(--secondary);">
+                            Nenhum usuário encontrado
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = filteredUsers.map(user => `
                 <tr>
-                    <td>${user.name}</td>
+                    <td>
+                        <div class="user-info">
+                            <div class="user-avatar">
+                                ${user.name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                            </div>
+                            <div class="user-details">
+                                <h4>${user.name}</h4>
+                                <p>ID: ${user.id}</p>
+                            </div>
+                        </div>
+                    </td>
                     <td>${user.email}</td>
                     <td>
-                        <span class="badge ${user.role === 'admin' ? 'badge-warning' : 'badge-info'}">
+                        <span class="badge ${user.role === 'admin' ? 'badge-admin' : 'badge-user'}">
                             ${user.role === 'admin' ? 'Administrador' : 'Usuário'}
                         </span>
+                        <span class="badge ${user.status === 'active' ? 'badge-active' : 'badge-inactive'}" style="margin-left: 8px;">
+                            ${user.status === 'active' ? 'Ativo' : 'Inativo'}
+                        </span>
                     </td>
-                    <td>${new Date(user.createdAt).toLocaleDateString('pt-BR')}</td>
                     <td>
-                        <span class="badge badge-success">Ativo</span>
+                        <div>${formatDate(user.createdAt)}</div>
+                        <small style="color: var(--secondary);">${user.lastLogin ? 'Último login: ' + formatDate(user.lastLogin) : 'Nunca logou'}</small>
                     </td>
                     <td>
-                        <div style="display: flex; gap: 8px;">
-                            <button class="btn btn-outline btn-small" onclick="editUser(${user.id})">
+                        <div class="user-actions">
+                            <button class="btn btn-outline btn-small" onclick="editUser(${user.id})" title="Editar usuário">
                                 <i class="fas fa-edit"></i>
                             </button>
-                            <button class="btn btn-error btn-small" onclick="deleteUser(${user.id})">
+                            <button class="btn btn-outline btn-small" onclick="toggleUserStatus(${user.id})" title="${user.status === 'active' ? 'Desativar' : 'Ativar'} usuário">
+                                <i class="fas ${user.status === 'active' ? 'fa-pause' : 'fa-play'}"></i>
+                            </button>
+                            ${user.role !== 'admin' ? `
+                                <button class="btn btn-error btn-small" onclick="deleteUser(${user.id})" title="Excluir usuário">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            ` : ''}
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function filterUsers(searchTerm) {
+            if (!searchTerm) {
+                filteredUsers = [...users];
+            } else {
+                filteredUsers = users.filter(user => 
+                    user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    user.email.toLowerCase().includes(searchTerm.toLowerCase())
+                );
+            }
+            renderUsersTable();
+        }
+
+        // Modal functions - Users
+        function openAddUserModal() {
+            document.getElementById('addUserModal').style.display = 'block';
+            document.getElementById('addUserForm').reset();
+        }
+
+        function closeAddUserModal() {
+            document.getElementById('addUserModal').style.display = 'none';
+        }
+
+        function openEditUserModal() {
+            document.getElementById('editUserModal').style.display = 'block';
+        }
+
+        function closeEditUserModal() {
+            document.getElementById('editUserModal').style.display = 'none';
+        }
+
+        // CRUD Operations - Users
+        async function saveUser() {
+            const form = document.getElementById('addUserForm');
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData);
+
+            // Validações
+            if (!data.userName || !data.userEmail || !data.userPassword) {
+                window.authManager.showAlert('Por favor, preencha todos os campos obrigatórios', 'error');
+                return;
+            }
+
+            const submitBtn = document.querySelector('#addUserModal .btn-primary');
+            const originalText = submitBtn.innerHTML;
+            
+            try {
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Salvando...';
+                submitBtn.disabled = true;
+
+                // Salvar no banco de dados via API
+                const newUser = await AdminDataManager.saveUserToAPI({
+                    name: data.userName,
+                    email: data.userEmail,
+                    password: data.userPassword,
+                    role: data.userRole
+                });
+
+                window.authManager.showAlert('Usuário criado com sucesso no banco de dados!', 'success');
+                closeAddUserModal();
+                await loadUsers(); // Recarregar lista do banco
+                
+            } catch (error) {
+                console.error('Erro ao criar usuário:', error);
+                window.authManager.showAlert(error.message || 'Erro ao criar usuário no banco de dados', 'error');
+            } finally {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        }
+
+        function editUser(userId) {
+            const user = users.find(u => u.id === userId);
+            if (user) {
+                document.getElementById('editUserId').value = user.id;
+                document.getElementById('editUserName').value = user.name;
+                document.getElementById('editUserEmail').value = user.email;
+                document.getElementById('editUserRole').value = user.role;
+                document.getElementById('editUserStatus').value = user.status;
+                document.getElementById('editUserPassword').value = ''; // Limpar campo de senha
+                openEditUserModal();
+            }
+        }
+
+        async function updateUser() {
+            const userId = parseInt(document.getElementById('editUserId').value);
+            const form = document.getElementById('editUserForm');
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData);
+
+            // Validações
+            if (!data.userName || !data.userEmail) {
+                window.authManager.showAlert('Por favor, preencha todos os campos obrigatórios', 'error');
+                return;
+            }
+
+            const submitBtn = document.querySelector('#editUserModal .btn-primary');
+            const originalText = submitBtn.innerHTML;
+            
+            try {
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Atualizando...';
+                submitBtn.disabled = true;
+
+                const updateData = {
+                    name: data.userName,
+                    email: data.userEmail,
+                    role: data.userRole,
+                    status: data.userStatus
+                };
+
+                // Incluir senha apenas se foi fornecida
+                if (data.userPassword && data.userPassword.length >= 6) {
+                    updateData.password = data.userPassword;
+                }
+
+                // Atualizar no banco de dados via API
+                await AdminDataManager.updateUserInAPI(userId, updateData);
+
+                window.authManager.showAlert('Usuário atualizado com sucesso no banco de dados!', 'success');
+                closeEditUserModal();
+                await loadUsers(); // Recarregar lista do banco
+                
+            } catch (error) {
+                console.error('Erro ao atualizar usuário:', error);
+                window.authManager.showAlert(error.message || 'Erro ao atualizar usuário no banco de dados', 'error');
+            } finally {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        }
+
+        async function toggleUserStatus(userId) {
+            const user = users.find(u => u.id === userId);
+            if (user) {
+                const newStatus = user.status === 'active' ? 'inactive' : 'active';
+                const action = newStatus === 'active' ? 'ativado' : 'desativado';
+                
+                try {
+                    // Atualizar no banco de dados via API
+                    await AdminDataManager.updateUserInAPI(userId, { status: newStatus });
+                    await loadUsers(); // Recarregar lista do banco
+                    window.authManager.showAlert(`Usuário ${action} com sucesso!`, 'success');
+                } catch (error) {
+                    console.error('Erro ao atualizar status:', error);
+                    window.authManager.showAlert(error.message || 'Erro ao atualizar status do usuário', 'error');
+                }
+            }
+        }
+
+        async function deleteUser(userId) {
+            const user = users.find(u => u.id === userId);
+            if (user && confirm(`Tem certeza que deseja excluir o usuário ${user.name}?\n\nEsta ação não pode ser desfeita.`)) {
+                try {
+                    // Excluir do banco de dados via API
+                    await AdminDataManager.deleteUserFromAPI(userId);
+                    await loadUsers(); // Recarregar lista do banco
+                    window.authManager.showAlert('Usuário excluído com sucesso do banco de dados!', 'success');
+                } catch (error) {
+                    console.error('Erro ao excluir usuário:', error);
+                    window.authManager.showAlert(error.message || 'Erro ao excluir usuário do banco de dados', 'error');
+                }
+            }
+        }
+
+        function refreshUsers() {
+            loadUsers();
+            window.authManager.showAlert('Lista de usuários atualizada do banco de dados', 'success');
+        }
+
+        // =============================================
+        // GERENCIAMENTO DE CARTÕES (mantido local)
+        // =============================================
+
+        function loadCards() {
+            cards = AdminDataManager.getCards();
+            filteredCards = [...cards];
+            updateStats();
+            renderCardsTable();
+        }
+
+        function renderCardsTable() {
+            const tbody = document.getElementById('cardsTableBody');
+            
+            if (filteredCards.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 40px; color: var(--secondary);">
+                            Nenhum cartão encontrado
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = filteredCards.map(card => `
+                <tr>
+                    <td>
+                        <div class="card-info">
+                            <div class="card-icon">
+                                <i class="fas fa-credit-card"></i>
+                            </div>
+                            <div class="card-details">
+                                <h4>${card.name}</h4>
+                                <p>ID: ${card.id}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <strong>${formatCurrency(card.limit)}</strong>
+                    </td>
+                    <td>
+                        <span class="${card.balance > 0 ? 'stat-expense' : ''}">
+                            ${formatCurrency(card.balance)}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="badge ${getDueDayBadgeClass(card.due_day)}">
+                            Dia ${card.due_day}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="badge ${card.status === 'active' ? 'badge-active' : 'badge-inactive'}">
+                            ${card.status === 'active' ? 'Ativo' : 'Inativo'}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="card-actions">
+                            <button class="btn btn-outline btn-small" onclick="editCard(${card.id})" title="Editar cartão">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-outline btn-small" onclick="toggleCardStatus(${card.id})" title="${card.status === 'active' ? 'Desativar' : 'Ativar'} cartão">
+                                <i class="fas ${card.status === 'active' ? 'fa-pause' : 'fa-play'}"></i>
+                            </button>
+                            <button class="btn btn-error btn-small" onclick="deleteCard(${card.id})" title="Excluir cartão">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </div>
@@ -201,82 +1247,189 @@
             `).join('');
         }
 
-        function updateStats(users) {
-            document.getElementById('totalUsers').textContent = users.length;
-            document.getElementById('activeUsers').textContent = users.filter(u => u.active).length;
-            document.getElementById('adminUsers').textContent = users.filter(u => u.role === 'admin').length;
-            document.getElementById('newUsers').textContent = users.filter(u => {
-                const userDate = new Date(u.createdAt);
-                const now = new Date();
-                return userDate.getMonth() === now.getMonth() && userDate.getFullYear() === now.getFullYear();
-            }).length;
+        function filterCards(searchTerm) {
+            if (!searchTerm) {
+                filteredCards = [...cards];
+            } else {
+                filteredCards = cards.filter(card => 
+                    card.name.toLowerCase().includes(searchTerm.toLowerCase())
+                );
+            }
+            renderCardsTable();
         }
 
-        function openCreateUserModal() {
-            editingUserId = null;
-            document.getElementById('modalTitle').textContent = 'Criar Usuário';
-            document.getElementById('userForm').reset();
-            document.getElementById('userPasswordInput').required = true;
-            document.getElementById('userModal').style.display = 'flex';
+        // Modal functions - Cards
+        function openAddCardModal() {
+            document.getElementById('addCardModal').style.display = 'block';
+            document.getElementById('addCardForm').reset();
         }
 
-        function editUser(userId) {
-            // Simular busca de usuário
-            const user = { id: userId, name: 'João Silva', email: 'joao@email.com', role: 'admin' };
-            
-            editingUserId = userId;
-            document.getElementById('modalTitle').textContent = 'Editar Usuário';
-            document.getElementById('userNameInput').value = user.name;
-            document.getElementById('userEmailInput').value = user.email;
-            document.getElementById('userRoleInput').value = user.role;
-            document.getElementById('userPasswordInput').required = false;
-            document.getElementById('userModal').style.display = 'flex';
+        function closeAddCardModal() {
+            document.getElementById('addCardModal').style.display = 'none';
         }
 
-        function closeUserModal() {
-            document.getElementById('userModal').style.display = 'none';
-            editingUserId = null;
+        function openEditCardModal() {
+            document.getElementById('editCardModal').style.display = 'block';
         }
 
-        function deleteUser(userId) {
-            if (confirm('Tem certeza que deseja excluir este usuário?')) {
-                // Simular exclusão
-                console.log('Excluir usuário:', userId);
-                alert('Usuário excluído com sucesso!');
-                loadUsers();
+        function closeEditCardModal() {
+            document.getElementById('editCardModal').style.display = 'none';
+        }
+
+        // CRUD Operations - Cards
+        async function saveCard() {
+            const form = document.getElementById('addCardForm');
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData);
+
+            // Validações
+            if (!data.cardName || !data.cardLimit || !data.cardDueDay) {
+                window.authManager.showAlert('Por favor, preencha todos os campos obrigatórios', 'error');
+                return;
+            }
+
+            if (data.cardDueDay < 1 || data.cardDueDay > 31) {
+                window.authManager.showAlert('O dia de vencimento deve ser entre 1 e 31', 'error');
+                return;
+            }
+
+            try {
+                // Salvar localmente (por enquanto)
+                const newCard = AdminDataManager.addCard({
+                    name: data.cardName,
+                    limit: parseFloat(data.cardLimit),
+                    balance: parseFloat(data.cardBalance || 0),
+                    due_day: parseInt(data.cardDueDay)
+                });
+
+                window.authManager.showAlert('Cartão criado com sucesso!', 'success');
+                closeAddCardModal();
+                loadCards();
+                
+            } catch (error) {
+                console.error('Erro ao criar cartão:', error);
+                window.authManager.showAlert('Erro ao criar cartão', 'error');
             }
         }
 
-        // Form submit
-        document.getElementById('userForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const formData = {
-                name: document.getElementById('userNameInput').value,
-                email: document.getElementById('userEmailInput').value,
-                password: document.getElementById('userPasswordInput').value,
-                role: document.getElementById('userRoleInput').value
-            };
-
-            // Simular salvamento
-            console.log('Salvar usuário:', formData, 'Editando:', editingUserId);
-            alert(editingUserId ? 'Usuário atualizado com sucesso!' : 'Usuário criado com sucesso!');
-            
-            closeUserModal();
-            loadUsers();
-        });
-
-        // Carregar dados quando a página carregar
-        document.addEventListener('DOMContentLoaded', loadUsers);
-
-        // Check authentication
-        function checkAuth() {
-            const token = localStorage.getItem('blync_token');
-            if (!token) {
-                window.location.href = '/login.html';
-                return false;
+        function editCard(cardId) {
+            const card = cards.find(c => c.id === cardId);
+            if (card) {
+                document.getElementById('editCardId').value = card.id;
+                document.getElementById('editCardName').value = card.name;
+                document.getElementById('editCardLimit').value = card.limit;
+                document.getElementById('editCardDueDay').value = card.due_day;
+                document.getElementById('editCardBalance').value = card.balance;
+                openEditCardModal();
             }
-            return true;
+        }
+
+        async function updateCard() {
+            const cardId = parseInt(document.getElementById('editCardId').value);
+            const form = document.getElementById('editCardForm');
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData);
+
+            // Validações
+            if (!data.cardName || !data.cardLimit || !data.cardDueDay) {
+                window.authManager.showAlert('Por favor, preencha todos os campos obrigatórios', 'error');
+                return;
+            }
+
+            if (data.cardDueDay < 1 || data.cardDueDay > 31) {
+                window.authManager.showAlert('O dia de vencimento deve ser entre 1 e 31', 'error');
+                return;
+            }
+
+            try {
+                AdminDataManager.updateCard(cardId, {
+                    name: data.cardName,
+                    limit: parseFloat(data.cardLimit),
+                    balance: parseFloat(data.cardBalance || 0),
+                    due_day: parseInt(data.cardDueDay)
+                });
+
+                window.authManager.showAlert('Cartão atualizado com sucesso!', 'success');
+                closeEditCardModal();
+                loadCards();
+            } catch (error) {
+                console.error('Erro ao atualizar cartão:', error);
+                window.authManager.showAlert('Erro ao atualizar cartão', 'error');
+            }
+        }
+
+        async function toggleCardStatus(cardId) {
+            const card = cards.find(c => c.id === cardId);
+            if (card) {
+                const newStatus = card.status === 'active' ? 'inactive' : 'active';
+                const action = newStatus === 'active' ? 'ativado' : 'desativado';
+                
+                try {
+                    AdminDataManager.updateCard(cardId, { status: newStatus });
+                    loadCards();
+                    window.authManager.showAlert(`Cartão ${action} com sucesso!`, 'success');
+                } catch (error) {
+                    window.authManager.showAlert('Erro ao atualizar status do cartão', 'error');
+                }
+            }
+        }
+
+        async function deleteCard(cardId) {
+            const card = cards.find(c => c.id === cardId);
+            if (card && confirm(`Tem certeza que deseja excluir o cartão ${card.name}?\n\nEsta ação não pode ser desfeita.`)) {
+                try {
+                    AdminDataManager.deleteCard(cardId);
+                    loadCards();
+                    window.authManager.showAlert('Cartão excluído com sucesso!', 'success');
+                } catch (error) {
+                    window.authManager.showAlert('Erro ao excluir cartão', 'error');
+                }
+            }
+        }
+
+        function refreshCards() {
+            loadCards();
+            window.authManager.showAlert('Lista de cartões atualizada', 'success');
+        }
+
+        // =============================================
+        // FUNÇÕES UTILITÁRIAS
+        // =============================================
+
+        function formatDate(dateString) {
+            return new Date(dateString).toLocaleDateString('pt-BR');
+        }
+
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            }).format(value);
+        }
+
+        function getDueDayBadgeClass(dueDay) {
+            const today = new Date().getDate();
+            if (dueDay === today) {
+                return 'badge-error'; // Vence hoje
+            } else if (dueDay > today && dueDay <= today + 5) {
+                return 'badge-warning'; // Vence em breve
+            } else {
+                return 'badge-success'; // Dentro do prazo
+            }
+        }
+
+        // Fechar modais ao clicar fora
+        window.onclick = function(event) {
+            const modals = ['addUserModal', 'editUserModal', 'addCardModal', 'editCardModal'];
+            modals.forEach(modalId => {
+                const modal = document.getElementById(modalId);
+                if (event.target === modal) {
+                    if (modalId === 'addUserModal') closeAddUserModal();
+                    if (modalId === 'editUserModal') closeEditUserModal();
+                    if (modalId === 'addCardModal') closeAddCardModal();
+                    if (modalId === 'editCardModal') closeEditCardModal();
+                }
+            });
         }
     </script>
 </body>

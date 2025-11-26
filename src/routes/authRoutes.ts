@@ -6,7 +6,7 @@ import { requireAdmin } from '../middleware/auth';
 const router = Router();
 const authController = new AuthController();
 
-// Rotas públicas - CORRIGIDO: usar /register em vez de /cadastro
+// Rotas públicas
 router.post('/register', authController.register);
 router.post('/login', authController.login);
 

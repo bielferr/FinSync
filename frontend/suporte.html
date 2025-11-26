@@ -24,9 +24,10 @@
             </div>
             
             <div class="nav-menu">
-                <a href="sobre.html" class="nav-link">Sobre</a>
-                <a href="contato.html" class="nav-link">Contato</a>
-                <a href="suporte.html" class="nav-link active">Blinkie</a>
+                <a href="/dashboard.html" class="nav-link">Dashboard</a>
+                <a href="/perfiladm.html" class="nav-link active">Administração</a>
+                <a href="hist.html" class="nav-link">Histórico</a>
+                <a href="/suporte.html" class="nav-link">Blinkie</a>
             </div>
             
             <div class="nav-actions">
@@ -199,6 +200,12 @@
 
     <script src="/js/chatbot.js"></script>
     <script>
+
+        // No início do script
+        if (!window.authManager?.requireAuth()) {
+            return;
+        }
+
         // Atualizar horários iniciais
         const now = new Date();
         document.getElementById('welcomeTime').textContent = now.toLocaleTimeString('pt-BR', { 
