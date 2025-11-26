@@ -81,43 +81,6 @@
             letter-spacing: 0.5px;
         }
 
-        .admin-tabs {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 24px;
-            border-bottom: 1px solid var(--gray);
-            padding-bottom: 16px;
-        }
-
-        .tab-btn {
-            padding: 12px 24px;
-            background: none;
-            border: none;
-            border-radius: 8px;
-            color: var(--secondary);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 500;
-        }
-
-        .tab-btn.active {
-            background: var(--primary);
-            color: var(--white);
-        }
-
-        .tab-btn:hover:not(.active) {
-            background: var(--light);
-            color: var(--dark);
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
         .table-container {
             background: var(--white);
             border-radius: 16px;
@@ -164,7 +127,7 @@
             background: var(--light);
         }
 
-        .user-avatar, .card-icon {
+        .user-avatar {
             width: 40px;
             height: 40px;
             border-radius: 50%;
@@ -176,22 +139,18 @@
             font-weight: 600;
         }
 
-        .card-icon {
-            background: var(--secondary);
-        }
-
-        .user-info, .card-info {
+        .user-info {
             display: flex;
             align-items: center;
             gap: 12px;
         }
 
-        .user-details h4, .card-details h4 {
+        .user-details h4 {
             font-weight: 500;
             margin-bottom: 4px;
         }
 
-        .user-details p, .card-details p {
+        .user-details p {
             color: var(--secondary);
             font-size: 0.875rem;
         }
@@ -225,22 +184,7 @@
             color: #991B1B;
         }
 
-        .badge-success {
-            background: #D1FAE5;
-            color: #065F46;
-        }
-
-        .badge-error {
-            background: #FEE2E2;
-            color: #991B1B;
-        }
-
-        .badge-warning {
-            background: #FEF3C7;
-            color: #92400E;
-        }
-
-        .user-actions, .card-actions {
+        .user-actions {
             display: flex;
             gap: 8px;
         }
@@ -289,12 +233,6 @@
             justify-content: flex-end;
         }
 
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-        }
-
         .password-field {
             position: relative;
         }
@@ -308,11 +246,6 @@
             border: none;
             color: var(--secondary);
             cursor: pointer;
-        }
-
-        .loading {
-            opacity: 0.6;
-            pointer-events: none;
         }
 
         .loading-skeleton {
@@ -351,16 +284,8 @@
                 flex-direction: column;
             }
             
-            .user-actions, .card-actions {
+            .user-actions {
                 flex-direction: column;
-            }
-            
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-            
-            .admin-tabs {
-                flex-wrap: wrap;
             }
         }
     </style>
@@ -396,7 +321,7 @@
             <div class="page-header-content">
                 <div>
                     <h1 class="page-title">Painel Administrativo</h1>
-                    <p class="page-subtitle">Gerencie usuários, cartões e configurações do sistema</p>
+                    <p class="page-subtitle">Gerencie usuários do sistema</p>
                     <div class="sync-status" id="syncStatus">
                         <i class="fas fa-sync"></i>
                         <span>Sincronizando com o banco de dados...</span>
@@ -406,10 +331,6 @@
                     <button class="btn btn-primary" onclick="openAddUserModal()">
                         <i class="fas fa-user-plus"></i>
                         Adicionar Usuário
-                    </button>
-                    <button class="btn btn-primary" onclick="openAddCardModal()">
-                        <i class="fas fa-credit-card"></i>
-                        Adicionar Cartão
                     </button>
                 </div>
             </div>
@@ -430,98 +351,41 @@
                     <div class="stat-value" id="adminUsers">0</div>
                     <div class="stat-label">Administradores</div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-value" id="totalCards">0</div>
-                    <div class="stat-label">Cartões Cadastrados</div>
-                </div>
             </div>
 
-            <!-- Tabs -->
-            <div class="admin-tabs">
-                <button class="tab-btn active" onclick="switchTab('users')">
-                    <i class="fas fa-users"></i>
-                    Usuários
-                </button>
-                <button class="tab-btn" onclick="switchTab('cards')">
-                    <i class="fas fa-credit-card"></i>
-                    Cartões
-                </button>
-            </div>
-
-            <!-- Users Tab -->
-            <div id="usersTab" class="tab-content active">
-                <div class="table-container">
-                    <div class="table-header">
-                        <h2 class="card-title">Usuários do Sistema</h2>
-                        <div class="table-actions">
-                            <input type="text" class="form-input" placeholder="Buscar usuários..." 
-                                   style="min-width: 250px;" oninput="filterUsers(this.value)">
-                            <button class="btn btn-outline" onclick="refreshUsers()">
-                                <i class="fas fa-sync-alt"></i>
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <div class="table-container">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Usuário</th>
-                                    <th>Email</th>
-                                    <th>Status</th>
-                                    <th>Registro</th>
-                                    <th>Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody id="usersTableBody">
-                                <tr>
-                                    <td colspan="5" style="text-align: center; padding: 40px; color: var(--secondary);">
-                                        <div class="loading-skeleton" style="height: 20px; margin-bottom: 8px;"></div>
-                                        <div class="loading-skeleton" style="height: 16px; width: 60%; margin: 0 auto;"></div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+            <!-- Users Table -->
+            <div class="table-container">
+                <div class="table-header">
+                    <h2 class="card-title">Usuários do Sistema</h2>
+                    <div class="table-actions">
+                        <input type="text" class="form-input" placeholder="Buscar usuários..." 
+                               style="min-width: 250px;" oninput="filterUsers(this.value)">
+                        <button class="btn btn-outline" onclick="refreshUsers()">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
                     </div>
                 </div>
-            </div>
-
-            <!-- Cards Tab -->
-            <div id="cardsTab" class="tab-content">
+                
                 <div class="table-container">
-                    <div class="table-header">
-                        <h2 class="card-title">Cartões Cadastrados</h2>
-                        <div class="table-actions">
-                            <input type="text" class="form-input" placeholder="Buscar cartões..." 
-                                   style="min-width: 250px;" oninput="filterCards(this.value)">
-                            <button class="btn btn-outline" onclick="refreshCards()">
-                                <i class="fas fa-sync-alt"></i>
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <div class="table-container">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Cartão</th>
-                                    <th>Limite</th>
-                                    <th>Saldo</th>
-                                    <th>Dia Vencimento</th>
-                                    <th>Status</th>
-                                    <th>Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody id="cardsTableBody">
-                                <tr>
-                                    <td colspan="6" style="text-align: center; padding: 40px; color: var(--secondary);">
-                                        <div class="loading-skeleton" style="height: 20px; margin-bottom: 8px;"></div>
-                                        <div class="loading-skeleton" style="height: 16px; width: 60%; margin: 0 auto;"></div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Usuário</th>
+                                <th>Email</th>
+                                <th>Status</th>
+                                <th>Registro</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody">
+                            <tr>
+                                <td colspan="5" style="text-align: center; padding: 40px; color: var(--secondary);">
+                                    <div class="loading-skeleton" style="height: 20px; margin-bottom: 8px;"></div>
+                                    <div class="loading-skeleton" style="height: 16px; width: 60%; margin: 0 auto;"></div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -631,231 +495,113 @@
         </div>
     </div>
 
-    <!-- Add Card Modal -->
-    <div id="addCardModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="card-title">Adicionar Cartão</h2>
-                <button class="btn btn-outline btn-small" onclick="closeAddCardModal()">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form id="addCardForm">
-                    <div class="form-group">
-                        <label class="form-label">Nome do Cartão *</label>
-                        <input type="text" class="form-input" id="cardName" name="cardName" required placeholder="Ex: Nubank, Inter, Itaú...">
-                    </div>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label">Limite do Cartão *</label>
-                            <input type="number" class="form-input" id="cardLimit" name="cardLimit" required min="0" step="0.01" placeholder="0.00">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label">Dia de Vencimento *</label>
-                            <input type="number" class="form-input" id="cardDueDay" name="cardDueDay" required min="1" max="31" placeholder="1-31">
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Saldo Atual</label>
-                        <input type="number" class="form-input" id="cardBalance" name="cardBalance" min="0" step="0.01" placeholder="0.00" value="0">
-                    </div>
-                </form>
-            </div>
-            <div class="modal-actions">
-                <button class="btn btn-outline" onclick="closeAddCardModal()">Cancelar</button>
-                <button class="btn btn-primary" onclick="saveCard()">Salvar Cartão</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Edit Card Modal -->
-    <div id="editCardModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="card-title">Editar Cartão</h2>
-                <button class="btn btn-outline btn-small" onclick="closeEditCardModal()">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form id="editCardForm">
-                    <input type="hidden" id="editCardId">
-                    <div class="form-group">
-                        <label class="form-label">Nome do Cartão *</label>
-                        <input type="text" class="form-input" id="editCardName" name="cardName" required>
-                    </div>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label">Limite do Cartão *</label>
-                            <input type="number" class="form-input" id="editCardLimit" name="cardLimit" required min="0" step="0.01">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label">Dia de Vencimento *</label>
-                            <input type="number" class="form-input" id="editCardDueDay" name="cardDueDay" required min="1" max="31">
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Saldo Atual</label>
-                        <input type="number" class="form-input" id="editCardBalance" name="cardBalance" min="0" step="0.01">
-                    </div>
-                </form>
-            </div>
-            <div class="modal-actions">
-                <button class="btn btn-outline" onclick="closeEditCardModal()">Cancelar</button>
-                <button class="btn btn-primary" onclick="updateCard()">Atualizar Cartão</button>
-            </div>
-        </div>
-    </div>
-
     <script src="/js/auth.js"></script>
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Página admin carregada');
+            
+            // Verificação de autenticação
+            if (!window.authManager || !window.authManager.requireAuth()) {
+                console.log('Usuário não autenticado, redirecionando...');
+                return;
+            }
 
+            // Verificar se usuário é admin
+            if (!window.authManager.requireAdmin()) {
+                return;
+            }
 
-    document.addEventListener('DOMContentLoaded', function() {
-        if (!window.authManager || !window.authManager.requireAuth()) {
-            return;
-        }
-        // Resto do código da página...
-    });
-    
-        // Configurações da API
-        const API_BASE_URL = 'http://localhost:3333/api';
-        
+            loadUsers();
+        });
+
         // Sistema de Gerenciamento de Dados
         const AdminDataManager = {
             storageKeys: {
                 USERS: 'blync_admin_users',
-                CARDS: 'blync_admin_cards',
                 LAST_SYNC: 'blync_admin_last_sync'
             },
 
             // Funções para Usuários
-            async getUsersFromAPI() {
-                try {
-                    const response = await window.authManager.authenticatedFetch(`${API_BASE_URL}/admin/users`);
-                    if (response.ok) {
-                        const result = await response.json();
-                        return result.data || [];
-                    } else {
-                        console.warn('Erro ao buscar usuários da API, usando dados locais');
-                        return this.getUsersFromLocal();
-                    }
-                } catch (error) {
-                    console.warn('API indisponível, usando dados locais:', error);
-                    return this.getUsersFromLocal();
-                }
-            },
-
-
-            async saveUserToAPI(userData) {
-                try {
-                    const response = await window.authManager.authenticatedFetch(`${API_BASE_URL}/admin/users`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(userData)
-                    });
-                    
-                    if (response.ok) {
-                        const result = await response.json();
-                        return result.data;
-                    } else {
-                        const error = await response.json();
-                        throw new Error(error.message || 'Erro ao salvar usuário');
-                    }
-                } catch (error) {
-                    throw error;
-                }
-            },
-
-            async updateUserInAPI(userId, userData) {
-                try {
-                    const response = await window.authManager.authenticatedFetch(`${API_BASE_URL}/admin/users/${userId}`, {
-                        method: 'PUT',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(userData)
-                    });
-                    
-                    if (response.ok) {
-                        const result = await response.json();
-                        return result.data;
-                    } else {
-                        const error = await response.json();
-                        throw new Error(error.message || 'Erro ao atualizar usuário');
-                    }
-                } catch (error) {
-                    throw error;
-                }
-            },
-
-            async deleteUserFromAPI(userId) {
-                try {
-                    const response = await window.authManager.authenticatedFetch(`${API_BASE_URL}/admin/users/${userId}`, {
-                        method: 'DELETE'
-                    });
-                    
-                    return response.ok;
-                } catch (error) {
-                    throw error;
-                }
-            },
-
-            // Funções locais (fallback)
             getUsersFromLocal() {
-                const users = localStorage.getItem(this.storageKeys.USERS);
-                return users ? JSON.parse(users) : [];
+                try {
+                    const users = localStorage.getItem(this.storageKeys.USERS);
+                    return users ? JSON.parse(users) : this.getDefaultUsers();
+                } catch (error) {
+                    console.error('Erro ao carregar usuários locais:', error);
+                    return this.getDefaultUsers();
+                }
+            },
+
+            getDefaultUsers() {
+                // Usuários padrão do sistema
+                return [
+                    {
+                        id: 1,
+                        name: 'Administrador',
+                        email: 'admin@blync.com',
+                        role: 'admin',
+                        status: 'active',
+                        createdAt: new Date().toISOString(),
+                        lastLogin: null
+                    }
+                ];
             },
 
             saveUsersToLocal(users) {
-                localStorage.setItem(this.storageKeys.USERS, JSON.stringify(users));
+                try {
+                    localStorage.setItem(this.storageKeys.USERS, JSON.stringify(users));
+                    return true;
+                } catch (error) {
+                    console.error('Erro ao salvar usuários:', error);
+                    return false;
+                }
             },
 
-            // Funções para Cartões (manter local por enquanto)
-            getCards() {
-                const cards = localStorage.getItem(this.storageKeys.CARDS);
-                return cards ? JSON.parse(cards) : [];
-            },
-
-            saveCards(cards) {
-                localStorage.setItem(this.storageKeys.CARDS, JSON.stringify(cards));
-            },
-
-            addCard(cardData) {
-                const cards = this.getCards();
-                const newCard = {
-                    id: this.generateId(cards),
-                    ...cardData,
+            addUser(userData) {
+                const users = this.getUsersFromLocal();
+                const newUser = {
+                    id: this.generateId(users),
+                    ...userData,
                     status: 'active',
                     createdAt: new Date().toISOString(),
-                    updatedAt: new Date().toISOString()
+                    lastLogin: null
                 };
-                cards.push(newCard);
-                this.saveCards(cards);
-                return newCard;
-            },
-
-            updateCard(cardId, cardData) {
-                const cards = this.getCards();
-                const index = cards.findIndex(c => c.id === cardId);
-                if (index !== -1) {
-                    cards[index] = { ...cards[index], ...cardData, updatedAt: new Date().toISOString() };
-                    this.saveCards(cards);
-                    return cards[index];
+                users.push(newUser);
+                if (this.saveUsersToLocal(users)) {
+                    return newUser;
                 }
                 return null;
             },
 
-            deleteCard(cardId) {
-                const cards = this.getCards();
-                const filteredCards = cards.filter(c => c.id !== cardId);
-                this.saveCards(filteredCards);
-                return filteredCards.length !== cards.length;
+            updateUser(userId, userData) {
+                const users = this.getUsersFromLocal();
+                const index = users.findIndex(u => u.id === userId);
+                if (index !== -1) {
+                    users[index] = { 
+                        ...users[index], 
+                        ...userData, 
+                        updatedAt: new Date().toISOString() 
+                    };
+                    if (this.saveUsersToLocal(users)) {
+                        return users[index];
+                    }
+                }
+                return null;
+            },
+
+            deleteUser(userId) {
+                const users = this.getUsersFromLocal();
+                // Não permitir deletar o próprio usuário admin
+                const currentUser = window.authManager.getCurrentUser();
+                if (currentUser && currentUser.id === userId) {
+                    throw new Error('Você não pode deletar sua própria conta');
+                }
+                
+                const filteredUsers = users.filter(u => u.id !== userId);
+                if (this.saveUsersToLocal(filteredUsers)) {
+                    return true;
+                }
+                return false;
             },
 
             // Utilitários
@@ -870,20 +616,6 @@
 
         let users = [];
         let filteredUsers = [];
-        let cards = [];
-        let filteredCards = [];
-        let currentTab = 'users';
-
-        // Inicialização
-        document.addEventListener('DOMContentLoaded', function() {
-            // Verificar se usuário é admin
-            if (!window.authManager.requireAdmin()) {
-                return;
-            }
-
-            loadUsers();
-            loadCards();
-        });
 
         // Função para mostrar/ocultar senha
         function togglePassword(fieldId) {
@@ -911,37 +643,22 @@
             }
         }
 
-        // Funções de Tab
-        function switchTab(tabName) {
-            currentTab = tabName;
-            
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            event.target.classList.add('active');
-            
-            document.querySelectorAll('.tab-content').forEach(content => {
-                content.classList.remove('active');
-            });
-            document.getElementById(tabName + 'Tab').classList.add('active');
-        }
-
         // =============================================
-        // GERENCIAMENTO DE USUÁRIOS - INTEGRAÇÃO COM API
+        // GERENCIAMENTO DE USUÁRIOS
         // =============================================
 
-        async function loadUsers() {
+        function loadUsers() {
             try {
-                updateSyncStatus('Carregando usuários do banco de dados...', 'syncing');
-                users = await AdminDataManager.getUsersFromAPI();
+                updateSyncStatus('Carregando usuários...', 'syncing');
+                users = AdminDataManager.getUsersFromLocal();
                 filteredUsers = [...users];
                 updateStats();
                 renderUsersTable();
-                updateSyncStatus(`Sincronizado - ${users.length} usuários carregados`, 'success');
+                updateSyncStatus(`${users.length} usuários carregados`, 'success');
             } catch (error) {
                 console.error('Erro ao carregar usuários:', error);
                 updateSyncStatus('Erro ao carregar usuários', 'error');
-                window.authManager.showAlert('Erro ao carregar usuários do banco de dados', 'error');
+                showAlert('Erro ao carregar usuários', 'error');
             }
         }
 
@@ -949,12 +666,10 @@
             const totalUsers = users.length;
             const activeUsers = users.filter(u => u.status === 'active').length;
             const adminUsers = users.filter(u => u.role === 'admin').length;
-            const totalCards = cards.length;
 
             document.getElementById('totalUsers').textContent = totalUsers;
             document.getElementById('activeUsers').textContent = activeUsers;
             document.getElementById('adminUsers').textContent = adminUsers;
-            document.getElementById('totalCards').textContent = totalCards;
         }
 
         function renderUsersTable() {
@@ -976,7 +691,7 @@
                     <td>
                         <div class="user-info">
                             <div class="user-avatar">
-                                ${user.name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                                ${getUserInitials(user.name)}
                             </div>
                             <div class="user-details">
                                 <h4>${user.name}</h4>
@@ -1016,6 +731,15 @@
             `).join('');
         }
 
+        function getUserInitials(name) {
+            if (!name) return 'US';
+            return name.split(' ')
+                      .map(n => n[0])
+                      .join('')
+                      .toUpperCase()
+                      .substring(0, 2);
+        }
+
         function filterUsers(searchTerm) {
             if (!searchTerm) {
                 filteredUsers = [...users];
@@ -1047,14 +771,26 @@
         }
 
         // CRUD Operations - Users
-        async function saveUser() {
+        function saveUser() {
             const form = document.getElementById('addUserForm');
             const formData = new FormData(form);
             const data = Object.fromEntries(formData);
 
             // Validações
             if (!data.userName || !data.userEmail || !data.userPassword) {
-                window.authManager.showAlert('Por favor, preencha todos os campos obrigatórios', 'error');
+                showAlert('Por favor, preencha todos os campos obrigatórios', 'error');
+                return;
+            }
+
+            if (data.userPassword.length < 6) {
+                showAlert('A senha deve ter pelo menos 6 caracteres', 'error');
+                return;
+            }
+
+            // Verificar se email já existe
+            const existingUser = users.find(u => u.email === data.userEmail);
+            if (existingUser) {
+                showAlert('Já existe um usuário com este email', 'error');
                 return;
             }
 
@@ -1065,21 +801,25 @@
                 submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Salvando...';
                 submitBtn.disabled = true;
 
-                // Salvar no banco de dados via API
-                const newUser = await AdminDataManager.saveUserToAPI({
+                // Salvar localmente
+                const newUser = AdminDataManager.addUser({
                     name: data.userName,
                     email: data.userEmail,
-                    password: data.userPassword,
+                    password: data.userPassword, // Em um sistema real, isso seria hasheado
                     role: data.userRole
                 });
 
-                window.authManager.showAlert('Usuário criado com sucesso no banco de dados!', 'success');
-                closeAddUserModal();
-                await loadUsers(); // Recarregar lista do banco
+                if (newUser) {
+                    showAlert('Usuário criado com sucesso!', 'success');
+                    closeAddUserModal();
+                    loadUsers();
+                } else {
+                    throw new Error('Erro ao salvar usuário');
+                }
                 
             } catch (error) {
                 console.error('Erro ao criar usuário:', error);
-                window.authManager.showAlert(error.message || 'Erro ao criar usuário no banco de dados', 'error');
+                showAlert(error.message || 'Erro ao criar usuário', 'error');
             } finally {
                 submitBtn.innerHTML = originalText;
                 submitBtn.disabled = false;
@@ -1099,7 +839,7 @@
             }
         }
 
-        async function updateUser() {
+        function updateUser() {
             const userId = parseInt(document.getElementById('editUserId').value);
             const form = document.getElementById('editUserForm');
             const formData = new FormData(form);
@@ -1107,7 +847,19 @@
 
             // Validações
             if (!data.userName || !data.userEmail) {
-                window.authManager.showAlert('Por favor, preencha todos os campos obrigatórios', 'error');
+                showAlert('Por favor, preencha todos os campos obrigatórios', 'error');
+                return;
+            }
+
+            if (data.userPassword && data.userPassword.length < 6) {
+                showAlert('A senha deve ter pelo menos 6 caracteres', 'error');
+                return;
+            }
+
+            // Verificar se email já existe em outro usuário
+            const existingUser = users.find(u => u.email === data.userEmail && u.id !== userId);
+            if (existingUser) {
+                showAlert('Já existe outro usuário com este email', 'error');
                 return;
             }
 
@@ -1130,276 +882,70 @@
                     updateData.password = data.userPassword;
                 }
 
-                // Atualizar no banco de dados via API
-                await AdminDataManager.updateUserInAPI(userId, updateData);
+                // Atualizar localmente
+                const updatedUser = AdminDataManager.updateUser(userId, updateData);
 
-                window.authManager.showAlert('Usuário atualizado com sucesso no banco de dados!', 'success');
-                closeEditUserModal();
-                await loadUsers(); // Recarregar lista do banco
+                if (updatedUser) {
+                    showAlert('Usuário atualizado com sucesso!', 'success');
+                    closeEditUserModal();
+                    loadUsers();
+                } else {
+                    throw new Error('Erro ao atualizar usuário');
+                }
                 
             } catch (error) {
                 console.error('Erro ao atualizar usuário:', error);
-                window.authManager.showAlert(error.message || 'Erro ao atualizar usuário no banco de dados', 'error');
+                showAlert(error.message || 'Erro ao atualizar usuário', 'error');
             } finally {
                 submitBtn.innerHTML = originalText;
                 submitBtn.disabled = false;
             }
         }
 
-        async function toggleUserStatus(userId) {
+        function toggleUserStatus(userId) {
             const user = users.find(u => u.id === userId);
             if (user) {
                 const newStatus = user.status === 'active' ? 'inactive' : 'active';
                 const action = newStatus === 'active' ? 'ativado' : 'desativado';
                 
                 try {
-                    // Atualizar no banco de dados via API
-                    await AdminDataManager.updateUserInAPI(userId, { status: newStatus });
-                    await loadUsers(); // Recarregar lista do banco
-                    window.authManager.showAlert(`Usuário ${action} com sucesso!`, 'success');
+                    const updatedUser = AdminDataManager.updateUser(userId, { status: newStatus });
+                    if (updatedUser) {
+                        loadUsers();
+                        showAlert(`Usuário ${action} com sucesso!`, 'success');
+                    } else {
+                        throw new Error('Erro ao atualizar status');
+                    }
                 } catch (error) {
                     console.error('Erro ao atualizar status:', error);
-                    window.authManager.showAlert(error.message || 'Erro ao atualizar status do usuário', 'error');
+                    showAlert(error.message || 'Erro ao atualizar status do usuário', 'error');
                 }
             }
         }
 
-        async function deleteUser(userId) {
+        function deleteUser(userId) {
             const user = users.find(u => u.id === userId);
-            if (user && confirm(`Tem certeza que deseja excluir o usuário ${user.name}?\n\nEsta ação não pode ser desfeita.`)) {
-                try {
-                    // Excluir do banco de dados via API
-                    await AdminDataManager.deleteUserFromAPI(userId);
-                    await loadUsers(); // Recarregar lista do banco
-                    window.authManager.showAlert('Usuário excluído com sucesso do banco de dados!', 'success');
-                } catch (error) {
-                    console.error('Erro ao excluir usuário:', error);
-                    window.authManager.showAlert(error.message || 'Erro ao excluir usuário do banco de dados', 'error');
+            if (user) {
+                if (confirm(`Tem certeza que deseja excluir o usuário ${user.name}?\n\nEsta ação não pode ser desfeita.`)) {
+                    try {
+                        const success = AdminDataManager.deleteUser(userId);
+                        if (success) {
+                            loadUsers();
+                            showAlert('Usuário excluído com sucesso!', 'success');
+                        } else {
+                            throw new Error('Erro ao excluir usuário');
+                        }
+                    } catch (error) {
+                        console.error('Erro ao excluir usuário:', error);
+                        showAlert(error.message || 'Erro ao excluir usuário', 'error');
+                    }
                 }
             }
         }
 
         function refreshUsers() {
             loadUsers();
-            window.authManager.showAlert('Lista de usuários atualizada do banco de dados', 'success');
-        }
-
-        // =============================================
-        // GERENCIAMENTO DE CARTÕES (mantido local)
-        // =============================================
-
-        function loadCards() {
-            cards = AdminDataManager.getCards();
-            filteredCards = [...cards];
-            updateStats();
-            renderCardsTable();
-        }
-
-        function renderCardsTable() {
-            const tbody = document.getElementById('cardsTableBody');
-            
-            if (filteredCards.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="6" style="text-align: center; padding: 40px; color: var(--secondary);">
-                            Nenhum cartão encontrado
-                        </td>
-                    </tr>
-                `;
-                return;
-            }
-
-            tbody.innerHTML = filteredCards.map(card => `
-                <tr>
-                    <td>
-                        <div class="card-info">
-                            <div class="card-icon">
-                                <i class="fas fa-credit-card"></i>
-                            </div>
-                            <div class="card-details">
-                                <h4>${card.name}</h4>
-                                <p>ID: ${card.id}</p>
-                            </div>
-                        </div>
-                    </td>
-                    <td>
-                        <strong>${formatCurrency(card.limit)}</strong>
-                    </td>
-                    <td>
-                        <span class="${card.balance > 0 ? 'stat-expense' : ''}">
-                            ${formatCurrency(card.balance)}
-                        </span>
-                    </td>
-                    <td>
-                        <span class="badge ${getDueDayBadgeClass(card.due_day)}">
-                            Dia ${card.due_day}
-                        </span>
-                    </td>
-                    <td>
-                        <span class="badge ${card.status === 'active' ? 'badge-active' : 'badge-inactive'}">
-                            ${card.status === 'active' ? 'Ativo' : 'Inativo'}
-                        </span>
-                    </td>
-                    <td>
-                        <div class="card-actions">
-                            <button class="btn btn-outline btn-small" onclick="editCard(${card.id})" title="Editar cartão">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button class="btn btn-outline btn-small" onclick="toggleCardStatus(${card.id})" title="${card.status === 'active' ? 'Desativar' : 'Ativar'} cartão">
-                                <i class="fas ${card.status === 'active' ? 'fa-pause' : 'fa-play'}"></i>
-                            </button>
-                            <button class="btn btn-error btn-small" onclick="deleteCard(${card.id})" title="Excluir cartão">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-            `).join('');
-        }
-
-        function filterCards(searchTerm) {
-            if (!searchTerm) {
-                filteredCards = [...cards];
-            } else {
-                filteredCards = cards.filter(card => 
-                    card.name.toLowerCase().includes(searchTerm.toLowerCase())
-                );
-            }
-            renderCardsTable();
-        }
-
-        // Modal functions - Cards
-        function openAddCardModal() {
-            document.getElementById('addCardModal').style.display = 'block';
-            document.getElementById('addCardForm').reset();
-        }
-
-        function closeAddCardModal() {
-            document.getElementById('addCardModal').style.display = 'none';
-        }
-
-        function openEditCardModal() {
-            document.getElementById('editCardModal').style.display = 'block';
-        }
-
-        function closeEditCardModal() {
-            document.getElementById('editCardModal').style.display = 'none';
-        }
-
-        // CRUD Operations - Cards
-        async function saveCard() {
-            const form = document.getElementById('addCardForm');
-            const formData = new FormData(form);
-            const data = Object.fromEntries(formData);
-
-            // Validações
-            if (!data.cardName || !data.cardLimit || !data.cardDueDay) {
-                window.authManager.showAlert('Por favor, preencha todos os campos obrigatórios', 'error');
-                return;
-            }
-
-            if (data.cardDueDay < 1 || data.cardDueDay > 31) {
-                window.authManager.showAlert('O dia de vencimento deve ser entre 1 e 31', 'error');
-                return;
-            }
-
-            try {
-                // Salvar localmente (por enquanto)
-                const newCard = AdminDataManager.addCard({
-                    name: data.cardName,
-                    limit: parseFloat(data.cardLimit),
-                    balance: parseFloat(data.cardBalance || 0),
-                    due_day: parseInt(data.cardDueDay)
-                });
-
-                window.authManager.showAlert('Cartão criado com sucesso!', 'success');
-                closeAddCardModal();
-                loadCards();
-                
-            } catch (error) {
-                console.error('Erro ao criar cartão:', error);
-                window.authManager.showAlert('Erro ao criar cartão', 'error');
-            }
-        }
-
-        function editCard(cardId) {
-            const card = cards.find(c => c.id === cardId);
-            if (card) {
-                document.getElementById('editCardId').value = card.id;
-                document.getElementById('editCardName').value = card.name;
-                document.getElementById('editCardLimit').value = card.limit;
-                document.getElementById('editCardDueDay').value = card.due_day;
-                document.getElementById('editCardBalance').value = card.balance;
-                openEditCardModal();
-            }
-        }
-
-        async function updateCard() {
-            const cardId = parseInt(document.getElementById('editCardId').value);
-            const form = document.getElementById('editCardForm');
-            const formData = new FormData(form);
-            const data = Object.fromEntries(formData);
-
-            // Validações
-            if (!data.cardName || !data.cardLimit || !data.cardDueDay) {
-                window.authManager.showAlert('Por favor, preencha todos os campos obrigatórios', 'error');
-                return;
-            }
-
-            if (data.cardDueDay < 1 || data.cardDueDay > 31) {
-                window.authManager.showAlert('O dia de vencimento deve ser entre 1 e 31', 'error');
-                return;
-            }
-
-            try {
-                AdminDataManager.updateCard(cardId, {
-                    name: data.cardName,
-                    limit: parseFloat(data.cardLimit),
-                    balance: parseFloat(data.cardBalance || 0),
-                    due_day: parseInt(data.cardDueDay)
-                });
-
-                window.authManager.showAlert('Cartão atualizado com sucesso!', 'success');
-                closeEditCardModal();
-                loadCards();
-            } catch (error) {
-                console.error('Erro ao atualizar cartão:', error);
-                window.authManager.showAlert('Erro ao atualizar cartão', 'error');
-            }
-        }
-
-        async function toggleCardStatus(cardId) {
-            const card = cards.find(c => c.id === cardId);
-            if (card) {
-                const newStatus = card.status === 'active' ? 'inactive' : 'active';
-                const action = newStatus === 'active' ? 'ativado' : 'desativado';
-                
-                try {
-                    AdminDataManager.updateCard(cardId, { status: newStatus });
-                    loadCards();
-                    window.authManager.showAlert(`Cartão ${action} com sucesso!`, 'success');
-                } catch (error) {
-                    window.authManager.showAlert('Erro ao atualizar status do cartão', 'error');
-                }
-            }
-        }
-
-        async function deleteCard(cardId) {
-            const card = cards.find(c => c.id === cardId);
-            if (card && confirm(`Tem certeza que deseja excluir o cartão ${card.name}?\n\nEsta ação não pode ser desfeita.`)) {
-                try {
-                    AdminDataManager.deleteCard(cardId);
-                    loadCards();
-                    window.authManager.showAlert('Cartão excluído com sucesso!', 'success');
-                } catch (error) {
-                    window.authManager.showAlert('Erro ao excluir cartão', 'error');
-                }
-            }
-        }
-
-        function refreshCards() {
-            loadCards();
-            window.authManager.showAlert('Lista de cartões atualizada', 'success');
+            showAlert('Lista de usuários atualizada', 'success');
         }
 
         // =============================================
@@ -1407,37 +953,61 @@
         // =============================================
 
         function formatDate(dateString) {
-            return new Date(dateString).toLocaleDateString('pt-BR');
+            try {
+                return new Date(dateString).toLocaleDateString('pt-BR');
+            } catch (error) {
+                return dateString;
+            }
         }
 
-        function formatCurrency(value) {
-            return new Intl.NumberFormat('pt-BR', {
-                style: 'currency',
-                currency: 'BRL'
-            }).format(value);
-        }
-
-        function getDueDayBadgeClass(dueDay) {
-            const today = new Date().getDate();
-            if (dueDay === today) {
-                return 'badge-error'; // Vence hoje
-            } else if (dueDay > today && dueDay <= today + 5) {
-                return 'badge-warning'; // Vence em breve
+        function showAlert(message, type = 'success') {
+            // Usar o sistema de alertas do authManager se disponível
+            if (window.authManager && window.authManager.showAlert) {
+                window.authManager.showAlert(message, type);
             } else {
-                return 'badge-success'; // Dentro do prazo
+                // Fallback simples
+                alert(`${type === 'error' ? 'Erro:' : 'Sucesso:'} ${message}`);
             }
         }
 
         // Fechar modais ao clicar fora
         window.onclick = function(event) {
-            const modals = ['addUserModal', 'editUserModal', 'addCardModal', 'editCardModal'];
+            const modals = ['addUserModal', 'editUserModal'];
             modals.forEach(modalId => {
                 const modal = document.getElementById(modalId);
                 if (event.target === modal) {
                     if (modalId === 'addUserModal') closeAddUserModal();
                     if (modalId === 'editUserModal') closeEditUserModal();
-                    if (modalId === 'addCardModal') closeAddCardModal();
-                    if (modalId === 'editCardModal') closeEditCardModal();
+                }
+            });
+        }
+
+        // Adicionar dados de exemplo em desenvolvimento
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+            document.addEventListener('DOMContentLoaded', function() {
+                // Verificar se não há usuários além do admin padrão
+                const currentUsers = AdminDataManager.getUsersFromLocal();
+                if (currentUsers.length <= 1) {
+                    const sampleUsers = [
+                        {
+                            name: 'João Silva',
+                            email: 'joao.silva@email.com',
+                            password: '123456',
+                            role: 'user'
+                        },
+                        {
+                            name: 'Maria Santos',
+                            email: 'maria.santos@email.com',
+                            password: '123456',
+                            role: 'user'
+                        }
+                    ];
+                    
+                    sampleUsers.forEach(userData => {
+                        AdminDataManager.addUser(userData);
+                    });
+                    
+                    console.log('Dados de exemplo adicionados para desenvolvimento');
                 }
             });
         }

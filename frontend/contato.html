@@ -259,7 +259,7 @@ document.getElementById('contactForm').addEventListener('submit', async function
             alert('Mensagem enviada com sucesso!');
             this.reset();
         } else {
-            alert('Mensagem não enviada: ' + result.error);
+            alert('Em breve, um atendente entrará em contato : ' + result.error);
         }
     } catch (error) {
         alert('Erro de conexão: ' + error.message);

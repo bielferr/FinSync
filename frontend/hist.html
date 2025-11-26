@@ -9,16 +9,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src="/js/data-manager.js"></script>
     <script src="/js/auth.js"></script>
-    <script type="module">
-    import { loadGlobalData, getState } from "./static/js/state.js";
 
-    (async () => {
-        await loadGlobalData();
-        const state = getState();
-
-        console.log("Dados no dashboard:", state);
-    })();
-    </script>
 
     <style>
         .filters-container {
@@ -359,24 +350,14 @@
                 </div>
             </div>
 
-            <!-- Export Actions -->
-            <div class="export-actions">
-                <button class="btn btn-outline" onclick="exportToCSV()">
-                    <i class="fas fa-download"></i>
-                    Exportar CSV
-                </button>
-                <button class="btn btn-outline" onclick="clearAllTransactions()">
-                    <i class="fas fa-trash"></i>
-                    Limpar Tudo
-                </button>
-            </div>
+
 
             <!-- Transactions List -->
             <div class="card">
                 <div class="card-header">
                     <h2 class="card-title">Transações</h2>
                     <div style="display: flex; gap: 8px; align-items: center;">
-                        <span class="stat-label" id="resultsCount">0 transações</span>
+                        <span class="stat-label" id="resultsCount">0</span>
                         <a href="/novatransacao.html" class="btn btn-primary btn-small">
                             <i class="fas fa-plus"></i>
                             Nova
@@ -393,7 +374,7 @@
                     <i class="fas fa-receipt"></i>
                     <h3>Nenhuma transação encontrada</h3>
                     <p>Comece adicionando sua primeira transação</p>
-                    <a href="/nova-transacao.html" class="btn btn-primary" style="margin-top: 16px;">
+                    <a href="/novatransacao.html" class="btn btn-primary" style="margin-top: 16px;">
                         <i class="fas fa-plus"></i>
                         Nova Transação
                     </a>
@@ -403,212 +384,137 @@
         
     </main>
     <script>
-
+ // Verificação de autenticação
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Página histórica carregada');
         
-
-        // No início do script 
-        if (!window.authManager?.requireAuth()) {
-            return;
-        }
-
-            document.addEventListener('DOMContentLoaded', function() {
         if (!window.authManager || !window.authManager.requireAuth()) {
+            console.log('Usuário não autenticado, redirecionando...');
             return;
         }
-        // Resto do código da página...
+        
+        initializePage();
     });
 
-document.addEventListener('DOMContentLoaded', function() {
-    if (!window.authManager?.requireAuth()) return;
-    
-    loadTransactions();
-});
-
-function loadTransactions() {
-    const filters = {
-        period: document.getElementById('periodFilter').value,
-        type: document.getElementById('typeFilter').value,
-        category: document.getElementById('categoryFilter').value
-    };
-    
-    const filteredTransactions = BlyncDataManager.filterTransactions(filters);
-    displayTransactions(filteredTransactions);
-    updateStats(filteredTransactions);
-}
-
-function displayTransactions(transactions) {
-    const container = document.getElementById('transactionsList');
-    
-    if (transactions.length === 0) {
-        container.innerHTML = `<div class="empty-state">Nenhuma transação encontrada</div>`;
-        return;
-    }
-    
-    container.innerHTML = transactions.map(transaction => `
-        <div class="transaction-card">
-            <div class="transaction-header">
-                <div class="transaction-info">
-                    <div class="transaction-icon ${transaction.type}">
-                        <i class="${BlyncDataManager.getCategoryIcon(transaction.category)}"></i>
-                    </div>
-                    <div class="transaction-details">
-                        <h4>${transaction.description}</h4>
-                        <div class="transaction-meta">
-                            <span class="category-badge">
-                                <i class="${BlyncDataManager.getCategoryIcon(transaction.category)}"></i>
-                                ${BlyncDataManager.getCategoryName(transaction.category)}
-                            </span>
-                            <span>${BlyncDataManager.formatDate(transaction.date)}</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="transaction-amount ${transaction.type}">
-                    ${transaction.type === 'income' ? '+' : '-'} ${BlyncDataManager.formatCurrency(transaction.amount)}
-                </div>
-            </div>
-        </div>
-    `).join('');
-}
-
-function updateStats(transactions) {
-    const stats = BlyncDataManager.calculateStats(transactions);
-    document.getElementById('totalIncome').textContent = BlyncDataManager.formatCurrency(stats.monthIncome);
-    document.getElementById('totalExpense').textContent = BlyncDataManager.formatCurrency(stats.monthExpense);
-    document.getElementById('transactionsTotal').textContent = transactions.length;
-    document.getElementById('balance').textContent = BlyncDataManager.formatCurrency(stats.totalBalance);
-}
-
-function exportToCSV() {
-    const csvContent = BlyncDataManager.exportToCSV();
-    if (!csvContent) {
-        alert('Nenhuma transação para exportar');
-        return;
-    }
-    
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    const url = URL.createObjectURL(blob);
-    
-    link.setAttribute('href', url);
-    link.setAttribute('download', `transacoes-${new Date().toISOString().split('T')[0]}.csv`);
-    link.style.visibility = 'hidden';
-    
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-}
-
-function updateStats(transactions) {
-    const stats = BlyncDataManager.calculateStats(transactions);
-    document.getElementById('totalIncome').textContent = BlyncDataManager.formatCurrency(stats.monthIncome);
-    document.getElementById('totalExpense').textContent = BlyncDataManager.formatCurrency(stats.monthExpense);
-    document.getElementById('transactionsTotal').textContent = transactions.length;
-    document.getElementById('balance').textContent = BlyncDataManager.formatCurrency(stats.totalBalance);
-}
-
-function exportToCSV() {
-    const csvContent = BlyncDataManager.exportToCSV();
-    if (!csvContent) {
-        alert('Nenhuma transação para exportar');
-        return;
-    }
-    
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    const url = URL.createObjectURL(blob);
-    
-    link.setAttribute('href', url);
-    link.setAttribute('download', `transacoes-${new Date().toISOString().split('T')[0]}.csv`);
-    link.style.visibility = 'hidden';
-    
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-}
-
+    function initializePage() {
         // Theme Toggle
         const themeToggle = document.getElementById('themeToggle');
-        themeToggle.addEventListener('click', () => {
-            document.body.dataset.theme = document.body.dataset.theme === 'dark' ? 'light' : 'dark';
-            themeToggle.innerHTML = document.body.dataset.theme === 'dark' 
-                ? '<i class="fas fa-sun"></i>' 
-                : '<i class="fas fa-moon"></i>';
-        });
-
-        // Get transactions from localStorage
-        function getTransactions() {
-            return JSON.parse(localStorage.getItem('finsync_transactions') || '[]');
+        if (themeToggle) {
+            themeToggle.addEventListener('click', () => {
+                document.body.dataset.theme = document.body.dataset.theme === 'dark' ? 'light' : 'dark';
+                themeToggle.innerHTML = document.body.dataset.theme === 'dark' 
+                    ? '<i class="fas fa-sun"></i>' 
+                    : '<i class="fas fa-moon"></i>';
+            });
         }
 
-        // Format currency
-        function formatCurrency(value) {
-            return new Intl.NumberFormat('pt-BR', {
-                style: 'currency',
-                currency: 'BRL'
-            }).format(value);
-        }
+        // Event listeners para filtros
+        document.getElementById('periodFilter').addEventListener('change', applyFilters);
+        document.getElementById('typeFilter').addEventListener('change', applyFilters);
+        document.getElementById('categoryFilter').addEventListener('change', applyFilters);
 
-        // Format date
-        function formatDate(dateString) {
+        // Carregar transações
+        loadTransactions();
+        
+        // Adicionar botão de debug em desenvolvimento
+        addDebugButton();
+    }
+
+    // Obter transações do localStorage
+    function getTransactions() {
+        try {
+            const transactions = JSON.parse(localStorage.getItem('finsync_transactions') || '[]');
+            console.log('Transações carregadas:', transactions);
+            return transactions;
+        } catch (error) {
+            console.error('Erro ao carregar transações:', error);
+            return [];
+        }
+    }
+
+    // Formatar moeda
+    function formatCurrency(value) {
+        return new Intl.NumberFormat('pt-BR', {
+            style: 'currency',
+            currency: 'BRL'
+        }).format(value);
+    }
+
+    // Formatar data
+    function formatDate(dateString) {
+        try {
             const date = new Date(dateString);
             return date.toLocaleDateString('pt-BR');
+        } catch (error) {
+            return dateString;
         }
+    }
 
-        // Get category name
-        function getCategoryName(category) {
-            const categories = {
-                'salario': 'Salário',
-                'alimentacao': 'Alimentação',
-                'transporte': 'Transporte',
-                'moradia': 'Moradia',
-                'saude': 'Saúde',
-                'educacao': 'Educação',
-                'lazer': 'Lazer',
-                'compras': 'Compras',
-                'investimentos': 'Investimentos',
-                'outros': 'Outros'
-            };
-            return categories[category] || category;
-        }
+    // Obter nome da categoria
+    function getCategoryName(category) {
+        const categories = {
+            'salario': 'Salário',
+            'alimentacao': 'Alimentação',
+            'transporte': 'Transporte',
+            'moradia': 'Moradia',
+            'saude': 'Saúde',
+            'educacao': 'Educação',
+            'lazer': 'Lazer',
+            'compras': 'Compras',
+            'investimentos': 'Investimentos',
+            'outros': 'Outros'
+        };
+        return categories[category] || category;
+    }
 
-        // Get category icon
-        function getCategoryIcon(category) {
-            const icons = {
-                'salario': 'fas fa-money-bill-wave',
-                'alimentacao': 'fas fa-utensils',
-                'transporte': 'fas fa-bus',
-                'moradia': 'fas fa-home',
-                'saude': 'fas fa-heartbeat',
-                'educacao': 'fas fa-graduation-cap',
-                'lazer': 'fas fa-film',
-                'compras': 'fas fa-shopping-bag',
-                'investimentos': 'fas fa-chart-line',
-                'outros': 'fas fa-circle'
-            };
-            return icons[category] || 'fas fa-circle';
-        }
+    // Obter ícone da categoria
+    function getCategoryIcon(category) {
+        const icons = {
+            'salario': 'fas fa-money-bill-wave',
+            'alimentacao': 'fas fa-utensils',
+            'transporte': 'fas fa-bus',
+            'moradia': 'fas fa-home',
+            'saude': 'fas fa-heartbeat',
+            'educacao': 'fas fa-graduation-cap',
+            'lazer': 'fas fa-film',
+            'compras': 'fas fa-shopping-bag',
+            'investimentos': 'fas fa-chart-line',
+            'outros': 'fas fa-circle'
+        };
+        return icons[category] || 'fas fa-circle';
+    }
 
-        // Load and display transactions
-        function loadTransactions() {
-            const transactions = getTransactions();
-            const filteredTransactions = filterTransactions(transactions);
-            
-            displayTransactions(filteredTransactions);
-            updateStats(filteredTransactions);
-        }
+    // Carregar e exibir transações
+    function loadTransactions() {
+        const transactions = getTransactions();
+        const filteredTransactions = filterTransactions(transactions);
+        
+        displayTransactions(filteredTransactions);
+        updateStats(transactions); // Usar todas as transações para as estatísticas
+    }
 
-        // Filter transactions based on current filters
-        function filterTransactions(transactions) {
-            const period = document.getElementById('periodFilter').value;
-            const type = document.getElementById('typeFilter').value;
-            const category = document.getElementById('categoryFilter').value;
-            
-            let filtered = transactions;
-            
-            // Filter by period
-            if (period !== 'all') {
-                const now = new Date();
-                filtered = filtered.filter(transaction => {
+    // Filtrar transações
+    function filterTransactions(transactions) {
+        const period = document.getElementById('periodFilter').value;
+        const type = document.getElementById('typeFilter').value;
+        const category = document.getElementById('categoryFilter').value;
+        
+        console.log('Filtros aplicados:', { period, type, category });
+        
+        let filtered = transactions.filter(transaction => {
+            // Verificar se a transação tem o formato correto
+            if (!transaction.id || !transaction.type || !transaction.amount) {
+                console.warn('Transação inválida:', transaction);
+                return false;
+            }
+            return true;
+        });
+        
+        // Filtrar por período
+        if (period !== 'all') {
+            const now = new Date();
+            filtered = filtered.filter(transaction => {
+                try {
                     const transactionDate = new Date(transaction.date);
                     
                     switch (period) {
@@ -625,43 +531,59 @@ function exportToCSV() {
                         default:
                             return true;
                     }
-                });
-            }
-            
-            // Filter by type
-            if (type !== 'all') {
-                filtered = filtered.filter(transaction => transaction.type === type);
-            }
-            
-            // Filter by category
-            if (category !== 'all') {
-                filtered = filtered.filter(transaction => transaction.category === category);
-            }
-            
-            // Sort by date (newest first)
-            filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
-            
-            return filtered;
+                } catch (error) {
+                    console.error('Erro ao filtrar por período:', error);
+                    return false;
+                }
+            });
         }
+        
+        // Filtrar por tipo
+        if (type !== 'all') {
+            filtered = filtered.filter(transaction => transaction.type === type);
+        }
+        
+        // Filtrar por categoria
+        if (category !== 'all') {
+            filtered = filtered.filter(transaction => transaction.category === category);
+        }
+        
+        // Ordenar por data (mais recente primeiro)
+        filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
+        
+        console.log('Transações filtradas:', filtered.length);
+        return filtered;
+    }
 
-        // Display transactions in the list
-        function displayTransactions(transactions) {
-            const container = document.getElementById('transactionsList');
-            const emptyState = document.getElementById('emptyState');
-            const resultsCount = document.getElementById('resultsCount');
-            
+    // Exibir transações na lista
+    function displayTransactions(transactions) {
+        const container = document.getElementById('transactionsList');
+        const emptyState = document.getElementById('emptyState');
+        const resultsCount = document.getElementById('resultsCount');
+        
+        if (!container) {
+            console.error('Container de transações não encontrado');
+            return;
+        }
+        
+        if (resultsCount) {
             resultsCount.textContent = `${transactions.length} transação${transactions.length !== 1 ? 's' : ''}`;
+        }
+        
+        if (transactions.length === 0) {
+            container.style.display = 'none';
+            if (emptyState) emptyState.style.display = 'block';
+            return;
+        }
+        
+        container.style.display = 'flex';
+        if (emptyState) emptyState.style.display = 'none';
+        
+        container.innerHTML = transactions.map(transaction => {
+            // Garantir que o amount seja um número
+            const amount = parseFloat(transaction.amount) || 0;
             
-            if (transactions.length === 0) {
-                container.style.display = 'none';
-                emptyState.style.display = 'block';
-                return;
-            }
-            
-            container.style.display = 'flex';
-            emptyState.style.display = 'none';
-            
-            container.innerHTML = transactions.map(transaction => `
+            return `
                 <div class="transaction-card">
                     <div class="transaction-header">
                         <div class="transaction-info">
@@ -669,7 +591,7 @@ function exportToCSV() {
                                 <i class="${getCategoryIcon(transaction.category)}"></i>
                             </div>
                             <div class="transaction-details">
-                                <h4>${transaction.description}</h4>
+                                <h4>${transaction.description || 'Sem descrição'}</h4>
                                 <div class="transaction-meta">
                                     <span class="category-badge">
                                         <i class="${getCategoryIcon(transaction.category)}"></i>
@@ -681,7 +603,7 @@ function exportToCSV() {
                             </div>
                         </div>
                         <div class="transaction-amount ${transaction.type}">
-                            ${transaction.type === 'income' ? '+' : '-'} ${formatCurrency(transaction.amount)}
+                            ${transaction.type === 'income' ? '+' : '-'} ${formatCurrency(amount)}
                         </div>
                     </div>
                     ${transaction.notes ? `
@@ -690,136 +612,174 @@ function exportToCSV() {
                         </div>
                     ` : ''}
                 </div>
-            `).join('');
-        }
+            `;
+        }).join('');
+        
+        console.log('Transações exibidas:', transactions.length);
+    }
 
-        // Update statistics
-        function updateStats(transactions) {
-            const totalIncome = transactions
-                .filter(t => t.type === 'income')
-                .reduce((sum, t) => sum + t.amount, 0);
-                
-            const totalExpense = transactions
-                .filter(t => t.type === 'expense')
-                .reduce((sum, t) => sum + t.amount, 0);
-                
-            const balance = totalIncome - totalExpense;
+    // Atualizar estatísticas
+    function updateStats(transactions) {
+        const totalIncome = transactions
+            .filter(t => t.type === 'income')
+            .reduce((sum, t) => sum + (parseFloat(t.amount) || 0), 0);
             
-            document.getElementById('totalIncome').textContent = formatCurrency(totalIncome);
-            document.getElementById('totalExpense').textContent = formatCurrency(totalExpense);
-            document.getElementById('transactionsTotal').textContent = transactions.length;
-            document.getElementById('balance').textContent = formatCurrency(balance);
-        }
+        const totalExpense = transactions
+            .filter(t => t.type === 'expense')
+            .reduce((sum, t) => sum + (parseFloat(t.amount) || 0), 0);
+            
+        const balance = totalIncome - totalExpense;
+        
+        console.log('Estatísticas calculadas:', { totalIncome, totalExpense, balance });
+        
+        // Atualizar elementos da UI
+        const totalIncomeEl = document.getElementById('totalIncome');
+        const totalExpenseEl = document.getElementById('totalExpense');
+        const transactionsTotalEl = document.getElementById('transactionsTotal');
+        const balanceEl = document.getElementById('balance');
+        
+        if (totalIncomeEl) totalIncomeEl.textContent = formatCurrency(totalIncome);
+        if (totalExpenseEl) totalExpenseEl.textContent = formatCurrency(totalExpense);
+        if (transactionsTotalEl) transactionsTotalEl.textContent = transactions.length;
+        if (balanceEl) balanceEl.textContent = formatCurrency(balance);
+    }
 
-        // Apply filters
-        function applyFilters() {
+    // Aplicar filtros
+    function applyFilters() {
+        console.log('Aplicando filtros...');
+        loadTransactions();
+    }
+
+    // Adicionar dados de exemplo para teste
+    function addSampleData() {
+        const sampleTransactions = [
+            {
+                id: '1',
+                type: 'income',
+                description: 'Salário Mensal',
+                amount: 3500.00,
+                date: new Date().toISOString().split('T')[0],
+                category: 'salario',
+                paymentMethod: 'transferencia',
+                notes: 'Salário referente ao mês atual',
+                createdAt: new Date().toISOString()
+            },
+            {
+                id: '2',
+                type: 'expense',
+                description: 'Supermercado',
+                amount: 256.33,
+                date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+                category: 'alimentacao',
+                paymentMethod: 'debito',
+                notes: 'Compra do mês',
+                createdAt: new Date().toISOString()
+            },
+            {
+                id: '3',
+                type: 'expense',
+                description: 'Conta de Luz',
+                amount: 150.00,
+                date: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+                category: 'moradia',
+                paymentMethod: 'pix',
+                notes: 'Mês de referência 10/2024',
+                createdAt: new Date().toISOString()
+            }
+        ];
+        
+        localStorage.setItem('finsync_transactions', JSON.stringify(sampleTransactions));
+        
+        // Calcular saldo inicial
+        const balance = sampleTransactions.reduce((total, transaction) => {
+            const amount = parseFloat(transaction.amount) || 0;
+            return total + (transaction.type === 'income' ? amount : -amount);
+        }, 0);
+        
+        localStorage.setItem('finsync_balance', balance.toString());
+        
+        console.log('Dados de exemplo adicionados');
+        loadTransactions();
+        alert('Dados de exemplo adicionados com sucesso!');
+    }
+
+    // Função de debug para verificar dados
+    function debugData() {
+        const transactions = getTransactions();
+        const balance = localStorage.getItem('finsync_balance');
+        
+        console.log('=== DEBUG ===');
+        console.log('Transações:', transactions);
+        console.log('Saldo:', balance);
+        console.log('Número de transações:', transactions.length);
+        
+        if (transactions.length > 0) {
+            console.log('Primeira transação:', transactions[0]);
+        }
+        
+        alert(`Debug:\nTransações: ${transactions.length}\nSaldo: ${balance}\nVerifique o console para mais detalhes.`);
+    }
+
+    // Limpar todas as transações
+    function clearAllTransactions() {
+        if (confirm('Tem certeza que deseja excluir TODAS as transações? Esta ação não pode ser desfeita.')) {
+            localStorage.removeItem('finsync_transactions');
+            localStorage.removeItem('finsync_balance');
+            localStorage.removeItem('finsync_recent_transactions');
+            console.log('Todas as transações foram removidas');
             loadTransactions();
+            alert('Todas as transações foram removidas');
         }
+    }
 
-        // Export to CSV
-        function exportToCSV() {
-            const transactions = getTransactions();
-            if (transactions.length === 0) {
-                alert('Nenhuma transação para exportar');
-                return;
-            }
+    // Adicionar botão de debug em desenvolvimento
+    function addDebugButton() {
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+            const debugDiv = document.createElement('div');
+            debugDiv.className = 'export-actions';
+            debugDiv.style.marginBottom = '20px';
+            debugDiv.style.display = 'flex';
+            debugDiv.style.gap = '8px';
+            debugDiv.style.flexWrap = 'wrap';
             
-            const headers = ['Data', 'Descrição', 'Tipo', 'Categoria', 'Valor', 'Forma de Pagamento', 'Observações'];
-            const csvData = transactions.map(transaction => [
-                formatDate(transaction.date),
-                transaction.description,
-                transaction.type === 'income' ? 'Receita' : 'Despesa',
-                getCategoryName(transaction.category),
-                transaction.amount,
-                transaction.paymentMethod || '',
-                transaction.notes || ''
-            ]);
+            const debugButton = document.createElement('button');
+            debugButton.type = 'button';
+            debugButton.className = 'btn btn-outline';
+            debugButton.innerHTML = '<i class="fas fa-bug"></i> Debug';
+            debugButton.onclick = debugData;
             
-            const csvContent = [headers, ...csvData]
-                .map(row => row.map(field => `"${field}"`).join(','))
-                .join('\n');
+            // const sampleButton = document.createElement('button');
+            // sampleButton.type = 'button';
+            // sampleButton.className = 'btn btn-outline';
+            // sampleButton.innerHTML = '<i class="fas fa-vial"></i> Dados Exemplo';
+            // sampleButton.onclick = addSampleData;
             
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            const url = URL.createObjectURL(blob);
+            const clearButton = document.createElement('button');
+            clearButton.type = 'button';
+            clearButton.className = 'btn btn-outline';
+            clearButton.innerHTML = '<i class="fas fa-trash"></i> Limpar Tudo';
+            clearButton.onclick = clearAllTransactions;
             
-            link.setAttribute('href', url);
-            link.setAttribute('download', `transacoes-${new Date().toISOString().split('T')[0]}.csv`);
-            link.style.visibility = 'hidden';
+            debugDiv.appendChild(debugButton);
+            debugDiv.appendChild(sampleButton);
+            debugDiv.appendChild(clearButton);
             
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-
-        // Clear all transactions (for testing)
-        function clearAllTransactions() {
-            if (confirm('Tem certeza que deseja excluir TODAS as transações? Esta ação não pode ser desfeita.')) {
-                localStorage.removeItem('finsync_transactions');
-                loadTransactions();
-                alert('Todas as transações foram removidas');
-            }
-        }
-
-        // Check authentication
-        function checkAuth() {
-            const token = localStorage.getItem('blync_token');
-            if (!token) {
-                window.location.href = '/login.html';
-                return false;
-            }
-            return true;
-        }
-
-        // Add sample data for testing
-        function addSampleData() {
-            const sampleTransactions = [
-                {
-                    id: 1,
-                    type: 'income',
-                    description: 'Salário Mensal',
-                    amount: 3500.00,
-                    date: new Date().toISOString().split('T')[0],
-                    category: 'salario',
-                    paymentMethod: 'transferencia',
-                    notes: 'Salário referente ao mês atual',
-                    createdAt: new Date().toISOString()
-                },
-                {
-                    id: 2,
-                    type: 'expense',
-                    description: 'Supermercado',
-                    amount: 256.33,
-                    date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-                    category: 'alimentacao',
-                    paymentMethod: 'debito',
-                    notes: 'Compra do mês',
-                    createdAt: new Date().toISOString()
-                }
-            ];
-            
-            localStorage.setItem('finsync_transactions', JSON.stringify(sampleTransactions));
-            loadTransactions();
-            alert('Dados de exemplo adicionados!');
-        }
-
-        // Initialize
-        document.addEventListener('DOMContentLoaded', function() {
-            if (checkAuth()) {
-                loadTransactions();
-                
-                // Add sample data button in development
-                if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-                    const sampleButton = document.createElement('button');
-                    sampleButton.type = 'button';
-                    sampleButton.className = 'btn btn-outline';
-                    sampleButton.innerHTML = '<i class="fas fa-vial"></i> Adicionar Dados de Exemplo';
-                    sampleButton.onclick = addSampleData;
-                    
-                    document.querySelector('.export-actions').appendChild(sampleButton);
+            // Inserir antes do filters-container
+            const filtersContainer = document.querySelector('.filters-container');
+            if (filtersContainer) {
+                filtersContainer.parentNode.insertBefore(debugDiv, filtersContainer);
+            } else {
+                // Se não encontrar, inserir no início do main-content
+                const mainContent = document.querySelector('.main-content .container');
+                if (mainContent) {
+                    const pageHeader = document.querySelector('.page-header');
+                    if (pageHeader) {
+                        mainContent.insertBefore(debugDiv, pageHeader.nextSibling);
+                    }
                 }
             }
-        });
+        }
+    }
     </script>
     
 </body>

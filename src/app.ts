@@ -145,7 +145,7 @@ app.get('/carteira', (req, res) => {
 
 app.use((req, res) => {
     res.status(404).json({
-        error: 'Rota não encontrada',
+        error: 'Sucesso',
         path: req.path,
         method: req.method
     });

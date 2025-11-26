@@ -420,6 +420,12 @@
             return;
         }
 
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!window.authManager || !window.authManager.requireAuth()) {
+                return;
+            }
+        });
+
         let cards = [];
         let editingCardId = null;
 

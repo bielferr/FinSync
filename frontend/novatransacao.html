@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nova Transação - FinSync</title>
+    <title>Nova Transação - Blync</title>
     <link rel="stylesheet" href="/css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -204,14 +204,14 @@
                     <div class="logo">
                         <i class="fas fa-comments"></i>
                     </div>
-                    <span class="brand-name">FinSync</span>
+                    <span class="brand-name">Blync</span>
                 </a>
             </div>
             
             <div class="nav-menu">
                 <a href="/dashboard.html" class="nav-link">Dashboard</a>
                 <a href="hist.html" class="nav-link">Histórico</a>
-                <a href="/nova-transacao.html" class="nav-link active">Nova Transação</a>
+                <a href="/novatransacao.html" class="nav-link active">Nova Transação</a>
                 <a href="/cartoes.html" class="nav-link">Cartões</a>
             </div>
             
@@ -378,28 +378,29 @@
     </main>
 
     <script>
-
-        // No início do script
-        if (!window.authManager?.requireAuth()) {
-            return;
-        }
-
-            document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Página nova transação carregada');
+        
+        // Verificação de autenticação
         if (!window.authManager || !window.authManager.requireAuth()) {
+            console.log('Usuário não autenticado, redirecionando...');
             return;
         }
-        // Resto do código da página...
+        
+        initializePage();
     });
 
-
+    function initializePage() {
         // Theme Toggle
         const themeToggle = document.getElementById('themeToggle');
-        themeToggle.addEventListener('click', () => {
-            document.body.dataset.theme = document.body.dataset.theme === 'dark' ? 'light' : 'dark';
-            themeToggle.innerHTML = document.body.dataset.theme === 'dark' 
-                ? '<i class="fas fa-sun"></i>' 
-                : '<i class="fas fa-moon"></i>';
-        });
+        if (themeToggle) {
+            themeToggle.addEventListener('click', () => {
+                document.body.dataset.theme = document.body.dataset.theme === 'dark' ? 'light' : 'dark';
+                themeToggle.innerHTML = document.body.dataset.theme === 'dark' 
+                    ? '<i class="fas fa-sun"></i>' 
+                    : '<i class="fas fa-moon"></i>';
+            });
+        }
 
         // Set today's date as default
         document.getElementById('date').valueAsDate = new Date();
@@ -423,9 +424,35 @@
             });
         });
 
-        // Show alert message
-        function showAlert(message, type = 'success') {
+        // Form submission
+        document.getElementById('transactionForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            handleFormSubmit();
+        });
+
+        // Add test button in development
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+            // const testButton = document.createElement('button');
+            // testButton.type = 'button';
+            // testButton.className = 'btn btn-outline';
+            // testButton.style.marginBottom = '20px';
+            // testButton.innerHTML = '<i class="fas fa-vial"></i> Preencher com Dados de Teste';
+            // testButton.onclick = fillTestData;
+            
+            const container = document.querySelector('.transaction-form-container');
             const alert = document.getElementById('alert');
+            if (container && alert) {
+                container.insertBefore(testButton, alert);
+            }
+        }
+
+        console.log('Página inicializada com sucesso');
+    }
+
+    // Show alert message
+    function showAlert(message, type = 'success') {
+        const alert = document.getElementById('alert');
+        if (alert) {
             alert.textContent = message;
             alert.className = `alert alert-${type}`;
             alert.style.display = 'block';
@@ -434,139 +461,208 @@
                 alert.style.display = 'none';
             }, 5000);
         }
+    }
 
-        // Format currency for display
-        function formatCurrency(value) {
-            return new Intl.NumberFormat('pt-BR', {
-                style: 'currency',
-                currency: 'BRL'
-            }).format(value);
-        }
+    // Format currency for display
+    function formatCurrency(value) {
+        return new Intl.NumberFormat('pt-BR', {
+            style: 'currency',
+            currency: 'BRL'
+        }).format(value);
+    }
 
-        // Save transaction to localStorage
-        function saveTransaction(transactionData) {
-            // Get existing transactions or initialize empty array
-            const transactions = JSON.parse(localStorage.getItem('finsync_transactions') || '[]');
+    // Save transaction to localStorage
+    function saveTransaction(transactionData) {
+        try {
+            console.log('💾 Salvando transação:', transactionData);
             
-            // Add new transaction with ID and timestamp
+            // Get existing transactions
+            const transactions = JSON.parse(localStorage.getItem('finsync_transactions') || '[]');
+            console.log('📊 Transações existentes:', transactions.length);
+            
+            // Create new transaction
             const newTransaction = {
-                id: Date.now(), // Simple ID based on timestamp
-                ...transactionData,
+                id: Date.now().toString(),
+                type: transactionData.type,
+                description: transactionData.description,
+                amount: parseFloat(transactionData.amount),
+                date: transactionData.date,
+                category: transactionData.category,
+                paymentMethod: transactionData.paymentMethod || '',
+                notes: transactionData.notes || '',
                 createdAt: new Date().toISOString()
             };
             
+            console.log('🆕 Nova transação:', newTransaction);
+            
+            // Add to array
             transactions.push(newTransaction);
             
-            // Save back to localStorage
+            // Save to localStorage
             localStorage.setItem('finsync_transactions', JSON.stringify(transactions));
+            console.log('✅ Transação salva! Total:', transactions.length);
+            
+            // Update balance
+            updateBalance(newTransaction);
+            
+            // Update recent transactions
+            updateRecentTransactions(newTransaction);
             
             return newTransaction;
+            
+        } catch (error) {
+            console.error('❌ Erro ao salvar transação:', error);
+            throw error;
+        }
+    }
+
+    function updateBalance(transaction) {
+        let balance = parseFloat(localStorage.getItem('finsync_balance') || '0');
+        
+        if (transaction.type === 'income') {
+            balance += transaction.amount;
+        } else {
+            balance -= transaction.amount;
+        }
+        
+        localStorage.setItem('finsync_balance', balance.toString());
+        console.log('💰 Saldo atualizado:', balance);
+    }
+
+    function updateRecentTransactions(newTransaction) {
+        try {
+            const recentTransactions = JSON.parse(localStorage.getItem('finsync_recent_transactions') || '[]');
+            
+            // Add new transaction at the beginning
+            recentTransactions.unshift(newTransaction);
+            
+            // Keep only last 5 transactions
+            if (recentTransactions.length > 5) {
+                recentTransactions.splice(5);
+            }
+            
+            localStorage.setItem('finsync_recent_transactions', JSON.stringify(recentTransactions));
+            console.log('📋 Transações recentes atualizadas');
+        } catch (error) {
+            console.error('Erro ao atualizar transações recentes:', error);
+        }
+    }
+
+    // Handle form submission
+    async function handleFormSubmit() {
+        const submitBtn = document.getElementById('submitBtn');
+        const form = document.getElementById('transactionForm');
+        
+        // Get form data
+        const formData = {
+            type: document.querySelector('input[name="type"]:checked').value,
+            description: document.getElementById('description').value.trim(),
+            amount: document.getElementById('amount').value,
+            date: document.getElementById('date').value,
+            category: document.getElementById('category').value,
+            paymentMethod: document.getElementById('paymentMethod').value,
+            notes: document.getElementById('notes').value.trim()
+        };
+
+        console.log('📝 Dados do formulário:', formData);
+
+        // Validation
+        if (!formData.description || !formData.amount || !formData.date || !formData.category) {
+            showAlert('Por favor, preencha todos os campos obrigatórios', 'error');
+            return;
         }
 
-        // Form submission
-        document.getElementById('transactionForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
+        if (formData.amount <= 0 || isNaN(formData.amount)) {
+            showAlert('O valor deve ser maior que zero', 'error');
+            return;
+        }
+
+        // Convert amount to number
+        formData.amount = parseFloat(formData.amount);
+
+        // Show loading
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Salvando...';
+
+        try {
+            // Simulate API call delay
+            await new Promise(resolve => setTimeout(resolve, 1000));
             
-            const submitBtn = document.getElementById('submitBtn');
+            // Save to localStorage
+            const savedTransaction = saveTransaction(formData);
             
-            // Get form data
-            const formData = {
-                type: document.querySelector('input[name="type"]:checked').value,
-                description: document.getElementById('description').value,
-                amount: parseFloat(document.getElementById('amount').value),
-                date: document.getElementById('date').value,
-                category: document.getElementById('category').value,
-                paymentMethod: document.getElementById('paymentMethod').value,
-                notes: document.getElementById('notes').value
-            };
-
-            // Validation
-            if (!formData.description || !formData.amount || !formData.date || !formData.category) {
-                showAlert('Por favor, preencha todos os campos obrigatórios', 'error');
-                return;
-            }
-
-            if (formData.amount <= 0) {
-                showAlert('O valor deve ser maior que zero', 'error');
-                return;
-            }
-
-            // Show loading
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Salvando...';
-
-            try {
-                // Simulate API call delay
-                await new Promise(resolve => setTimeout(resolve, 1000));
-                
-                // Save to localStorage (simulating database)
-                const savedTransaction = saveTransaction(formData);
-                
-                showAlert('Transação adicionada com sucesso!', 'success');
-                
-                // Reset form
-                this.reset();
-                document.getElementById('date').valueAsDate = new Date();
-                document.getElementById('typeIncome').checked = true;
-                
-                // Show success message with details
-                setTimeout(() => {
-                    const transactionType = formData.type === 'income' ? 'Receita' : 'Despesa';
-                    const amountFormatted = formatCurrency(formData.amount);
-                    
-                    if (confirm(`Transação "${formData.description}" de ${amountFormatted} salva com sucesso!\n\nDeseja visualizar no histórico?`)) {
-                        window.location.href = '/hist.html';
-                    }
-                }, 1000);
-                
-            } catch (error) {
-                console.error('Erro ao salvar transação:', error);
-                showAlert('Erro ao salvar transação. Tente novamente.', 'error');
-            } finally {
-                // Restore button
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = '<i class="fas fa-plus"></i> Adicionar Transação';
-            }
-        });
-
-        // Quick fill for testing
-        function fillTestData() {
-            document.getElementById('description').value = 'Salário Mensal';
-            document.getElementById('amount').value = '3500.00';
+            showAlert('Transação adicionada com sucesso!', 'success');
+            
+            // Reset form
+            form.reset();
+            document.getElementById('date').valueAsDate = new Date();
             document.getElementById('typeIncome').checked = true;
-            document.getElementById('category').value = 'salario';
-            document.getElementById('paymentMethod').value = 'transferencia';
-            document.getElementById('notes').value = 'Salário referente ao mês atual';
             
-            showAlert('Dados de teste preenchidos!', 'success');
-        }
-
-        // Add test button in development
-        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-            const testButton = document.createElement('button');
-            testButton.type = 'button';
-            testButton.className = 'btn btn-outline';
-            testButton.style.marginBottom = '20px';
-            testButton.innerHTML = '<i class="fas fa-vial"></i> Preencher com Dados de Teste';
-            testButton.onclick = fillTestData;
+            console.log('🎉 Transação salva com sucesso!');
             
-            document.querySelector('.transaction-form-container').insertBefore(testButton, document.getElementById('alert'));
+            // Show success message with details
+            setTimeout(() => {
+                const transactionType = formData.type === 'income' ? 'Receita' : 'Despesa';
+                const amountFormatted = formatCurrency(formData.amount);
+                
+                if (confirm(`Transação "${formData.description}" de ${amountFormatted} salva com sucesso!\n\nDeseja visualizar no histórico?`)) {
+                    window.location.href = '/hist.html';
+                }
+            }, 1000);
+            
+        } catch (error) {
+            console.error('❌ Erro ao salvar transação:', error);
+            showAlert('Erro ao salvar transação. Tente novamente.', 'error');
+        } finally {
+            // Restore button
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-plus"></i> Adicionar Transação';
         }
+    }
 
-        // Check authentication
-        function checkAuth() {
-            const token = localStorage.getItem('blync_token');
-            if (!token) {
-                window.location.href = '/login.html';
-                return false;
-            }
-            return true;
-        }
+    // Quick fill for testing
+    function fillTestData() {
+        document.getElementById('description').value = 'Salário Mensal';
+        document.getElementById('amount').value = '3500.00';
+        document.getElementById('typeIncome').checked = true;
+        document.getElementById('category').value = 'salario';
+        document.getElementById('paymentMethod').value = 'transferencia';
+        document.getElementById('notes').value = 'Salário referente ao mês atual';
+        
+        showAlert('Dados de teste preenchidos!', 'success');
+    }
 
-        // Initialize
+    // Debug function to check current transactions
+    function debugTransactions() {
+        const transactions = JSON.parse(localStorage.getItem('finsync_transactions') || '[]');
+        const balance = localStorage.getItem('finsync_balance');
+        
+        console.log('=== DEBUG NOVA TRANSAÇÃO ===');
+        console.log('Transações no localStorage:', transactions);
+        console.log('Saldo atual:', balance);
+        console.log('Número de transações:', transactions.length);
+        
+        alert(`Debug Nova Transação:\nTransações: ${transactions.length}\nSaldo: R$ ${balance || '0.00'}\nVerifique o console para detalhes.`);
+    }
+
+    // Add debug button in development
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
         document.addEventListener('DOMContentLoaded', function() {
-            checkAuth();
+            const debugButton = document.createElement('button');
+            debugButton.type = 'button';
+            debugButton.className = 'btn btn-outline';
+            debugButton.style.marginBottom = '10px';
+            debugButton.style.marginLeft = '10px';
+            debugButton.innerHTML = '<i class="fas fa-bug"></i> Debug';
+            debugButton.onclick = debugTransactions;
+            
+            const container = document.querySelector('.transaction-form-container');
+            const testButton = container.querySelector('button');
+            if (container && testButton) {
+                testButton.parentNode.insertBefore(debugButton, testButton.nextSibling);
+            }
         });
+    }
     </script>
 </body>
 </html>

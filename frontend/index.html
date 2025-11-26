@@ -628,7 +628,7 @@
                 <a href="contato.html" class="nav-link">Contato</a>
             </div>
             
-            <div class="nav-actions">
+            <div class="nav-actions" id="navActions">
                 <a href="login.html" class="btn btn-outline">Entrar</a>
                 <a href="cadastro.html" class="btn btn-primary">Abrir Conta</a>
             </div>
@@ -648,7 +648,7 @@
                     Open Finance, investimentos e muito mais em um só lugar.
                 </p>
                 <div class="hero-actions">
-                    <button type="button" class="btn btn-primary btn-large" onclick="redirectToProfile()">
+                    <button type="button" class="btn btn-primary btn-large" onclick="redirectToApp()">
                         <i class="fas fa-rocket"></i>
                         Começar Agora
                     </button>
@@ -769,7 +769,7 @@
                 <h2>Pronto para revolucionar sua vida financeira?</h2>
                 <p>Junte-se a milhares de clientes que já descobriram uma nova forma de lidar com dinheiro</p>
                 <div class="cta-actions">
-                    <button type="button" class="btn btn-primary btn-large" onclick="redirectToProfile()">
+                    <button type="button" class="btn btn-primary btn-large" onclick="redirectToApp()">
                         <i class="fas fa-user-plus"></i>
                         Criar Minha Conta
                     </button>
@@ -797,7 +797,7 @@
                 <div class="footer-links">
                     <div class="link-group">
                         <h4>Produtos</h4>
-                        <a href="dashboard.html">Dashboard</a>
+                        <a href="javascript:void(0)" onclick="redirectToDashboard()">Dashboard</a>
                         <a href="#">Investimentos</a>
                         <a href="#">Cartões</a>
                     </div>
@@ -831,27 +831,37 @@
     </footer>
 
     <script>
-        // Função para redirecionar para perfil.html
-        function redirectToProfile() {
-            window.location.href = 'perfil.html';
+        // Funções de redirecionamento inteligentes
+        function redirectToApp() {
+            if (window.authManager && window.authManager.isAuthenticated()) {
+                // Usuário logado - redireciona para o dashboard
+                window.location.href = 'dashboard.html';
+            } else {
+                // Usuário não logado - redireciona para cadastro
+                window.location.href = 'cadastro.html';
+            }
         }
 
-            // Redirecionar usuários logados para a página inicial
-            document.addEventListener('DOMContentLoaded', function() {
-                if (window.authManager && window.authManager.isAuthenticated()) {
-                    window.location.href = 'inicial.html';
+        function redirectToDashboard() {
+            if (window.authManager && window.authManager.isAuthenticated()) {
+                window.location.href = 'dashboard.html';
+            } else {
+                window.location.href = 'login.html';
             }
-        });
+        }
 
-    //         document.addEventListener('DOMContentLoaded', function() {
-    //     if (!window.authManager || !window.authManager.requireAuth()) {
-    //         return;
-    //     }
-    //     // Resto do código da página...
-    // });
+        function redirectToProfile() {
+            if (window.authManager && window.authManager.isAuthenticated()) {
+                window.location.href = 'perfil.html';
+            } else {
+                window.location.href = 'cadastro.html';
+            }
+        }
 
-        // Menu mobile
+        // Menu mobile e inicialização
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('Página inicial carregada');
+            
             const mobileMenuBtn = document.getElementById('mobileMenuBtn');
             const navMenu = document.getElementById('navMenu');
             
@@ -890,7 +900,40 @@
                     link.classList.add('active');
                 }
             });
+
+            // Verificar se usuário está autenticado e atualizar interface se necessário
+            updateUIForAuthStatus();
         });
+
+        // Atualizar interface baseado no status de autenticação
+        function updateUIForAuthStatus() {
+            const isAuthenticated = window.authManager && window.authManager.isAuthenticated();
+            
+            if (isAuthenticated) {
+                console.log('Usuário autenticado detectado na página inicial');
+                
+                // Atualizar links de navegação
+                const navActions = document.querySelector('.nav-actions');
+                if (navActions) {
+                    navActions.innerHTML = `
+                        <a href="dashboard.html" class="btn btn-outline">Dashboard</a>
+                        <a href="perfil.html" class="btn btn-primary">Minha Conta</a>
+                    `;
+                }
+                
+                // Atualizar textos dos botões CTA
+                const ctaButtons = document.querySelectorAll('.btn-primary');
+                ctaButtons.forEach(button => {
+                    const text = button.textContent.trim();
+                    if (text.includes('Começar Agora') || text.includes('Criar Minha Conta')) {
+                        button.innerHTML = '<i class="fas fa-rocket"></i> Acessar Dashboard';
+                        button.onclick = function() { window.location.href = 'dashboard.html'; };
+                    }
+                });
+            } else {
+                console.log('Usuário não autenticado na página inicial');
+            }
+        }
 
         // Fechar menu mobile ao clicar fora
         document.addEventListener('click', (e) => {
@@ -905,6 +948,15 @@
                 icon.className = 'fas fa-bars';
             }
         });
+
+        // Prevenir acesso direto a páginas restritas
+        function checkAuthAndRedirect() {
+            if (window.authManager && !window.authManager.isAuthenticated()) {
+                window.location.href = 'login.html';
+                return false;
+            }
+            return true;
+        }
     </script>
 
     <!-- Font Awesome para ícones -->
