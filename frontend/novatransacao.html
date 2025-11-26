@@ -384,6 +384,13 @@
             return;
         }
 
+            document.addEventListener('DOMContentLoaded', function() {
+        if (!window.authManager || !window.authManager.requireAuth()) {
+            return;
+        }
+        // Resto do código da página...
+    });
+
 
         // Theme Toggle
         const themeToggle = document.getElementById('themeToggle');

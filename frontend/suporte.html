@@ -9,6 +9,16 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src="/js/auth.js"></script>
+    <script type="module">
+    import { loadGlobalData, getState } from "./static/js/state.js";
+
+    (async () => {
+    await loadGlobalData();
+        const state = getState();
+
+        console.log("Dados no suporte:", state);
+    })();
+    </script>
 </head>
 <body>
     <!-- Navigation -->
@@ -156,7 +166,7 @@
         </div>
     </div>
 
-        <!-- Footer -->
+    <!-- Footer -->
     <footer class="footer">
         <div class="container">
             <div class="footer-content">
@@ -165,23 +175,29 @@
                         <i class="fas fa-comments"></i>
                     </div>
                     <span class="brand-name">Blync</span>
-                    <p>Seu banco digital inteligente</p>
+                    <p>Seu assistente financeiro inteligente</p>
                 </div>
                 
                 <div class="footer-links">
                     <div class="link-group">
                         <h4>Produtos</h4>
-                        <a href="#">Matriz Financeira</a>
+                        <a href="dashboard.html">Dashboard</a>
+                        <a href="#">Investimentos</a>
+                        <a href="#">Cartões</a>
                     </div>
                     
                     <div class="link-group">
                         <h4>Institucional</h4>
-                        <a href="/sobre.html">Sobre nós</a>
+                        <a href="sobre.html">Sobre Nós</a>
+                        <a href="#">Carreiras</a>
+                        <a href="#">Imprensa</a>
                     </div>
                     
                     <div class="link-group">
                         <h4>Ajuda</h4>
-                        <a href="/contacto.html">Contato</a>
+                        <a href="contato.html">Contato</a>
+                        <a href="#">Suporte</a>
+                        <a href="#">FAQ</a>
                     </div>
                 </div>
             </div>
@@ -205,6 +221,13 @@
         if (!window.authManager?.requireAuth()) {
             return;
         }
+
+            document.addEventListener('DOMContentLoaded', function() {
+        if (!window.authManager || !window.authManager.requireAuth()) {
+            return;
+        }
+        // Resto do código da página...
+    });
 
         // Atualizar horários iniciais
         const now = new Date();

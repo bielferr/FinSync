@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blync - Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="/js/auth.js"></script>
+    <script type="module">
+    import { loadGlobalData, getState } from "./js/state.js";
+
+    (async () => {
+        await loadGlobalData();
+        const state = getState();
+
+        console.log("Dados iniciais:", state);
+    })();
+    </script>
+    <style>
+        :root {
+            --primary: #0066FF;
+            --primary-dark: #0051CC;
+            --secondary: #6B7280;
+            --dark: #1F2937;
+            --light: #F8FAFC;
+            --white: #FFFFFF;
+            --gray: #E5E7EB;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --error: #EF4444;
+            --gradient: linear-gradient(135deg, #0066FF 0%, #0051CC 100%);
+        }
+
+        [data-theme="dark"] {
+            --primary: #3B82F6;
+            --primary-dark: #2563EB;
+            --secondary: #9CA3AF;
+            --dark: #F9FAFB;
+            --light: #111827;
+            --white: #1F2937;
+            --gray: #374151;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            background: var(--white);
+            transition: color 0.3s ease, background-color 0.3s ease;
+        }
+
+        /* Layout Base */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Navigation */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--gray);
+            z-index: 1000;
+            padding: 16px 0;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font: 700 20px/1 'Inter', sans-serif;
+            color: var(--dark);
+        }
+
+        .logo {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 18px;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 32px;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--secondary);
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--primary);
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        /* Componentes Reutilizáveis */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font: 500 14px/1 'Inter', sans-serif;
+            transition: all 0.2s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: var(--gradient);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 102, 255, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--light);
+            color: var(--dark);
+            border: 1px solid var(--gray);
+        }
+
+        .btn-secondary:hover {
+            background: var(--gray);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .btn-white {
+            background: var(--white);
+            color: var(--primary);
+        }
+
+        .btn-white:hover {
+            background: var(--light);
+        }
+
+        /* Tamanhos de Botão */
+        .btn-small { padding: 8px 16px; font-size: 12px; }
+        .btn-large { padding: 16px 32px; font-size: 16px; }
+        .btn-full { width: 100%; justify-content: center; }
+
+        /* Cards */
+        .card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid var(--gray);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            margin-bottom: 24px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        /* Dashboard Layout */
+        .dashboard {
+            padding: 100px 0 40px;
+            background: var(--light);
+            min-height: 100vh;
+        }
+
+        .welcome-section {
+            margin-bottom: 32px;
+        }
+
+        .welcome-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--dark);
+        }
+
+        .welcome-subtitle {
+            color: var(--secondary);
+            font-size: 1.125rem;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .balance-card {
+            background: var(--gradient);
+            color: var(--white);
+            padding: 32px;
+            border-radius: 16px;
+            box-shadow: 0 8px 25px rgba(0, 102, 255, 0.2);
+        }
+
+        .balance-label {
+            font-size: 0.875rem;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+
+        .balance-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .balance-stats {
+            display: flex;
+            gap: 24px;
+        }
+
+        .stat {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            opacity: 0.8;
+        }
+
+        .income .stat-value {
+            color: var(--success);
+        }
+
+        .expenses .stat-value {
+            color: var(--error);
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .action-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid var(--gray);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .action-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary);
+        }
+
+        .action-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--light);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px;
+            color: var(--primary);
+            font-size: 20px;
+        }
+
+        .action-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: var(--dark);
+        }
+
+        .action-description {
+            font-size: 0.875rem;
+            color: var(--secondary);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--dark);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .section-title a {
+            font-size: 0.875rem;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        /* Activity List Styles */
+        .activity-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .activity-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--gray);
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .activity-icon.income {
+            background: #D1FAE5;
+            color: #065F46;
+        }
+
+        .activity-icon.expense {
+            background: #FEE2E2;
+            color: #991B1B;
+        }
+
+        .activity-details h4 {
+            font-weight: 500;
+            margin-bottom: 4px;
+            color: var(--dark);
+        }
+
+        .activity-meta {
+            display: flex;
+            gap: 12px;
+            font-size: 0.875rem;
+            color: var(--secondary);
+        }
+
+        .activity-amount {
+            font-weight: 600;
+            font-size: 1.125rem;
+            text-align: right;
+        }
+
+        .activity-amount.income {
+            color: var(--success);
+        }
+
+        .activity-amount.expense {
+            color: var(--error);
+        }
+
+        .category-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 8px;
+            background: var(--light);
+            color: var(--secondary);
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--secondary);
+        }
+
+        .loading i {
+            font-size: 1.5rem;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--secondary);
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            margin-bottom: 8px;
+            color: var(--dark);
+        }
+
+        /* Mobile menu button */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--secondary);
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @media (max-width: 768px) {
+            .mobile-menu-btn {
+                display: flex;
+            }
+            
+            .nav-menu {
+                position: fixed;
+                top: 72px;
+                left: 0;
+                width: 100%;
+                background: var(--white);
+                flex-direction: column;
+                padding: 20px;
+                border-bottom: 1px solid var(--gray);
+                display: none;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                gap: 16px;
+            }
+            
+            .nav-menu.active {
+                display: flex;
+            }
+
+            .dashboard {
+                padding: 90px 0 20px;
+            }
+
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .balance-stats {
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .activity-item {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .activity-amount {
+                text-align: left;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 16px;
+            }
+            
+            .welcome-title {
+                font-size: 1.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <a href="/" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 12px;">
+                    <div class="logo">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <span class="brand-name">Blync</span>
+                </a>
+            </div>
+            
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <div class="nav-menu" id="navMenu">
+                <a href="inicial.html" class="nav-link active">Dashboard</a>
+                <a href="historico.html" class="nav-link">Histórico</a>
+                <a href="perfil.html" class="nav-link">Perfil</a>
+            </div>
+            
+            <div class="nav-actions">
+                <a href="login.html" class="btn btn-outline">Sair</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Dashboard Content -->
+    <section class="dashboard">
+        <div class="container">
+            <div class="welcome-section">
+                <h1 class="welcome-title">Bem-vindo de volta!</h1>
+                <p class="welcome-subtitle">Gerencie suas finanças de forma simples e eficiente</p>
+            </div>
+
+            <div class="dashboard-grid">
+                <div class="balance-card">
+                    <div class="balance-label">SALDO ATUAL</div>
+                    <div class="balance-value" id="currentBalance">R$ 0,00</div>
+                    <div class="balance-stats">
+                        <div class="stat income">
+                            <div class="stat-value" id="monthlyIncome">R$ 0,00</div>
+                            <div class="stat-label">ENTRADAS (MÊS)</div>
+                        </div>
+                        <div class="stat expenses">
+                            <div class="stat-value" id="monthlyExpenses">R$ 0,00</div>
+                            <div class="stat-label">SAÍDAS (MÊS)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="main-content">
+                <div class="left-column">
+                    <div class="quick-actions">
+                        <div class="action-card" onclick="window.location.href='novatransacao.html'">
+                            <div class="action-icon">
+                                <i class="fas fa-plus"></i>
+                            </div>
+                            <div class="action-title">Nova Transação</div>
+                            <div class="action-description">Adicione receitas e despesas rapidamente</div>
+                        </div>
+                        <div class="action-card" onclick="window.location.href='historico.html'">
+                            <div class="action-icon">
+                                <i class="fas fa-history"></i>
+                            </div>
+                            <div class="action-title">Histórico</div>
+                            <div class="action-description">Veja todas as suas transações</div>
+                        </div>
+                        <div class="action-card" onclick="window.location.href='dashboard.html'">
+                            <div class="action-icon">
+                                <i class="fas fa-credit-card"></i>
+                            </div>
+                            <div class="action-title">Dashboard</div>
+                            <div class="action-description">Gerencie seus gastos mensais</div>
+                        </div>
+                        <div class="action-card" onclick="window.location.href='perfil.html'">
+                            <div class="action-icon">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="action-title">Meu Perfil</div>
+                            <div class="action-description">Configure suas informações</div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h2 class="section-title">
+                            Atividade Recente
+                            <a href="hist.html">Ver Tudo →</a>
+                        </h2>
+                        
+                        <div id="recentActivity">
+                            <div class="loading">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                Carregando suas transações recentes...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="right-column">
+                    <div class="card">
+                        <h2 class="section-title">Resumo do Mês</h2>
+                        <div id="monthlySummary">
+                            <div class="loading">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                Carregando resumo mensal...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Menu mobile
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const navMenu = document.getElementById('navMenu');
+            
+            if (mobileMenuBtn && navMenu) {
+                mobileMenuBtn.addEventListener('click', () => {
+                    navMenu.classList.toggle('active');
+                    const icon = mobileMenuBtn.querySelector('i');
+                    if (navMenu.classList.contains('active')) {
+                        icon.className = 'fas fa-times';
+                    } else {
+                        icon.className = 'fas fa-bars';
+                    }
+                });
+            }
+
+            // Fechar menu mobile ao clicar fora
+            document.addEventListener('click', (e) => {
+                const navMenu = document.getElementById('navMenu');
+                const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+                
+                if (navMenu && mobileMenuBtn && 
+                    !e.target.closest('.nav-menu') && 
+                    !e.target.closest('.mobile-menu-btn')) {
+                    navMenu.classList.remove('active');
+                    const icon = mobileMenuBtn.querySelector('i');
+                    icon.className = 'fas fa-bars';
+                }
+            });
+
+            // Adicionar classe active ao link atual
+            const currentPage = window.location.pathname.split('/').pop();
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            navLinks.forEach(link => {
+                if (link.getAttribute('href') === currentPage) {
+                    link.classList.add('active');
+                }
+            });
+
+            // Carregar dados dinâmicos
+            loadDashboardData();
+        });
+
+        // Get transactions from localStorage
+        function getTransactions() {
+            return JSON.parse(localStorage.getItem('finsync_transactions') || '[]');
+        }
+
+        // Format currency
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            }).format(value);
+        }
+
+        // Format date
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('pt-BR');
+        }
+
+        // Get category name
+        function getCategoryName(category) {
+            const categories = {
+                'salario': 'Salário',
+                'alimentacao': 'Alimentação',
+                'transporte': 'Transporte',
+                'moradia': 'Moradia',
+                'saude': 'Saúde',
+                'educacao': 'Educação',
+                'lazer': 'Lazer',
+                'compras': 'Compras',
+                'investimentos': 'Investimentos',
+                'outros': 'Outros'
+            };
+            return categories[category] || category;
+        }
+
+        // Get category icon
+        function getCategoryIcon(category) {
+            const icons = {
+                'salario': 'fas fa-money-bill-wave',
+                'alimentacao': 'fas fa-utensils',
+                'transporte': 'fas fa-bus',
+                'moradia': 'fas fa-home',
+                'saude': 'fas fa-heartbeat',
+                'educacao': 'fas fa-graduation-cap',
+                'lazer': 'fas fa-film',
+                'compras': 'fas fa-shopping-bag',
+                'investimentos': 'fas fa-chart-line',
+                'outros': 'fas fa-circle'
+            };
+            return icons[category] || 'fas fa-circle';
+        }
+
+        // Load dashboard data
+        function loadDashboardData() {
+            const transactions = getTransactions();
+            
+            // Calcular totais do mês atual
+            const currentMonth = new Date().getMonth();
+            const currentYear = new Date().getFullYear();
+            
+            const monthlyTransactions = transactions.filter(transaction => {
+                const transactionDate = new Date(transaction.date);
+                return transactionDate.getMonth() === currentMonth && 
+                       transactionDate.getFullYear() === currentYear;
+            });
+            
+            const totalIncome = monthlyTransactions
+                .filter(t => t.type === 'income')
+                .reduce((sum, t) => sum + t.amount, 0);
+                
+            const totalExpense = monthlyTransactions
+                .filter(t => t.type === 'expense')
+                .reduce((sum, t) => sum + t.amount, 0);
+            
+            const balance = totalIncome - totalExpense;
+            
+            // Atualizar valores na dashboard
+            document.getElementById('currentBalance').textContent = formatCurrency(balance);
+            document.getElementById('monthlyIncome').textContent = formatCurrency(totalIncome);
+            document.getElementById('monthlyExpenses').textContent = formatCurrency(totalExpense);
+            
+            // Carregar atividade recente (últimas 5 transações)
+            const recentTransactions = transactions
+                .sort((a, b) => new Date(b.date) - new Date(a.date))
+                .slice(0, 5);
+            
+            displayRecentActivity(recentTransactions);
+            displayMonthlySummary(monthlyTransactions);
+        }
+
+        // Display recent activity
+        function displayRecentActivity(transactions) {
+            const container = document.getElementById('recentActivity');
+            
+            if (transactions.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-receipt"></i>
+                        <h3>Nenhuma transação encontrada</h3>
+                        <p>Comece adicionando sua primeira transação</p>
+                        <button class="btn btn-primary" onclick="window.location.href='novatransacao.html'" style="margin-top: 16px;">
+                            <i class="fas fa-plus"></i>
+                            Nova Transação
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = `
+                <div class="activity-list">
+                    ${transactions.map(transaction => `
+                        <div class="activity-item">
+                            <div class="activity-info">
+                                <div class="activity-icon ${transaction.type}">
+                                    <i class="${getCategoryIcon(transaction.category)}"></i>
+                                </div>
+                                <div class="activity-details">
+                                    <h4>${transaction.description}</h4>
+                                    <div class="activity-meta">
+                                        <span class="category-badge">
+                                            <i class="${getCategoryIcon(transaction.category)}"></i>
+                                            ${getCategoryName(transaction.category)}
+                                        </span>
+                                        <span>${formatDate(transaction.date)}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="activity-amount ${transaction.type}">
+                                ${transaction.type === 'income' ? '+' : '-'} ${formatCurrency(transaction.amount)}
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        // Display monthly summary
+        function displayMonthlySummary(transactions) {
+            const container = document.getElementById('monthlySummary');
+            
+            // Calcular totais por categoria
+            const categoryTotals = {};
+            transactions.forEach(transaction => {
+                if (!categoryTotals[transaction.category]) {
+                    categoryTotals[transaction.category] = { income: 0, expense: 0 };
+                }
+                categoryTotals[transaction.category][transaction.type] += transaction.amount;
+            });
+            
+            // Criar HTML do resumo
+            let summaryHTML = '';
+            
+            // Top categorias de despesas
+            const expenseCategories = Object.entries(categoryTotals)
+                .filter(([_, totals]) => totals.expense > 0)
+                .sort((a, b) => b[1].expense - a[1].expense)
+                .slice(0, 3);
+            
+            if (expenseCategories.length > 0) {
+                summaryHTML += `
+                    <h4 style="margin-bottom: 12px; color: var(--secondary); font-size: 0.875rem;">Maiores Despesas</h4>
+                    ${expenseCategories.map(([category, totals]) => `
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid var(--gray);">
+                            <span style="display: flex; align-items: center; gap: 6px;">
+                                <i class="${getCategoryIcon(category)}" style="font-size: 12px; color: var(--secondary);"></i>
+                                ${getCategoryName(category)}
+                            </span>
+                            <span style="color: var(--error); font-weight: 500;">- ${formatCurrency(totals.expense)}</span>
+                        </div>
+                    `).join('')}
+                `;
+            }
+            
+            // Top categorias de receitas
+            const incomeCategories = Object.entries(categoryTotals)
+                .filter(([_, totals]) => totals.income > 0)
+                .sort((a, b) => b[1].income - a[1].income)
+                .slice(0, 3);
+            
+            if (incomeCategories.length > 0) {
+                summaryHTML += `
+                    <h4 style="margin: 16px 0 12px; color: var(--secondary); font-size: 0.875rem;">Maiores Receitas</h4>
+                    ${incomeCategories.map(([category, totals]) => `
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid var(--gray);">
+                            <span style="display: flex; align-items: center; gap: 6px;">
+                                <i class="${getCategoryIcon(category)}" style="font-size: 12px; color: var(--secondary);"></i>
+                                ${getCategoryName(category)}
+                            </span>
+                            <span style="color: var(--success); font-weight: 500;">+ ${formatCurrency(totals.income)}</span>
+                        </div>
+                    `).join('')}
+                `;
+            }
+            
+            if (summaryHTML === '') {
+                summaryHTML = `
+                    <div class="empty-state" style="padding: 20px;">
+                        <i class="fas fa-chart-pie"></i>
+                        <p style="font-size: 0.875rem;">Nenhuma transação este mês</p>
+                    </div>
+                `;
+            }
+            
+            container.innerHTML = summaryHTML;
+        }
+
+        // Adicionar dados de exemplo se não houver transações
+        function addSampleData() {
+            const sampleTransactions = [
+                {
+                    id: 1,
+                    type: 'income',
+                    description: 'Salário Mensal',
+                    amount: 3500.00,
+                    date: new Date().toISOString().split('T')[0],
+                    category: 'salario',
+                    paymentMethod: 'transferencia',
+                    notes: 'Salário referente ao mês atual',
+                    createdAt: new Date().toISOString()
+                },
+                {
+                    id: 2,
+                    type: 'expense',
+                    description: 'Supermercado',
+                    amount: 256.33,
+                    date: new Date().toISOString().split('T')[0],
+                    category: 'alimentacao',
+                    paymentMethod: 'debito',
+                    notes: 'Compra do mês',
+                    createdAt: new Date().toISOString()
+                },
+                {
+                    id: 3,
+                    type: 'expense',
+                    description: 'Aluguel',
+                    amount: 1200.00,
+                    date: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+                    category: 'moradia',
+                    paymentMethod: 'transferencia',
+                    notes: 'Aluguel do apartamento',
+                    createdAt: new Date().toISOString()
+                },
+                {
+                    id: 4,
+                    type: 'income',
+                    description: 'Freelance',
+                    amount: 800.00,
+                    date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+                    category: 'outros',
+                    paymentMethod: 'pix',
+                    notes: 'Trabalho freelance',
+                    createdAt: new Date().toISOString()
+                }
+            ];
+            
+            localStorage.setItem('finsync_transactions', JSON.stringify(sampleTransactions));
+            loadDashboardData();
+            alert('Dados de exemplo adicionados!');
+        }
+
+        // Adicionar botão para dados de exemplo em desenvolvimento
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+            document.addEventListener('DOMContentLoaded', function() {
+                const sampleButton = document.createElement('button');
+                sampleButton.type = 'button';
+                sampleButton.className = 'btn btn-outline';
+                sampleButton.innerHTML = '<i class="fas fa-vial"></i> Adicionar Dados de Exemplo';
+                sampleButton.onclick = addSampleData;
+                sampleButton.style.marginTop = '16px';
+                
+                document.querySelector('.welcome-section').appendChild(sampleButton);
+            });
+        }
+    </script>
+
+    <!-- Font Awesome para ícones -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+</body>
+</html>

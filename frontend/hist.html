@@ -7,7 +7,19 @@
     <link rel="stylesheet" href="/css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="/js/data-manager.js"></script>
     <script src="/js/auth.js"></script>
+    <script type="module">
+    import { loadGlobalData, getState } from "./static/js/state.js";
+
+    (async () => {
+        await loadGlobalData();
+        const state = getState();
+
+        console.log("Dados no dashboard:", state);
+    })();
+    </script>
+
     <style>
         .filters-container {
             background: var(--white);
@@ -240,7 +252,7 @@
                     <div class="logo">
                         <i class="fas fa-comments"></i>
                     </div>
-                    <span class="brand-name">FinSync</span>
+                    <span class="brand-name">Blync</span>
                 </a>
             </div>
             <div class="nav-menu" id="navMenu">
@@ -365,7 +377,7 @@
                     <h2 class="card-title">Transações</h2>
                     <div style="display: flex; gap: 8px; align-items: center;">
                         <span class="stat-label" id="resultsCount">0 transações</span>
-                        <a href="/nova-transacao.html" class="btn btn-primary btn-small">
+                        <a href="/novatransacao.html" class="btn btn-primary btn-small">
                             <i class="fas fa-plus"></i>
                             Nova
                         </a>
@@ -388,55 +400,131 @@
                 </div>
             </div>
         </div>
-        <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-brand">
-                    <div class="logo">
-                        <i class="fas fa-comments"></i>
-                    </div>
-                    <span class="brand-name">Blync</span>
-                    <p>Seu assistente financeiro inteligente</p>
-                </div>
-                
-                <div class="footer-links">
-                    <div class="link-group">
-                        <h4>Produtos</h4>
-                        <a href="dashboard.html">Dashboard</a>
-                    </div>
-                    
-                    <div class="link-group">
-                        <h4>Institucional</h4>
-                        <a href="sobre.html">Sobre Nós</a>
-                    </div>
-                    
-                    <div class="link-group">
-                        <h4>Ajuda</h4>
-                        <a href="contato.html">Contato</a>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="footer-bottom">
-                <p>&copy; 2025 Blync Tecnologia S.A. - CNPJ 17.123.456/7777-77</p>
-                <div class="footer-social">
-                    <a href="#"><i class="fab fa-instagram"></i></a>
-                    <a href="#"><i class="fab fa-twitter"></i></a>
-                    <a href="#"><i class="fab fa-linkedin"></i></a>
-                    <a href="#"><i class="fab fa-facebook"></i></a>
-                </div>
-            </div>
-        </div>
-    </footer>
+        
     </main>
-
     <script>
+
+        
 
         // No início do script 
         if (!window.authManager?.requireAuth()) {
             return;
         }
+
+            document.addEventListener('DOMContentLoaded', function() {
+        if (!window.authManager || !window.authManager.requireAuth()) {
+            return;
+        }
+        // Resto do código da página...
+    });
+
+document.addEventListener('DOMContentLoaded', function() {
+    if (!window.authManager?.requireAuth()) return;
+    
+    loadTransactions();
+});
+
+function loadTransactions() {
+    const filters = {
+        period: document.getElementById('periodFilter').value,
+        type: document.getElementById('typeFilter').value,
+        category: document.getElementById('categoryFilter').value
+    };
+    
+    const filteredTransactions = BlyncDataManager.filterTransactions(filters);
+    displayTransactions(filteredTransactions);
+    updateStats(filteredTransactions);
+}
+
+function displayTransactions(transactions) {
+    const container = document.getElementById('transactionsList');
+    
+    if (transactions.length === 0) {
+        container.innerHTML = `<div class="empty-state">Nenhuma transação encontrada</div>`;
+        return;
+    }
+    
+    container.innerHTML = transactions.map(transaction => `
+        <div class="transaction-card">
+            <div class="transaction-header">
+                <div class="transaction-info">
+                    <div class="transaction-icon ${transaction.type}">
+                        <i class="${BlyncDataManager.getCategoryIcon(transaction.category)}"></i>
+                    </div>
+                    <div class="transaction-details">
+                        <h4>${transaction.description}</h4>
+                        <div class="transaction-meta">
+                            <span class="category-badge">
+                                <i class="${BlyncDataManager.getCategoryIcon(transaction.category)}"></i>
+                                ${BlyncDataManager.getCategoryName(transaction.category)}
+                            </span>
+                            <span>${BlyncDataManager.formatDate(transaction.date)}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="transaction-amount ${transaction.type}">
+                    ${transaction.type === 'income' ? '+' : '-'} ${BlyncDataManager.formatCurrency(transaction.amount)}
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function updateStats(transactions) {
+    const stats = BlyncDataManager.calculateStats(transactions);
+    document.getElementById('totalIncome').textContent = BlyncDataManager.formatCurrency(stats.monthIncome);
+    document.getElementById('totalExpense').textContent = BlyncDataManager.formatCurrency(stats.monthExpense);
+    document.getElementById('transactionsTotal').textContent = transactions.length;
+    document.getElementById('balance').textContent = BlyncDataManager.formatCurrency(stats.totalBalance);
+}
+
+function exportToCSV() {
+    const csvContent = BlyncDataManager.exportToCSV();
+    if (!csvContent) {
+        alert('Nenhuma transação para exportar');
+        return;
+    }
+    
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    
+    link.setAttribute('href', url);
+    link.setAttribute('download', `transacoes-${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+function updateStats(transactions) {
+    const stats = BlyncDataManager.calculateStats(transactions);
+    document.getElementById('totalIncome').textContent = BlyncDataManager.formatCurrency(stats.monthIncome);
+    document.getElementById('totalExpense').textContent = BlyncDataManager.formatCurrency(stats.monthExpense);
+    document.getElementById('transactionsTotal').textContent = transactions.length;
+    document.getElementById('balance').textContent = BlyncDataManager.formatCurrency(stats.totalBalance);
+}
+
+function exportToCSV() {
+    const csvContent = BlyncDataManager.exportToCSV();
+    if (!csvContent) {
+        alert('Nenhuma transação para exportar');
+        return;
+    }
+    
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    
+    link.setAttribute('href', url);
+    link.setAttribute('download', `transacoes-${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
 
         // Theme Toggle
         const themeToggle = document.getElementById('themeToggle');
@@ -733,5 +821,6 @@
             }
         });
     </script>
+    
 </body>
 </html>

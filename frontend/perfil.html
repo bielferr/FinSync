@@ -7,7 +7,19 @@
     <link rel="stylesheet" href="/css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="/js/data-manager.js"></script>
     <script src="/js/auth.js"></script>
+    <script type="module">
+    import { loadGlobalData, getState } from "./static/js/state.js";
+
+    (async () => {
+        await loadGlobalData();
+        const state = getState();
+
+        console.log("Dados no dashboard:", state);
+    })();
+    </script>
+
     <style>
         .badge-success {
             background: #D1FAE5;
@@ -61,7 +73,7 @@
                     <div class="logo">
                         <i class="fas fa-comments"></i>
                     </div>
-                    <span class="brand-name">FinSync</span>
+                    <span class="brand-name">Blync</span>
                 </a>
             </div>
             
@@ -70,6 +82,8 @@
                 <a href="/hist.html" class="nav-link">Histórico</a>
                 <a href="/cartoes.html" class="nav-link">Cartões</a>
                 <a href="/perfil.html" class="nav-link active">Perfil</a>
+                <a href="/suporte.html" class="nav-link active">Blinkie</a>
+
             </div>
             
             <div class="nav-actions">
@@ -190,6 +204,67 @@
     </main>
 
     <script>
+        
+document.addEventListener('DOMContentLoaded', function() {
+    if (!window.authManager?.requireAuth()) return;
+    
+    loadProfileData();
+});
+
+function loadProfileData() {
+    // Carregar dados do usuário
+    const userData = BlyncDataManager.getUserData();
+    if (userData) {
+        document.getElementById('userName').textContent = userData.name;
+        document.getElementById('userEmail').textContent = userData.email;
+        document.getElementById('userInitials').textContent = getUserInitials(userData.name);
+        document.getElementById('userJoinDate').textContent = BlyncDataManager.formatDate(userData.createdAt);
+        
+        const roleElement = document.getElementById('userRole');
+        roleElement.textContent = userData.role === 'admin' ? 'Administrador' : 'Usuário';
+    }
+    
+    // Carregar dados financeiros
+    loadFinancialData();
+    loadRecentTransactions();
+}
+
+function loadFinancialData() {
+    const stats = BlyncDataManager.calculateStats();
+    document.getElementById('currentBalance').textContent = BlyncDataManager.formatCurrency(stats.totalBalance);
+    document.getElementById('monthIncome').textContent = BlyncDataManager.formatCurrency(stats.monthIncome);
+    document.getElementById('monthExpense').textContent = BlyncDataManager.formatCurrency(stats.monthExpense);
+}
+
+function loadRecentTransactions() {
+    const transactions = BlyncDataManager.getTransactions()
+        .sort((a, b) => new Date(b.date) - new Date(a.date))
+        .slice(0, 5);
+    
+    const tbody = document.getElementById('recentTransactions');
+    
+    if (transactions.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5">Nenhuma transação</td></tr>`;
+        return;
+    }
+    
+    tbody.innerHTML = transactions.map(transaction => `
+        <tr>
+            <td>${transaction.description}</td>
+            <td>${BlyncDataManager.getCategoryName(transaction.category)}</td>
+            <td>${BlyncDataManager.formatDate(transaction.date)}</td>
+            <td style="color: ${transaction.type === 'income' ? 'var(--success)' : 'var(--error)'}">
+                ${transaction.type === 'income' ? '+' : '-'} ${BlyncDataManager.formatCurrency(transaction.amount)}
+            </td>
+            <td>
+                <span class="${transaction.type === 'income' ? 'badge-success' : 'badge-error'}">
+                    ${transaction.type === 'income' ? 'Entrada' : 'Saída'}
+                </span>
+            </td>
+        </tr>
+    `).join('');
+}
+
         // Verificar autenticação usando o AuthManager
         document.addEventListener('DOMContentLoaded', function() {
             if (!window.authManager || !window.authManager.requireAuth()) {
@@ -200,6 +275,13 @@
             loadUserData();
             setupThemeToggle();
         });
+
+            document.addEventListener('DOMContentLoaded', function() {
+        if (!window.authManager || !window.authManager.requireAuth()) {
+            return;
+        }
+        // Resto do código da página...
+    });
 
         // Theme Toggle
         function setupThemeToggle() {

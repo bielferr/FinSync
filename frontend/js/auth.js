@@ -207,17 +207,36 @@ class AuthManager {
         return !!(token && user);
     }
     
-    checkAuthState() {
-        const { token, user } = this.getAuthData();
-        
-        if (token && user) {
-            this.updateUIForAuthState(true, user);
-            return true;
-        } else {
-            this.updateUIForAuthState(false);
-            return false;
+checkAuthState() {
+    const { token, user } = this.getAuthData();
+    
+    if (token && user) {
+        this.updateUIForAuthState(true, user);
+        this.redirectToHomePage(); // NOVO: Redirecionar se necessário
+        return true;
+    } else {
+        this.updateUIForAuthState(false);
+        this.redirectToHomePage(); // NOVO: Redirecionar se necessário
+        return false;
+    }
+}
+
+// NOVO MÉTODO: Redirecionar para a página inicial correta
+redirectToHomePage() {
+    if (this.isAuthenticated()) {
+        // Se estiver logado, redireciona para inicial.html
+        if (window.location.pathname === '/' || 
+            window.location.pathname.includes('index.html') ||
+            window.location.pathname === '/index.html') {
+            window.location.href = 'inicial.html';
+        }
+    } else {
+        // Se não estiver logado, redireciona para index
+        if (window.location.pathname.includes('inicial.html')) {
+            window.location.href = 'index.html';
         }
     }
+}
     
     // NOVO MÉTODO: Verificar se usuário é admin
     isUserAdmin() {
@@ -230,7 +249,7 @@ class AuthManager {
         return this.isUserAdmin() ? 'perfiladm.html' : 'perfil.html';
     }
     
-    updateUIForAuthState(isAuthenticated, user = null) {
+updateUIForAuthState(isAuthenticated, user = null) {
     // Atualizar navbar de ações (botões de login/cadastro)
     const navActions = document.querySelector('.nav-actions');
     if (navActions) {
@@ -440,26 +459,39 @@ class AuthManager {
         return true;
     }
 
-    // NOVO MÉTODO: Gerenciar navegação baseada na autenticação
+// NOVO MÉTODO: Gerenciar navegação baseada na autenticação
 updateNavigationForAuthState(isAuthenticated) {
     const navMenu = document.querySelector('.nav-menu');
+    const navBrand = document.querySelector('.nav-brand a');
+    
     if (!navMenu) return;
 
     if (isAuthenticated) {
         // Usuário logado - mostrar todas as páginas
         navMenu.innerHTML = `
-            <a href="dashboard.html" class="nav-link">Dashboard</a>
+            <a href="inicial.html" class="nav-link">Inicial</a>
             <a href="hist.html" class="nav-link">Histórico</a>
-            <a href="cartoes.html" class="nav-link">Cartões</a>
+            <a href="dashboard.html" class="nav-link">Dashboard</a>
             <a href="perfil.html" class="nav-link">Perfil</a>
+            <a href="suporte.html" class="nav-link">Blinkie</a>
             ${this.isUserAdmin() ? '<a href="perfiladm.html" class="nav-link">Admin</a>' : ''}
         `;
+        
+        // Atualizar link da logo para inicial.html
+        if (navBrand) {
+            navBrand.href = 'inicial.html';
+        }
     } else {
         // Usuário não logado - mostrar apenas sobre e contato
         navMenu.innerHTML = `
             <a href="sobre.html" class="nav-link">Sobre</a>
             <a href="contato.html" class="nav-link">Contato</a>
         `;
+        
+        // Atualizar link da logo para index.html
+        if (navBrand) {
+            navBrand.href = 'index.html';
+        }
     }
 }
 }

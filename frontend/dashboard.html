@@ -8,7 +8,19 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/js/data-manager.js"></script>
     <script src="/js/auth.js"></script>
+    <script type="module">
+    import { loadGlobalData, getState } from "./static/js/state.js";
+
+    (async () => {
+        await loadGlobalData();
+        const state = getState();
+
+        console.log("Dados no dashboard:", state);
+    })();
+    </script>
+
 
     <style>
         /* Dashboard Page Styles */
@@ -729,18 +741,7 @@
                         </div>
                         <span class="action-label">Histórico</span>
                     </a>
-                    <a href="/cartoes.html" class="action-btn">
-                        <div class="action-icon">
-                            <i class="fas fa-credit-card"></i>
-                        </div>
-                        <span class="action-label">Cartões</span>
-                    </a>
-                    <a href="/cartoes.html" class="action-btn">
-                        <div class="action-icon">
-                            <i class="fas fa-credit-card"></i>
-                        </div>
-                        <span class="action-label">Cartões</span>
-                    </a>
+
 
                 </div>
 
@@ -906,75 +907,7 @@
         🧪
     </button>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-brand">
-                    <div class="logo">
-                        <i class="fas fa-comments"></i>
-                    </div>
-                    <span class="brand-name">Blync</span>
-                    <p>Seu assistente financeiro inteligente</p>
-                </div>
-                
-                <div class="footer-links">
-                    <div class="link-group">
-                        <h4>Produtos</h4>
-                        <a href="dashboard.html">Dashboard</a>
-                    </div>
-                    
-                    <div class="link-group">
-                        <h4>Institucional</h4>
-                        <a href="sobre.html">Sobre Nós</a>
-                    </div>
-                    
-                    <div class="link-group">
-                        <h4>Ajuda</h4>
-                        <a href="contato.html">Contato</a>
-                    </div>
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-brand">
-                    <div class="logo">
-                        <i class="fas fa-comments"></i>
-                    </div>
-                    <span class="brand-name">Blync</span>
-                    <p>Seu assistente financeiro inteligente</p>
-                </div>
-                
-                <div class="footer-links">
-                    <div class="link-group">
-                        <h4>Produtos</h4>
-                        <a href="dashboard.html">Dashboard</a>
-                    </div>
-                    
-                    <div class="link-group">
-                        <h4>Institucional</h4>
-                        <a href="sobre.html">Sobre Nós</a>
-                    </div>
-                    
-                    <div class="link-group">
-                        <h4>Ajuda</h4>
-                        <a href="contato.html">Contato</a>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="footer-bottom">
-                <p>&copy; 2025 Blync Tecnologia S.A. - CNPJ 17.123.456/7777-77</p>
-                <div class="footer-social">
-                    <a href="#"><i class="fab fa-instagram"></i></a>
-                    <a href="#"><i class="fab fa-twitter"></i></a>
-                    <a href="#"><i class="fab fa-linkedin"></i></a>
-                    <a href="#"><i class="fab fa-facebook"></i></a>
-                </div>
-            </div>
-        </div>
-    </footer>
-
+    
     <script>
 
         // No início do script 
@@ -982,7 +915,61 @@
             return;
         }
 
-    <script>
+            document.addEventListener('DOMContentLoaded', function() {
+        if (!window.authManager || !window.authManager.requireAuth()) {
+            return;
+        }
+        
+    });
+    document.addEventListener('DOMContentLoaded', function() {
+    if (!window.authManager?.requireAuth()) return;
+    
+    loadDashboardData();
+});
+
+function loadDashboardData() {
+    const stats = BlyncDataManager.calculateStats();
+    
+    // Atualizar estatísticas
+    document.getElementById('totalBalance').textContent = BlyncDataManager.formatCurrency(stats.totalBalance);
+    document.getElementById('monthIncome').textContent = BlyncDataManager.formatCurrency(stats.monthIncome);
+    document.getElementById('monthExpense').textContent = BlyncDataManager.formatCurrency(stats.monthExpense);
+    document.getElementById('transactionsCount').textContent = stats.transactionsCount;
+    
+    // Carregar transações recentes
+    loadRecentTransactions();
+}
+
+function loadRecentTransactions() {
+    const transactions = BlyncDataManager.getTransactions()
+        .sort((a, b) => new Date(b.date) - new Date(a.date))
+        .slice(0, 5);
+    
+    const container = document.getElementById('recentTransactions');
+    
+    if (transactions.length === 0) {
+        container.innerHTML = `<div class="empty-state">Nenhuma transação</div>`;
+        return;
+    }
+    
+    container.innerHTML = transactions.map(transaction => `
+        <div class="transaction-item">
+            <div class="transaction-info">
+                <div class="transaction-icon ${transaction.type}">
+                    <i class="${BlyncDataManager.getCategoryIcon(transaction.category)}"></i>
+                </div>
+                <div class="transaction-details">
+                    <h4>${transaction.description}</h4>
+                    <p>${BlyncDataManager.getCategoryName(transaction.category)} • ${BlyncDataManager.formatDate(transaction.date)}</p>
+                </div>
+            </div>
+            <div class="transaction-amount ${transaction.type}">
+                ${transaction.type === 'income' ? '+' : '-'} ${BlyncDataManager.formatCurrency(transaction.amount)}
+            </div>
+        </div>
+    `).join('');
+}
+
         // =============================================
         // SISTEMA UNIFICADO DE DADOS - USANDO MESMA CHAVE DO HISTÓRICO
         // =============================================
