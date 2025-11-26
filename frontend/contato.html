@@ -245,7 +245,7 @@ document.getElementById('contactForm').addEventListener('submit', async function
     
     try {
         // Enviar para uma rota específica do backend
-        const response = await fetch('http://localhost:3333/contato', {
+        const response = await fetch('https://blync.onrender.com/contato', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
