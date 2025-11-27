@@ -384,12 +384,12 @@ const response = await fetch('https://blync.onrender.com/api/auth/register', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-        name: `${firstName} ${lastName}`,
-        email,
-        password,
-        newsletter
+        name: userData.name,
+        email: userData.email,
+        password: userData.password
     })
 });
+
 
 
                 console.log('Status da resposta:', response.status);
