@@ -48,7 +48,7 @@ const startServer = async () => {
         console.log(`Servidor FINSYNC rodando na porta ${PORT}`);
         console.log(`Ambiente: ${process.env.NODE_ENV || 'development'}`);
         console.log(`Banco de dados: ${process.env.DB_NAME}`);
-        console.log(`Health check: http://localhost:${PORT}/health`);
+        console.log(`Health check: https://blync.onrender.com/:${PORT}/health`);
     });
 };
 startServer().catch(console.error);

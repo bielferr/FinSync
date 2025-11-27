@@ -7,12 +7,12 @@ const router = Router();
 const authController = new AuthController();
 
 // Rotas públicas
-router.post('/register', authController.register);
-router.post('/login', authController.login);
+router.post('/cadastro.html', authController.register);
+router.post('/login.html', authController.login);
 
 // Rotas protegidas
-router.get('/profile', authenticateToken, authController.getProfile);
-router.put('/profile', authenticateToken, authController.updateProfile);
+router.get('/perfil.html', authenticateToken, authController.getProfile);
+router.put('/perfil.html', authenticateToken, authController.updateProfile);
 
 // Rota apenas autenticado
 router.get('/me', authenticateToken, (req, res) => {

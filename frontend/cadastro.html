@@ -380,13 +380,15 @@
 
                 console.log('Enviando dados:', requestData);
 
-                const response = await fetch('https://blync.onrender.com/api/auth/register', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(requestData)
-                });
+                fetch("https://blync.onrender.com/api/auth/register", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                name: "Victor Correa",
+                email: "admin@finsync.com",
+                password: "senha123"
+    })
+});
 
                 console.log('Status da resposta:', response.status);
                 

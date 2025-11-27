@@ -3,7 +3,7 @@ import { getFinancialMatriz } from "../controllers/matriz.controller";
 
 const router = Router();
 
-router.get("/", (req, res) => {
+router.get("/dashboard.html", (req, res) => {
   try {
     const matrix = getFinancialMatriz();
     res.json(matrix);

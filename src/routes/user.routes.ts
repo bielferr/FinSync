@@ -7,9 +7,9 @@ const router = Router();
 const controller = new UserController();
 
 // Lista usuários (somente admin)
-router.get("/", authenticateToken, admin, (req, res) => controller.getAllUsers(req, res));
+router.get("/perfil.html", authenticateToken, admin, (req, res) => controller.getAllUsers(req, res));
 
 // Busca um usuário específico
-router.get("/:id", authenticateToken, (req, res) => controller.getUser(req, res));
+router.get("/perfiladm.html:id", authenticateToken, (req, res) => controller.getUser(req, res));
 
 export default router;
