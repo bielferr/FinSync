@@ -41,7 +41,6 @@ app.post('/api/auth/register-direct', authController.register);
 console.log('✅ Rota direta /api/auth/register-direct registrada');
 
 console.log('Registrando rota /api/auth');
-app.use("/api/auth", authRoutes);
 console.log('Rota /api/auth registrada');
 
 app.use("/api/users", userRoutes);

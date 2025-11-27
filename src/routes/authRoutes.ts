@@ -7,7 +7,7 @@ import { requireAdmin } from '../middleware/auth';
 const router = Router();
 const authController = new AuthController();
 
-// Rotas públicas
+// ROTAS DA API (não HTML!)
 router.post('/register', authController.register);
 router.post('/login', authController.login);
 
